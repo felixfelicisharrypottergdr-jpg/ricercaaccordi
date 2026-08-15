@@ -3801,54 +3801,61 @@ addNd();
 refreshAgreementAssignment();
 })();
 </script>
-<!-- Altezza dinamica per incorporamento ForumFree -->
+<!-- Altezza dinamica per incorporamento ForumFree — misura il contenuto reale, non il viewport -->
 <script type="text/javascript">
 (function(){
 var ultimoValore = 0;
 var timer = null;
-function misuraPagina(){
-var body = document.body;
-var html = document.documentElement;
-var altezza = 0;
-if(body){
-altezza = Math.max(altezza, body.scrollHeight, body.offsetHeight);
+var root = document.querySelector(".wrap");
+
+function misuraContenuto(){
+if(!root){ return 0; }
+var rect = root.getBoundingClientRect();
+var altezza = Math.max(root.scrollHeight || 0, Math.ceil(rect.height || 0));
+return Math.ceil(altezza);
 }
-if(html){
-altezza = Math.max(altezza, html.scrollHeight, html.offsetHeight, html.clientHeight);
-}
-return altezza;
-}
+
 function inviaAltezzaRicercaAccordi(){
-var altezza = misuraPagina();
+var altezza = misuraContenuto();
 if(altezza <= 0){ return; }
-if(altezza === ultimoValore){ return; }
+if(Math.abs(altezza - ultimoValore) < 2){ return; }
 ultimoValore = altezza;
 window.parent.postMessage({
 tipo: "altezzaRicercaAccordi",
 altezza: altezza
 }, "*");
 }
+
 function pianificaInvio(){
 if(timer){ window.clearTimeout(timer); }
 timer = window.setTimeout(inviaAltezzaRicercaAccordi, 80);
 }
+
+/* Nasconde la scrollbar interna soltanto quando la pagina è davvero dentro un iframe. */
+if(window.self !== window.top){
+document.documentElement.style.overflow = "hidden";
+if(document.body){ document.body.style.overflow = "hidden"; }
+}
+
 window.addEventListener("load", function(){
 inviaAltezzaRicercaAccordi();
 window.setTimeout(inviaAltezzaRicercaAccordi, 250);
 window.setTimeout(inviaAltezzaRicercaAccordi, 800);
 });
 window.addEventListener("resize", pianificaInvio);
-if(typeof ResizeObserver !== "undefined" && document.body){
+
+if(typeof ResizeObserver !== "undefined" && root){
 var ro = new ResizeObserver(pianificaInvio);
-ro.observe(document.body);
+ro.observe(root);
 }
-if(typeof MutationObserver !== "undefined" && document.body){
+if(typeof MutationObserver !== "undefined" && root){
 var mo = new MutationObserver(pianificaInvio);
-mo.observe(document.body, { childList:true, subtree:true, attributes:true });
+mo.observe(root, { childList:true, subtree:true, attributes:true, characterData:true });
 }
 document.addEventListener("input", pianificaInvio);
 document.addEventListener("change", pianificaInvio);
 document.addEventListener("cli" + "ck", pianificaInvio);
+
 inviaAltezzaRicercaAccordi();
 })();
 </script>
