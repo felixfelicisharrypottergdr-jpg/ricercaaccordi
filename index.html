@@ -146,13 +146,13 @@ cursor:pointer;
 user-select:none;
 transition:background 0.15s, color 0.15s}
 .dice-cmd:hover {background:rgba(112, 66, 122, 0.18)}
-.dice-cmd::after {content:url('https://i.postimg.cc/Y9pYY4zW/1.png');
+.dice-cmd::after {content:"⧉";
 font-size: 11px;
 opacity: 0.6}
 .dice-cmd.copied {background:var(--ok);
 color: #FFF;
 border-color:var(--ok)}
-.dice-cmd.copied::after {content:"✓ "; opacity: 1}
+.dice-cmd.copied::after {content:"✓"; opacity: 1}
 .roll-entry {display:flex;
 align-items:center;
 gap: 10px;
@@ -895,6 +895,8 @@ button:disabled,input:disabled,select:disabled{
   opacity:.58;
   cursor:not-allowed;
 }
+.wrap.setup-incomplete .tab-panel.active .phase{display:none !important;}
+#setupStatus.ok{background:rgba(47,110,70,.08);border-color:rgba(47,110,70,.28);border-left-color:var(--ok);}
 
 @media(max-width:760px){
   .wrap{padding:0 14px 60px;}
@@ -922,12 +924,12 @@ l'esito.</p>
 Zona di provenienza della controparte</div>
 <p class="hint" style="margin-top:0;">Tira <span class="dice-cmd" data-dice="1d3"
 data-name="Scelta Zona">1d3</span> sul forum (1 Verde · 2 Giallo · 3 Rosso) e seleziona
-qui il colore corrispondente. Conta la provenienza della controparte, non il luogo fisico
+qui il colore corrispondente. <b>Nessuna Zona viene assunta automaticamente.</b> Conta la provenienza della controparte, non il luogo fisico
 dell'incontro. <b>Eccezione:</b> nella Coordinazione Interministeriale ambientata in Gran
 Bretagna puoi scegliere direttamente l'apposita opzione: per quella Missione la Zona sarà
 Verde.</p>
 <div class="zone-picker">
-<label class="zone-opt"><input type="radio" name="zona" value="verde" checked><span
+<label class="zone-opt"><input type="radio" name="zona" value="verde"><span
 class="dot verde"></span>Verde</label>
 <label class="zone-opt"><input type="radio" name="zona" value="giallo"><span class="dot
 giallo"></span>Giallo</label>
@@ -948,11 +950,11 @@ e scegli manualmente la linguetta.</p>
 <div class="assignment-grid">
 <div class="field"><label>Risultato 1d4</label><input type="number" id="accordoRollVal" min="1" max="4"></div>
 <div class="field"><label>Rinunce ancora disponibili</label><div class="readout" id="accordoRinunce">3</div></div>
-<div class="field"><label>Accordo collegato</label><label class="toggle-row" style="margin:0;"><input type="checkbox" id="accordoLinkedToggle"> Scelta diretta, senza 1d4</label></div>
+<div class="field"><label>Accordo collegato</label><label class="toggle-row" style="margin:0;"><input type="checkbox" id="accordoLinkedToggle"> Nuova role collegata: scelta diretta, senza 1d4</label></div>
 </div>
 <div class="roll-entry" style="margin-top:12px;"><button class="reset-link" id="accordoRinunciaBtn" data-action="rinunciaAccordo" type="button">Rinuncia all'Accordo assegnato</button></div>
 <div class="assignment-status" id="accordoAssignmentStatus">Inserisci il risultato del 1d4 per determinare l'Accordo.</div>
-<p class="hint">Ogni PG può seguire <b>un solo Accordo per role</b>. Cambiare Accordo senza usare la rinuncia è possibile soltanto quando è attiva la modalità “Accordo collegato”.</p>
+<p class="hint">Ogni PG può seguire <b>un solo Accordo per role</b>. Un Accordo collegato si svolge comunque in <b>una nuova role</b>: attiva la modalità dedicata e scegli una sola linguetta. Dopo la scelta, l’Accordo viene bloccato per evitare cambi accidentali.</p>
 <div class="tabbar" style="margin-bottom:0;">
 <button class="tab-btn active" data-tab="a1"><span class="num">01</span>Trattativa e
 Mediazione</button>
@@ -981,6 +983,7 @@ Diplomatici</div>
 <div id="ndContainer"></div>
 <button class="add-btn" data-action="addNd">+ Aggiungi non Diplomatico</button>
 <div class="participant-warning" id="participantStatus">La role richiede almeno 2 PG e almeno 1 Diplomatico.</div>
+<div class="participant-warning" id="setupStatus">Determina l’Accordo e completa i dati necessari per sbloccare le Fasi.</div>
 <p class="hint">"Parametro di riferimento" è il Parametro guida della Categoria (es. Acume
 per Acumen, Percezione per Sensus, Volontà per Voluntas...). <b>Sapienza Magica Affine
 scelta</b> serve nelle prove che richiedono una delle due Sapienze affini; <b>Totale
@@ -1015,11 +1018,12 @@ coerenti con il regolamento.</div>
 <div class="ndnote"><b>Modificatore da una precedente Coordinazione.</b> Se il precedente Accordo di Coordinazione nella <u>stessa Zona</u> ha prodotto +5 o −5, registralo qui. Nelle prove a soglia modifica la soglia; nei round e nelle prove contrapposte modifica il risultato del Diplomatico, mai quello dell'Avversario o dell'opinione pubblica.
 <div class="assignment-grid">
 <div class="field"><label>Modificatore precedente</label><select id="prevCoordMod"><option value="0">Nessuno (0)</option><option value="5">Successo precedente (+5)</option><option value="-5">Fallimento precedente (−5)</option></select></div>
-<div class="field"><label>Zona della precedente Coordinazione</label><select id="prevCoordZone"><option value="verde">Verde</option><option value="giallo">Giallo</option><option value="rosso">Rosso</option></select></div>
+<div class="field"><label>Zona della precedente Coordinazione</label><select id="prevCoordZone"><option value="">— scegli la Zona —</option><option value="verde">Verde</option><option value="giallo">Giallo</option><option value="rosso">Rosso</option></select></div>
 </div>
 <div class="hint" id="prevCoordStatus">Nessun modificatore precedente attivo.</div>
 </div>
 <div class="ndnote"><b>Arrotondamenti.</b> Tutte le divisioni previste dalle formule vengono arrotondate per difetto.</div>
+<div class="ndnote"><b>FantaWiz.</b> Anche il PG non Diplomatico che partecipa effettivamente alla Ricerca può completare il Livello Difficile della Missione “Il Diplomatico”, come previsto dal regolamento.</div>
 </div>
 <!-- ACCORDO 1 -->
 <div class="tab-panel active" id="panel-a1">
@@ -1282,6 +1286,20 @@ if(!elm){ return false; }
 if(elm.value === ""){ return false; }
 return true;
 }
+function validNonNegativeNumber(id){
+var elm = document.getElementById(id);
+if(!elm || elm.value === ""){ return false; }
+var v = Number(elm.value);
+return Number.isFinite(v) && v >= 0;
+}
+function validChoice(id){
+var elm = document.getElementById(id);
+return !!(elm && elm.value !== "");
+}
+function agreementNumberFromTab(name){
+var n = parseInt(String(name || "").replace("a",""),10);
+return (n >= 1 && n <= 4) ? n : null;
+}
 function text(id){
 var elm = document.getElementById(id);
 if(!elm){ return ""; }
@@ -1336,6 +1354,7 @@ if(!box){ return; }
 var m = prevCoordRaw();
 if(m === 0){ box.innerHTML = "Nessun modificatore precedente attivo."; return; }
 var z = text("prevCoordZone");
+if(!z){ box.innerHTML = "<b>Modificatore non applicato:</b> scegli la Zona della precedente Coordinazione."; return; }
 box.innerHTML = "Modificatore registrato: <b>" + (m>0?"+":"") + m + "</b> per la Zona <b>" + zonaLabel(z) + "</b>. Viene applicato solo quando la Zona effettiva dell'Accordo coincide.";
 }
 function potionOptionsHTML(){
@@ -1571,12 +1590,13 @@ while(i < radios.length){
 if(radios[i].checked){ return radios[i].value; }
 i = i + 1;
 }
-return "verde";
+return null;
 }
 function zonaLabel(z){
 if(z === "verde"){ return "Verde"; }
 if(z === "giallo"){ return "Giallo"; }
-return "Rosso";
+if(z === "rosso"){ return "Rosso"; }
+return "non determinata";
 }
 function stampHTML(success){
 if(success){ return '<span class="stamp ok">Successo</span>'; }
@@ -1666,21 +1686,21 @@ return ''
 + '<div class="char-card" id="dipCard_' + id + '" data-dipid="' + id + '">'
 + ' <div class="char-card-head"><span class="char-card-title">Diplomatico</span><button class="remove-btn" data-action="removeDip" data-id="' + id + '">rimuovi</button></div>'
 + ' <div class="grid" style="margin-bottom:6px;">'
-+ ' <div class="field"><label>Acume</label><input type="number" id="dipAcume_' + id + '" value="0"></div>'
-+ ' <div class="field"><label>Volontà</label><input type="number" id="dipVolonta_' + id + '" value="0"></div>'
++ ' <div class="field"><label>Acume</label><input type="number" id="dipAcume_' + id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Volontà</label><input type="number" id="dipVolonta_' + id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Empatia</label><input type="number" id="dipEmpatia_' + id +
-'" value="0"></div>'
+'" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Dialettica</label><input type="number" id="dipDialettica_' + id
-+ '" value="0"></div>'
++ '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Percezione</label><input type="number" id="dipPercezione_'
-+ id + '" value="0"></div>'
++ id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Popolarità</label><input type="number" id="dipPopolarita_' +
-id + '" value="0"></div>'
-+ ' <div class="field"><label>Tot. Sapienze Magiche</label><input type="number" id="dipSapienze_' + id + '" value="0"></div>'
-+ ' <div class="field"><label>Lv. Persuasore</label><input type="number" id="dipPersuasore_' + id + '" value="0"></div>'
+id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Tot. Sapienze Magiche</label><input type="number" id="dipSapienze_' + id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Lv. Persuasore</label><input type="number" id="dipPersuasore_' + id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Rango Diplomatico</label><select id="dipRango_' + id +
-'"><option value="0">Apprendista Diplomatico</option><option value="10">Diplomatico</option><option value="15">Consigliere</option><option value="20">Cancelliere</option></select></div>'
-+ ' <div class="field"><label>Prestigio attuale</label><input type="number" id="dipPrestigio_' + id + '" value="0" min="0"></div>'
+'"><option value="">— scegli il rango —</option><option value="0">Apprendista Diplomatico</option><option value="10">Diplomatico</option><option value="15">Consigliere</option><option value="20">Cancelliere</option></select></div>'
++ ' <div class="field"><label>Prestigio attuale</label><input type="number" id="dipPrestigio_' + id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' </div>'
 + '</div>';
 }
@@ -1746,6 +1766,74 @@ box.innerHTML = "Partecipanti registrati: <b>" + total + "</b> · Diplomatici: <
 box.innerHTML = "<b>Requisito non rispettato:</b> servono almeno 2 PG e almeno 1 Diplomatico.";
 }
 }
+
+function requiredFieldsForAgreement(n, kind){
+if(kind === "dip"){
+if(n === 1){ return ["Acume","Volonta","Empatia","Sapienze","Persuasore"]; }
+if(n === 2){ return ["Volonta","Dialettica","Prestigio","Rango"]; }
+if(n === 3){ return ["Acume","Percezione","Popolarita","Persuasore","Volonta","Dialettica"]; }
+if(n === 4){ return ["Acume","Volonta","Popolarita","Sapienze"]; }
+}
+if(kind === "nd"){
+if(n === 1){ return ["Categoria","Acume","Volonta","Empatia","SapienzaAffine","SapienzeTotali","ParamRif"]; }
+if(n === 2){ return ["Categoria","Volonta","Dialettica"]; }
+if(n === 3){ return ["Categoria","Acume","Volonta"]; }
+if(n === 4){ return ["Categoria","Acume","Volonta","Popolarita"]; }
+}
+return [];
+}
+function validateParticipantFields(n){
+var errors=[],i,j,id,fields,suffix,fieldId;
+for(i=0;i<diplomatIds.length;i++){
+id=diplomatIds[i]; fields=requiredFieldsForAgreement(n,"dip");
+for(j=0;j<fields.length;j++){
+suffix=fields[j]; fieldId="dip"+suffix+"_"+id;
+if(suffix === "Rango"){
+if(!validChoice(fieldId)){ errors.push("scegli il rango del Diplomatico "+(i+1)); break; }
+}else if(!validNonNegativeNumber(fieldId)){
+errors.push("completa i dati richiesti del Diplomatico "+(i+1)); break;
+}
+}
+}
+for(i=0;i<ndIds.length;i++){
+id=ndIds[i]; fields=requiredFieldsForAgreement(n,"nd");
+for(j=0;j<fields.length;j++){
+suffix=fields[j]; fieldId="nd"+suffix+"_"+id;
+if(suffix === "Categoria"){
+if(!validChoice(fieldId)){ errors.push("scegli la Categoria del non Diplomatico "+(i+1)); break; }
+}else if(!validNonNegativeNumber(fieldId)){
+errors.push("completa i dati richiesti del non Diplomatico "+(i+1)); break;
+}
+}
+if(validChoice("ndCategoria_"+id) && text("ndCategoria_"+id) === "Intracciabile" && !validChoice("ndCategoriaAffine_"+id)){
+errors.push("scegli la Categoria affine del non Diplomatico Intracciabile "+(i+1));
+}
+}
+return errors;
+}
+function setupValidation(){
+var errors=[];
+var total=diplomatIds.length+ndIds.length;
+if(diplomatIds.length<1 || total<2){ errors.push("servono almeno 2 PG e almeno 1 Diplomatico"); }
+if(accordoAssigned===null){ errors.push(document.getElementById("accordoLinkedToggle").checked ? "scegli l’Accordo collegato" : "determina l’Accordo con 1d4"); }
+var zone=getZona();
+var uk=document.getElementById("a4ukToggle");
+var zoneOk=!!zone || (accordoAssigned===4 && uk && uk.checked);
+if(accordoAssigned!==null && !zoneOk){ errors.push("determina la Zona con 1d3" + (accordoAssigned===4 ? " oppure attiva l’eccezione Gran Bretagna" : "")); }
+if(accordoAssigned!==null){ errors=errors.concat(validateParticipantFields(accordoAssigned)); }
+return {ok:errors.length===0,errors:errors};
+}
+function refreshSetupStatus(){
+var box=document.getElementById("setupStatus");
+var wrap=document.querySelector(".wrap");
+var v=setupValidation();
+if(wrap){ wrap.classList.toggle("setup-incomplete",!v.ok); }
+if(box){
+if(v.ok){ box.classList.add("ok"); box.innerHTML="<b>Dati preliminari completi.</b> Le Fasi dell’Accordo sono operative."; }
+else { box.classList.remove("ok"); box.innerHTML="<b>Prima di usare le Fasi:</b> "+v.errors.join("; ")+"."; }
+}
+return v.ok;
+}
 /* =================== NON DIPLOMATICI =================== */
 var ndIds = [];
 var nextNdId = 0;
@@ -1756,22 +1844,22 @@ return ''
 '">rimuovi</button></div>'
 + ' <div class="grid">'
 + ' <div class="field"><label>Categoria Magica</label><select id="ndCategoria_' + id + '" data-action-onchange="ndCategoriaChanged" data-id="' + id +
-'"><option>Acumen</option><option>Animus</option><option>Ars</option><option>Numen</option><option>Sensus</option><option>Voluntas</option><option>Intracciabile</option> </select></div>'
+'"><option value="">— scegli la Categoria —</option><option>Acumen</option><option>Animus</option><option>Ars</option><option>Numen</option><option>Sensus</option><option>Voluntas</option><option>Intracciabile</option> </select></div>'
 + ' <div class="field"><label>Acume (ND)</label><input type="number" id="ndAcume_' + id
-+ '" value="0"></div>'
++ '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Volontà (ND)</label><input type="number" id="ndVolonta_' + id
-+ '" value="0"></div>'
++ '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Empatia (ND)</label><input type="number" id="ndEmpatia_' +
-id + '" value="0"></div>'
+id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' <div class="field"><label>Dialettica (ND)</label><input type="number" id="ndDialettica_'
-+ id + '" value="0"></div>'
-+ ' <div class="field"><label>Popolarità (ND)</label><input type="number" id="ndPopolarita_' + id + '" value="0"></div>'
-+ ' <div class="field"><label>Sapienza Magica Affine scelta</label><input type="number" id="ndSapienzaAffine_' + id + '" value="0"></div>'
-+ ' <div class="field"><label>Totale Sapienze Magiche</label><input type="number" id="ndSapienzeTotali_' + id + '" value="0"></div>'
-+ ' <div class="field"><label>Parametro di riferimento Categoria</label><input type="number" id="ndParamRif_' + id + '" value="0"></div>'
++ id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Popolarità (ND)</label><input type="number" id="ndPopolarita_' + id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Sapienza Magica Affine scelta</label><input type="number" id="ndSapienzaAffine_' + id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Totale Sapienze Magiche</label><input type="number" id="ndSapienzeTotali_' + id + '" min="0" placeholder="Inserisci valore"></div>'
++ ' <div class="field"><label>Parametro di riferimento Categoria</label><input type="number" id="ndParamRif_' + id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' </div>'
 + ' <div class="field nd-affine-row" id="ndAffineRow_' + id + '"><label>Se Intracciabile: Categoria affine (Parametro più alto in scheda)</label><select id="ndCategoriaAffine_' + id +
-'"><option>Acumen</option><option>Animus</option><option>Ars</option><option>Numen</option><option>Sensus</option><option>Voluntas</option></select></div>'
+'"><option value="">— scegli la Categoria affine —</option><option>Acumen</option><option>Animus</option><option>Ars</option><option>Numen</option><option>Sensus</option><option>Voluntas</option></select></div>'
 + '</div>';
 }
 function getNd(id){
@@ -1781,7 +1869,7 @@ if(raw === "Intracciabile"){ resolved = text("ndCategoriaAffine_" + id).replace(
 return {
 categoriaRaw: raw,
 categoria: resolved.toLowerCase(),
-label: raw === "Intracciabile" ? ("Intracciabile — " + resolved) : raw,
+label: raw ? (raw === "Intracciabile" ? ("Intracciabile — " + (resolved || "affinità da scegliere")) : raw) : "Categoria da scegliere",
 acume: num("ndAcume_" + id),
 volonta: num("ndVolonta_" + id),
 empatia: num("ndEmpatia_" + id),
@@ -2617,8 +2705,10 @@ var uk = document.getElementById("a4ukToggle");
 var txt = "";
 if(uk && uk.checked){
 txt = "<b>Gran Bretagna:</b> questa Missione viene trattata come Zona <b>Verde</b>.";
-} else {
+} else if(z){
 txt = "Zona effettiva per questa Missione: <b>" + zonaLabel(z) + "</b>.";
+} else {
+txt = "<b>Zona non determinata:</b> seleziona la provenienza al Passo 1 oppure attiva qui l’eccezione Gran Bretagna.";
 }
 setHTML("a4zoneNote", txt);
 }
@@ -3850,6 +3940,7 @@ setTimeout(function(){ elm.classList.remove("copied"); }, 900);
 /* =================== TABS =================== */
 var accordoRinunceLeft = 3;
 var accordoAssigned = null;
+var linkedModeLast = false;
 function agreementNameFromNumber(v){
 if(v === 1){ return "Trattativa e Mediazione"; }
 if(v === 2){ return "Networking e Influenza Sociale"; }
@@ -3865,19 +3956,35 @@ var tabs = document.querySelectorAll(".tab-btn");
 var status = document.getElementById("accordoAssignmentStatus");
 var btn = document.getElementById("accordoRinunciaBtn");
 setHTML("accordoRinunce", String(accordoRinunceLeft));
-if(linked){
+if(linked !== linkedModeLast){
+linkedModeLast = linked;
 accordoAssigned = null;
+clearInput("accordoRollVal");
+invalidateAllAgreementRolls();
+var pp=document.querySelectorAll(".tab-panel"), px=0;
+while(px<pp.length){ pp[px].classList.remove("active"); px=px+1; }
+}
+if(linked){
 document.getElementById("accordoRollVal").disabled = true;
-var i=0; while(i<tabs.length){ tabs[i].classList.remove("locked"); tabs[i].disabled=false; i=i+1; }
-if(!document.querySelector(".tab-panel.active")){ switchTab("a1",true); }
-if(status){ status.innerHTML = "<b>Accordo collegato:</b> scegli direttamente una linguetta. Il tiro 1d4 non è richiesto."; }
-if(btn){ btn.disabled = true; btn.style.opacity = ".45"; }
+if(accordoAssigned === null){
+var i=0; while(i<tabs.length){ tabs[i].classList.remove("locked","active"); tabs[i].disabled=false; i=i+1; }
+if(status){ status.innerHTML = "<b>Nuova role collegata:</b> scegli una sola linguetta. Il tiro 1d4 non è richiesto; dopo la scelta le altre verranno bloccate."; }
+} else {
+var targetLinked = agreementTabFromNumber(accordoAssigned);
+var il=0; while(il<tabs.length){
+var okLinked = tabs[il].getAttribute("data-tab") === targetLinked;
+tabs[il].classList.toggle("locked",!okLinked); tabs[il].disabled=!okLinked; il=il+1;
+}
+switchTab(targetLinked,true);
+if(status){ status.innerHTML = "<b>Accordo collegato scelto:</b> " + agreementNameFromNumber(accordoAssigned) + ". La scelta è bloccata per questa nuova role."; }
+}
+if(btn){ btn.disabled=true; btn.style.opacity=".45"; btn.innerHTML="Rinuncia non usata negli Accordi collegati"; }
 return;
 }
 document.getElementById("accordoRollVal").disabled = false;
 if(roll.status === "invalid"){
 accordoAssigned = null;
-var j=0; while(j<tabs.length){ tabs[j].classList.add("locked"); tabs[j].disabled=true; j=j+1; }
+var j=0; while(j<tabs.length){ tabs[j].classList.add("locked"); tabs[j].classList.remove("active"); tabs[j].disabled=true; j=j+1; }
 var p1=document.querySelectorAll(".tab-panel"); j=0; while(j<p1.length){p1[j].classList.remove("active");j=j+1;}
 if(status){ status.innerHTML = rollErrorHTML(4); }
 if(btn){ btn.disabled=true; btn.style.opacity=".45"; }
@@ -3885,10 +3992,10 @@ return;
 }
 if(roll.status === "empty"){
 accordoAssigned = null;
-var k=0; while(k<tabs.length){ tabs[k].classList.add("locked"); tabs[k].disabled=true; k=k+1; }
+var k=0; while(k<tabs.length){ tabs[k].classList.add("locked"); tabs[k].classList.remove("active"); tabs[k].disabled=true; k=k+1; }
 var p2=document.querySelectorAll(".tab-panel"); k=0; while(k<p2.length){p2[k].classList.remove("active");k=k+1;}
 if(status){ status.innerHTML = "Inserisci il risultato del <b>1d4</b> per determinare l'Accordo."; }
-if(btn){ btn.disabled=true; btn.style.opacity=".45"; }
+if(btn){ btn.disabled=true; btn.style.opacity=".45"; btn.innerHTML="Rinuncia all'Accordo assegnato"; }
 return;
 }
 accordoAssigned = roll.value;
@@ -3920,10 +4027,16 @@ resetAgreementByNumber(roll.value);
 accordoRinunceLeft = accordoRinunceLeft - 1;
 clearInput("accordoRollVal");
 accordoAssigned = null;
-refreshAgreementAssignment();
+refreshAll();
 }
 function switchTab(name, internal){
 var linked = document.getElementById("accordoLinkedToggle") ? document.getElementById("accordoLinkedToggle").checked : true;
+if(!internal && linked){
+if(accordoAssigned === null){
+var n = agreementNumberFromTab(name);
+if(n !== null){ accordoAssigned = n; refreshAll(); return; }
+} else if(name !== agreementTabFromNumber(accordoAssigned)){ return; }
+}
 if(!internal && !linked && accordoAssigned !== null && name !== agreementTabFromNumber(accordoAssigned)){ return; }
 var tabs = document.querySelectorAll(".tab-btn");
 var i = 0;
@@ -3948,6 +4061,8 @@ refreshPrevCoordStatus();
 refreshNDPickers();
 refreshLeaderSelects();
 refreshDipTargetPickers();
+a4RefreshZoneNote();
+if(!refreshSetupStatus()){ return; }
 refreshA1F1();
 refreshA1F2();
 refreshA1F3();
@@ -4057,7 +4172,7 @@ if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT"){ invalidateDow
 wireAll();
 addDip();
 addNd();
-refreshAgreementAssignment();
+refreshAll();
 })();
 </script>
 <!-- Altezza dinamica per incorporamento ForumFree — misura il contenuto reale, non il viewport -->
