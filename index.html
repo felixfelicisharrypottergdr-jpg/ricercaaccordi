@@ -1,6 +1,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>:root {--ink-navy: #26172F;
+<style>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css');
+@font-face {
+  font-family: 'magic';
+  src: url('https://dl.dropboxusercontent.com/scl/fi/nbzmrri4qyvc3tzx96911/HarryBeastDisplay-Regular.woff2?rlkey=he290voe32k33gowug23c1osc&st=nj9fgly1') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+:root {--ink-navy: #26172F;
 --ink-navy-2: #382243;
 --parchment: #E5D7BD;
 --parchment-2: #F4E9D4;
@@ -909,6 +918,38 @@ button:disabled,input:disabled,select:disabled{
   .tab-btn{flex:1 1 100%;}
   .roll-entry .field{max-width:none;flex:1 1 130px;}
 }
+
+
+/* ===== FONT MAGIC + FONT AWESOME ===== */
+h1.title,
+.section-label,
+.phase-title,
+.char-card-title,
+.dip-roll-row .row-title,
+.dip-mission-card > h4,
+.final-tally h4,
+.step-body b {
+  font-family:'magic',var(--serif);
+  font-weight:normal;
+  letter-spacing:.02em;
+}
+
+.phase-num,
+.step-num,
+.tab-btn .num {
+  font-family:'magic',var(--serif);
+  font-style:normal;
+}
+
+.dice-cmd::before {
+  content:"\f6cf";
+  font-family:"Font Awesome 7 Free";
+  font-weight:900;
+  font-style:normal;
+  line-height:1;
+  opacity:.9;
+}
+
 </style>
 <div class="wrap">
 <div class="foglio" style="background:#2B1735"><header class="masthead">
