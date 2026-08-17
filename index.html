@@ -950,10 +950,45 @@ h1.title,
   opacity:.9;
 }
 
+
+/* ===== SIGILLO TESTATA ===== */
+header.masthead .seal{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:68px;
+  height:68px;
+  margin:0 auto 18px;
+  border:1px solid var(--brass);
+  border-radius:50%;
+  background:var(--ink-navy);
+  color:var(--brass-light);
+  font-size:29px;
+  line-height:1;
+  box-shadow:
+    0 0 0 4px rgba(181,155,120,.08),
+    0 0 18px rgba(181,155,120,.08);
+}
+
+header.masthead .seal i{
+  color:inherit;
+  font-size:inherit;
+  line-height:1;
+}
+
+@media(max-width:760px){
+  header.masthead .seal{
+    width:62px;
+    height:62px;
+    margin-bottom:16px;
+    font-size:26px;
+  }
+}
+
 </style>
 <div class="wrap">
 <div class="foglio" style="background:#2B1735"><header class="masthead">
-   <div class="seal" style="color:#f4e9d4; font-size:30px"><i class="fa-solid fa-earth-americas"></i></div> <h1 class="title" style="font-size:40px; font-family:magic">• Ricerca Accordi •</h1>
+   <div class="seal"><i class="fa-solid fa-earth-americas"></i></div> <h1 class="title" style="font-size:40px; font-family:magic">• Ricerca Accordi •</h1>
 <p class="subtitle">Per PG Diplomatici (e Non Diplomatici in soccorso)</p>
 </header> </div>
 <!-- STEP 1: ZONA -->
