@@ -223,7 +223,7 @@ text-decoration:underline;
 cursor:pointer;
 background:none;
 border:none;
-padding: 0}Fr
+padding: 0}
 .extra-roll {display:none}
 .extra-roll.on {display:flex}
 .step-list {display:flex; flex-direction:column; gap: 16px}
@@ -1217,7 +1217,7 @@ class="phase-title">Gravità dello scandalo</span></div>
 tira obbligatoriamente <b>1d4</b>: 1 Minore · 2 Media · 3 Alta · 4 Critica.</p>
 <div class="toggle-row">
 <input type="checkbox" id="a3gbToggle">
-<label for="a3gbToggle" style="margin:0;">Scandalo ambientato in Gran Bretagna</label>
+<label for="a3gbToggle" style="margin:0;">Scandalo ambientato in Gran Bretagna <span class="muted">(il 1d4 sostituisce solo la determinazione della Gravità; la Zona generale resta quella di provenienza)</span></label>
 </div>
 <div class="roll-entry extra-roll" id="a3gbRow">
 <span class="dice-cmd" id="a3gbcmd" data-dice="1d4" data-name="Scandali - Gravità
@@ -1341,8 +1341,10 @@ azzera Accordo 4</button></div>
 </div>
 <footer>Ufficio Affari Diplomatici · Ricerca Accordi · uso interno alla role</footer>
 </div>
+<!-- Revisione v4: ripristinata la Zona generale di provenienza anche per gli Scandali in Gran Bretagna; il 1d4 GB modifica solo la Gravità. Ripristinati inoltre i +5 individuali per i Diplomatici riusciti negli Accordi 1, 3 e 4. -->
 <script type="text/javascript">
 (function(){
+/* Revisione 2026-08-20: allineamento Regolamento/HTML; fix reset A1, Pozioni Volontà/Dialettica, invalidazione A3 F3 e refusi CSS/testuali. */
 var CLICK = "cli" + "ck";
 /* =================== BASIC HELPERS =================== */
 function num(id){
@@ -1452,6 +1454,14 @@ return ''
 + '<select id="' + selectId + '">' + potionOptionsHTML() + '</select></div>'
 + '<div class="potion-help">Usala solo se la Pozione scelta agisce su <b>' + parametro +
 '</b>. Il bonus modifica esclusivamente il Parametro del PG che la beve.</div>'
++ '</div>';
+}
+function potionVolDialBoxHTML(selectId, targetId, soggetto){
+return ''
++ '<div class="potion-box">'
++ '<div class="field"><label>Pozione ' + soggetto + '</label><select id="' + selectId + '">' + potionOptionsHTML() + '</select></div>'
++ '<div class="field"><label>Parametro su cui agisce</label><select id="' + targetId + '"><option value="volonta">Volontà</option><option value="dialettica">Dialettica</option></select></div>'
++ '<div class="potion-help">Il regolamento consente la Pozione solo se agisce sul Parametro scelto. Il bonus viene applicato <b>a uno solo</b> tra Volontà e Dialettica e soltanto al PG che la beve.</div>'
 + '</div>';
 }
 function resetSelect(id, value){
@@ -2207,21 +2217,21 @@ sensus: "<b>Da narrare:</b> il PG Sensus legge emozioni, menzogne e segnali sott
 voluntas: "<b>Da narrare:</b> il PG Voluntas mantiene sangue freddo e credibilità di fronte alle pressioni, rassicurando il Diplomatico.<br><br><b>Effetto OFF Game:</b> +5 alla soglia del Diplomatico aiutato."
 };
 var noteA4F1 = {
-acume: "<b>Da narrare:</b> il non Diplomatico mette a disposizione la propria capacità di analisi per aiutare a comprendere la situazione.<br><br><b>Effetto OFF Game:</b> metà del suo Acume si aggiunge alla soglia di ogni Diplomatico.",
-volonta: "<b>Da narrare:</b> il non Diplomatico sostiene con determinazione i Diplomatici nella fase di analisi, mantenendo il gruppo concentrato sull'obiettivo.<br><br><b>Effetto OFF Game:</b> metà della sua Volontà si aggiunge alla soglia di ogni Diplomatico.",
-popolarita: "<b>Da narrare:</b> il non Diplomatico sfrutta la propria influenza o notorietà per aprire porte e ottenere informazioni.<br><br><b>Effetto OFF Game:</b> metà della sua Popolarità si aggiunge alla soglia di ogni Diplomatico."
+acume: "<b>Da narrare:</b> il non Diplomatico mette a disposizione la propria capacità di analisi per aiutare a comprendere la situazione.<br><br><b>Effetto OFF Game:</b> metà del suo Acume si aggiunge alla soglia del Diplomatico aiutato.",
+volonta: "<b>Da narrare:</b> il non Diplomatico sostiene con determinazione i Diplomatici nella fase di analisi, mantenendo il gruppo concentrato sull'obiettivo.<br><br><b>Effetto OFF Game:</b> metà della sua Volontà si aggiunge alla soglia del Diplomatico aiutato.",
+popolarita: "<b>Da narrare:</b> il non Diplomatico sfrutta la propria influenza o notorietà per aprire porte e ottenere informazioni.<br><br><b>Effetto OFF Game:</b> metà della sua Popolarità si aggiunge alla soglia del Diplomatico aiutato."
 };
 var noteA4F2 = {
-acumen: "<b>Da narrare:</b> il PG Acumen analizza le competenze dei vari team per assegnare i compiti nel modo più efficiente.<br><br><b>Effetto OFF Game:</b> +5 alla soglia di ogni Diplomatico.",
-animus: "<b>Da narrare:</b> il PG Animus fornisce supporto logistico e risorse pratiche sul campo (materiali, contatti, personale) per agevolare il coordinamento.<br><br><b>Effetto OFF Game:</b> +5 alla soglia di ogni Diplomatico.",
-ars: "<b>Da narrare:</b> il PG Ars fornisce supporto tecnico-scientifico (pozioni, referti, strumentazione) utile al coordinamento fra i team.<br><br><b>Effetto OFF Game:</b> +5 alla soglia di ogni Diplomatico.",
-numen: "<b>Da narrare:</b> il PG Numen fornisce supporto protettivo o istituzionale che agevola il lavoro dei team coinvolti.<br><br><b>Effetto OFF Game:</b> +5 alla soglia di ogni Diplomatico.",
+acumen: "<b>Da narrare:</b> il PG Acumen analizza le competenze dei vari team per assegnare i compiti nel modo più efficiente.<br><br><b>Effetto OFF Game:</b> +5 alla soglia del Diplomatico aiutato.",
+animus: "<b>Da narrare:</b> il PG Animus fornisce supporto logistico e risorse pratiche sul campo (materiali, contatti, personale) per agevolare il coordinamento.<br><br><b>Effetto OFF Game:</b> +5 alla soglia del Diplomatico aiutato.",
+ars: "<b>Da narrare:</b> il PG Ars fornisce supporto tecnico-scientifico (pozioni, referti, strumentazione) utile al coordinamento fra i team.<br><br><b>Effetto OFF Game:</b> +5 alla soglia del Diplomatico aiutato.",
+numen: "<b>Da narrare:</b> il PG Numen fornisce supporto protettivo o istituzionale che agevola il lavoro dei team coinvolti.<br><br><b>Effetto OFF Game:</b> +5 alla soglia del Diplomatico aiutato.",
 sensus: "<b>Da narrare:</b> il PG Sensus intercetta malumori e conflitti latenti fra i team prima che esplodano.<br><br><b>Effetto OFF Game:</b> se un Diplomatico fallisce, si narra un secondo tentativo: tira di nuovo 1d35 sul forum e inseriscilo nella casella di rilancio in quella riga.",
-voluntas: "<b>Da narrare:</b> il PG Voluntas motiva concretamente i team coinvolti con un discorso o un gesto di leadership.<br><br><b>Effetto OFF Game:</b> tira 1d10 sul forum e inseriscilo qui sotto: si somma alla soglia di ogni Diplomatico."
+voluntas: "<b>Da narrare:</b> il PG Voluntas motiva concretamente i team coinvolti con un discorso o un gesto di leadership.<br><br><b>Effetto OFF Game:</b> tira 1d10 sul forum e inseriscilo qui sotto: si somma alla soglia del Diplomatico aiutato."
 };
 var noteA4F3 = {
-acume: "<b>Da narrare:</b> il non Diplomatico monitora l'andamento dei lavori senza intervenire direttamente, segnalando eventuali problemi al Diplomatico.<br><br><b>Effetto OFF Game:</b> metà del suo Acume si aggiunge alla soglia di ogni Diplomatico.",
-volonta: "<b>Da narrare:</b> il non Diplomatico interviene direttamente per riallineare i team in difficoltà.<br><br><b>Effetto OFF Game:</b> metà della sua Volontà si aggiunge alla soglia di ogni Diplomatico."
+acume: "<b>Da narrare:</b> il non Diplomatico monitora l'andamento dei lavori senza intervenire direttamente, segnalando eventuali problemi al Diplomatico.<br><br><b>Effetto OFF Game:</b> metà del suo Acume si aggiunge alla soglia del Diplomatico aiutato.",
+volonta: "<b>Da narrare:</b> il non Diplomatico interviene direttamente per riallineare i team in difficoltà.<br><br><b>Effetto OFF Game:</b> metà della sua Volontà si aggiunge alla soglia del Diplomatico aiutato."
 };
 /* =================== ACCORDO 1 - FASE I / II =================== */
 var a1f1LastSupportKey = {};
@@ -2377,7 +2387,7 @@ function a2f1RowTemplate(id, attempt){
 var suf = attempt === 2 ? "_2" : "";
 return '<div class="dip-roll-row" id="a2f1row' + suf + '_' + id + '" data-dipid="' + id + '">'
 + '<div class="row-title" id="a2f1title' + suf + '_' + id + '"></div>'
-+ potionBoxHTML("a2f1potion" + suf + "_" + id, "Volontà")
++ potionVolDialBoxHTML("a2f1potion" + suf + "_" + id, "a2f1potionTarget" + suf + "_" + id, "del Diplomatico")
 + socialObjectBoxHTML("a2f1obj" + suf + "_" + id, "dip", true, "threshold")
 + '<div class="formula-box" id="a2f1formula' + suf + '_' + id + '">—</div>'
 + '<div class="roll-entry"><span class="dice-cmd" id="a2f1cmd' + suf + '_' + id + '" data-dice="1d40">—</span><div class="field"><label>Risultato Diplomatico</label><input type="number" id="a2f1val' + suf + '_' + id + '" min="1" max="40"></div><span id="a2f1stamp' + suf + '_' + id + '" class="stamp wait">in attesa</span></div>'
@@ -2403,8 +2413,12 @@ return 0;
 function evaluateA2F1Attempt(attempt){
 ensureA2F1Rows(attempt); var suf=attempt===2?"_2":"", malus=a2F1Malus(), prev=prevCoordForZone(getZona()), finalMap={}, anySuccess=false, allResolved=diplomatIds.length>0, j=0;
 while(j<diplomatIds.length){
-var id=diplomatIds[j],pos=j+1,dip=getDip(id),potion=potionBonus("a2f1potion"+suf+"_"+id),obj=socialObjectEffect("a2f1obj"+suf+"_"+id,dip,"threshold"),objBonus=socialThresholdBonus(obj),soglia=dip.volonta+potion+dip.dialettica+objBonus-malus+prev; if(soglia<0){soglia=0;}
-setHTML("a2f1title"+suf+"_"+id,"Diplomatico "+pos+(attempt===2?" — secondo tentativo":"")); var parts=[{op:"+",value:dip.volonta,label:"Volontà"},{op:"+",value:potion,label:"Pozione"},{op:"+",value:dip.dialettica,label:"Dialettica"},{op:"+",value:objBonus,label:"Oggetto"},{op:"-",value:malus,label:"Malus Zona"}]; if(prev){parts.push({op:prev>=0?"+":"-",value:Math.abs(prev),label:"Coord. precedente"});} setHTML("a2f1formula"+suf+"_"+id,buildDisplayFormula(parts,soglia)); var bd=buildBreakdown(parts,soglia); setDiceCmd("a2f1cmd"+suf+"_"+id,"Diplomatico "+pos+" — tira 1d40","1d40","Networking Fase I"+(attempt===2?" secondo tentativo":"")+" - Diplomatico "+pos); setDiceFormula("a2f1cmd"+suf+"_"+id,bd); setDiceCmd("a2f1ndcmd"+suf+"_"+id,"non Diplomatico — tira 1d40 con soglia "+soglia,"1d40","Networking Fase I - supporto ND per Diplomatico "+pos); setDiceFormula("a2f1ndcmd"+suf+"_"+id,bd);
+var id=diplomatIds[j],pos=j+1,dip=getDip(id);
+var potion=potionBonus("a2f1potion"+suf+"_"+id), potionTarget=text("a2f1potionTarget"+suf+"_"+id);
+var potionVol=potionTarget==="dialettica"?0:potion, potionDial=potionTarget==="dialettica"?potion:0;
+var obj=socialObjectEffect("a2f1obj"+suf+"_"+id,dip,"threshold"),objBonus=socialThresholdBonus(obj);
+var soglia=dip.volonta+potionVol+dip.dialettica+potionDial+objBonus-malus+prev; if(soglia<0){soglia=0;}
+setHTML("a2f1title"+suf+"_"+id,"Diplomatico "+pos+(attempt===2?" — secondo tentativo":"")); var parts=[{op:"+",value:dip.volonta,label:"Volontà"},{op:"+",value:potionVol,label:"Pozione→Volontà"},{op:"+",value:dip.dialettica,label:"Dialettica"},{op:"+",value:potionDial,label:"Pozione→Dialettica"},{op:"+",value:objBonus,label:"Oggetto"},{op:"-",value:malus,label:"Malus Zona"}]; if(prev){parts.push({op:prev>=0?"+":"-",value:Math.abs(prev),label:"Coord. precedente"});} setHTML("a2f1formula"+suf+"_"+id,buildDisplayFormula(parts,soglia)); var bd=buildBreakdown(parts,soglia); setDiceCmd("a2f1cmd"+suf+"_"+id,"Diplomatico "+pos+" — tira 1d40","1d40","Networking Fase I"+(attempt===2?" secondo tentativo":"")+" - Diplomatico "+pos); setDiceFormula("a2f1cmd"+suf+"_"+id,bd); setDiceCmd("a2f1ndcmd"+suf+"_"+id,"non Diplomatico — tira 1d40 con soglia "+soglia,"1d40","Networking Fase I - supporto ND per Diplomatico "+pos); setDiceFormula("a2f1ndcmd"+suf+"_"+id,bd);
 var ndSel=document.getElementById("a2f1ndpick"+suf+"_"+id); if(attempt===2&&ndSel){var firstPick=text("a2f1ndpick_"+id); if(firstPick!=="none"){ndSel.value=firstPick;ndSel.disabled=true;} else {ndSel.disabled=false;}}
 var ndPick=text("a2f1ndpick"+suf+"_"+id); guardRoll("a2f1main"+suf+"_"+id,soglia,["a2f1val"+suf+"_"+id]); guardRoll("a2f1nd"+suf+"_"+id,soglia+"|"+ndPick,["a2f1ndval"+suf+"_"+id]);
 var dipRoll=rollState("a2f1val"+suf+"_"+id,40),retryRow=document.getElementById("a2f1ndRow"+suf+"_"+id); if(retryRow){retryRow.classList.remove("on");}
@@ -2426,11 +2440,11 @@ var second=evaluateA2F1Attempt(2),box2=document.getElementById("a2f1aggregate2")
 function a2f2RowTemplate(id){
 return '<div class="dip-roll-row" id="a2f2row_' + id + '" data-dipid="' + id + '">'
 + '<div class="row-title" id="a2f2title_' + id + '"></div>'
-+ potionBoxHTML("a2f2potion_" + id, "Volontà")
++ potionVolDialBoxHTML("a2f2potion_" + id, "a2f2potionTarget_" + id, "del Diplomatico")
 + socialObjectBoxHTML("a2f2obj_" + id,"dip",true,"threshold")
 + '<div class="round-block"><div class="field"><label>Non Diplomatico che aiuta questo Diplomatico</label><select class="nd-picker" id="a2f2ndpick_' + id + '"><option value="none">Nessuno</option></select></div>'
 + '<div id="a2f2ndSupport_' + id + '" style="display:none;">'
-+ potionBoxHTML("a2f2ndpotion_" + id,"Volontà del non Diplomatico")
++ potionVolDialBoxHTML("a2f2ndpotion_" + id, "a2f2ndpotionTarget_" + id, "del non Diplomatico")
 + socialObjectBoxHTML("a2f2ndobj_" + id,"nd",false,"threshold")
 + '<div class="formula-box" id="a2f2ndformula_' + id + '">Bonus ND: +0</div></div></div>'
 + '<div class="formula-box" id="a2f2formula_' + id + '">—</div>'
@@ -2473,6 +2487,9 @@ var id = diplomatIds[j];
 var pos = j + 1;
 var dip = getDip(id);
 var potion = potionBonus("a2f2potion_" + id);
+var potionTarget = text("a2f2potionTarget_" + id);
+var potionVol = potionTarget === "dialettica" ? 0 : potion;
+var potionDial = potionTarget === "dialettica" ? potion : 0;
 var obj = socialObjectEffect("a2f2obj_" + id,dip,"threshold");
 var objBonus = socialThresholdBonus(obj);
 var bonusNd = 0;
@@ -2482,9 +2499,12 @@ if(ndPick !== "none"){
 if(ndWrap){ ndWrap.style.display = "block"; }
 var nd = getNd(ndPick);
 var ndPotion = potionBonus("a2f2ndpotion_" + id);
+var ndPotionTarget = text("a2f2ndpotionTarget_" + id);
+var ndPotionVol = ndPotionTarget === "dialettica" ? 0 : ndPotion;
+var ndPotionDial = ndPotionTarget === "dialettica" ? ndPotion : 0;
 var ndObj = socialObjectEffect("a2f2ndobj_" + id,nd,"threshold");
-var ndVol = nd.volonta + ndPotion + ndObj.vol;
-var ndDial = nd.dialettica + ndObj.dial;
+var ndVol = nd.volonta + ndPotionVol + ndObj.vol;
+var ndDial = nd.dialettica + ndPotionDial + ndObj.dial;
 bonusNd = ndDial + floorDiv(ndVol,2) + ndObj.flat;
 setHTML("a2f2ndformula_" + id,"Bonus ND = Dialettica " + ndDial + " + Volontà " + ndVol
 + "/2" + (ndObj.flat?(" + " + ndObj.flat + " oggetto"):"") + " = <b>+" + bonusNd + "</b>");
@@ -2492,14 +2512,15 @@ setHTML("a2f2ndformula_" + id,"Bonus ND = Dialettica " + ndDial + " + Volontà "
 if(ndWrap){ ndWrap.style.display = "none"; }
 }
 var prev = prevCoordForZone(getZona());
-var soglia = dip.volonta + potion + obj.vol + dip.dialettica + obj.dial + dip.rango + obj.flat +
+var soglia = dip.volonta + potionVol + obj.vol + dip.dialettica + potionDial + obj.dial + dip.rango + obj.flat +
 bonusNd - malus + prev;
 if(soglia < 0){ soglia = 0; }
 var parts = [
 {op:"+",value:dip.volonta,label:"Volontà"},
-{op:"+",value:potion,label:"Pozione"},
+{op:"+",value:potionVol,label:"Pozione→Volontà"},
 {op:"+",value:obj.vol,label:"Oggetto→Volontà"},
 {op:"+",value:dip.dialettica,label:"Dialettica"},
+{op:"+",value:potionDial,label:"Pozione→Dialettica"},
 {op:"+",value:obj.dial,label:"Oggetto→Dialettica"},
 {op:"+",value:dip.rango,label:"Bonus Prestigio"},
 {op:"+",value:obj.flat,label:"Oggetto fisso"},
@@ -3348,6 +3369,7 @@ list = [
 list.push("Altro scandalo coerente con la Gravità scelta");
 return list;
 }
+var a3ScandalLastGravita = null;
 function refreshA3ScandalPicker(){
 var sel = document.getElementById("a3scandaloTipo");
 if(!sel){ return; }
@@ -3355,16 +3377,25 @@ var g = state.a3.gravita;
 if(!g){
 sel.innerHTML = '<option value="">Determina prima la Gravità</option>';
 sel.disabled = true;
+a3ScandalLastGravita = null;
 return;
 }
 sel.disabled = false;
-var current = sel.value;
+/* v2: la scelta dello scandalo appartiene alla Gravità corrente. Se la Gravità
+   cambia, non va conservato lo stesso indice perché indicherebbe una voce diversa. */
+var sameGravita = a3ScandalLastGravita === g;
+var current = sameGravita ? sel.value : "";
 var arr = a3ScandalOptions(g);
-var h = "";
+var h = '<option value="">— scegli lo scandalo —</option>';
 var i = 0;
 while(i < arr.length){ h += '<option value="' + i + '">' + arr[i] + '</option>'; i = i + 1; }
 sel.innerHTML = h;
-if(current !== "" && parseInt(current,10) < arr.length){ sel.value = current; }
+if(current !== "" && !isNaN(parseInt(current,10)) && parseInt(current,10) < arr.length){
+sel.value = current;
+} else {
+sel.value = "";
+}
+a3ScandalLastGravita = g;
 }
 function refreshA3Gravita(){
 var gbOn = document.getElementById("a3gbToggle").checked;
@@ -3545,7 +3576,7 @@ a1FinalTally();
 function a2f3RowTemplate(id){
 return '<div class="dip-roll-row" id="a2f3row_' + id + '" data-dipid="' + id + '">'
 + '<div class="row-title" id="a2f3title_' + id + '"></div>'
-+ potionBoxHTML("a2f3potion_" + id,"Volontà")
++ potionVolDialBoxHTML("a2f3potion_" + id, "a2f3potionTarget_" + id, "del Diplomatico")
 + socialObjectBoxHTML("a2f3obj_" + id,"dip",true,"f3")
 + '<div class="grid">'
 + '<div class="field"><label>Non Diplomatico che interviene</label><select class="nd-picker" id="a2f3ndpick_' + id + '"><option value="none">Nessuno</option></select></div>'
@@ -3599,10 +3630,13 @@ var id = diplomatIds[j];
 var pos = j + 1;
 var dip = getDip(id);
 var potion = potionBonus("a2f3potion_" + id);
+var potionTarget = text("a2f3potionTarget_" + id);
+var potionVol = potionTarget === "dialettica" ? 0 : potion;
+var potionDial = potionTarget === "dialettica" ? potion : 0;
 var obj = socialObjectEffect("a2f3obj_" + id,dip,"f3");
-var volForDie = dip.volonta + potion + obj.vol;
+var volForDie = dip.volonta + potionVol + obj.vol;
 if(volForDie < 1){ volForDie = 1; }
-var dialFinal = dip.dialettica + obj.dial;
+var dialFinal = dip.dialettica + potionDial + obj.dial;
 var bonusF2 = mapVal(state.a2.bonusF3,id);
 var effect = text("a2f3ndeffect_" + id);
 var ndPick = text("a2f3ndpick_" + id);
@@ -3617,9 +3651,9 @@ volForDie,"Networking Fase III - Diplomatico " + pos);
 setDiceCmd("a2f3avvcmd_" + id,"Avversario — tira 1d" + avvDado + " (" + zonaLabel(z) +
 ")","1d" + avvDado,"Networking Fase III - Avversario contro Diplomatico " + pos);
 var formula = "Diplomatico = 1d" + volForDie + " Volontà";
-if(potion){ formula += " (" + dip.volonta + " +" + potion + " Pozione"; if(obj.vol){ formula += " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto"; } formula += ")"; }
+if(potionVol){ formula += " (" + dip.volonta + " +" + potionVol + " Pozione"; if(obj.vol){ formula += " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto"; } formula += ")"; }
 else if(obj.vol){ formula += " (" + dip.volonta + " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto)"; }
-formula += " + Dialettica(" + dialFinal + ") + Prestigio attuale/2(" + floorDiv(dip.prestigio,2) + ") " +
+formula += " + Dialettica(" + dialFinal + ")" + (potionDial ? " [Pozione +" + potionDial + "]" : "") + " + Prestigio attuale/2(" + floorDiv(dip.prestigio,2) + ") " +
 (bonusF2>=0?"+ ":"- ") + Math.abs(bonusF2) + " esito Fase II";
 if(flatObj){ formula += " " + (flatObj>=0?"+ ":"- ") + Math.abs(flatObj) + " Oggetto"; }
 if(dipBonus){ formula += " +5 Supporto ND"; }
@@ -3681,7 +3715,7 @@ finalBox.innerHTML = "<h4>Riepilogo finale del Networking</h4><p><b>Ricerca Acco
 function a3f3RowTemplate(id){
 return '<div class="dip-roll-row" id="a3f3row_' + id + '" data-dipid="' + id + '">'
 + '<div class="row-title" id="a3f3title_' + id + '"></div>'
-+ potionBoxHTML("a3f3potion_" + id, "Volontà")
++ potionVolDialBoxHTML("a3f3potion_" + id, "a3f3potionTarget_" + id, "del Diplomatico")
 + socialObjectBoxHTML("a3f3obj_" + id, "dip", true, "f3")
 + '<div class="grid">'
 + '<div class="field"><label>Non Diplomatico che lo aiuta</label><select class="nd-picker" id="a3f3ndpick_' + id + '"><option value="none">Nessuno</option></select></div>'
@@ -3726,8 +3760,11 @@ var id = diplomatIds[j];
 var pos = j + 1;
 var dip = getDip(id);
 var pozione = potionBonus("a3f3potion_" + id);
+var potionTarget = text("a3f3potionTarget_" + id);
+var potionVol = potionTarget === "dialettica" ? 0 : pozione;
+var potionDial = potionTarget === "dialettica" ? pozione : 0;
 var obj = socialObjectEffect("a3f3obj_" + id, dip, "f3");
-var volForDie = dip.volonta + pozione + obj.vol;
+var volForDie = dip.volonta + potionVol + obj.vol;
 if(volForDie < 1){ volForDie = 1; }
 var pickedNd = text("a3f3ndpick_" + id);
 var bonusNd = 0;
@@ -3744,16 +3781,16 @@ setHTML("a3f3ndnote_" + id, "Nessun non Diplomatico selezionato: Bonus ND +0.");
 }
 var bonusF1 = mapVal(state.a3.bonusF2F3, id);
 var bonusF2 = mapVal(state.a3.bonusF3only, id);
-var dial = dip.dialettica + obj.dial;
+var dial = dip.dialettica + potionDial + obj.dial;
 setHTML("a3f3title_" + id, "Diplomatico " + pos);
 setDiceCmd("a3f3dipcmd_" + id, "Diplomatico " + pos + " — tira 1d" + volForDie, "1d" +
 volForDie, "Scandali Fase III - Diplomatico " + pos);
 setDiceCmd("a3f3pubcmd_" + id, "Opinione pubblica — tira 1d" + pubSides + " (" +
 gravitaLabel(state.a3.gravita) + ")", "1d" + pubSides, "Scandali Fase III - Opinione pubblica - Diplomatico " + pos);
 var formula = "Diplomatico = 1d" + volForDie + " Volontà";
-if(pozione){ formula += " (+" + pozione + " Pozione)"; }
+if(potionVol){ formula += " (+" + potionVol + " Pozione)"; }
 if(obj.vol){ formula += " (" + (obj.vol>=0?"+":"") + obj.vol + " Volontà da Oggetto)"; }
-formula += " + Dialettica " + dial + " + Persuasore " + dip.persuasore;
+formula += " + Dialettica " + dial + (potionDial ? " (Pozione +" + potionDial + ")" : "") + " + Persuasore " + dip.persuasore;
 formula += " " + ((bonusF1 + bonusF2)>=0?"+":"") + (bonusF1 + bonusF2) + " esiti Fasi I/II";
 if(bonusNd){ formula += " +" + bonusNd + " ND"; }
 if(obj.flat){ formula += " " + (obj.flat>=0?"+":"") + obj.flat + " Oggetto"; }
@@ -3761,7 +3798,7 @@ var prev = prevCoordForZone(getZona());
 if(prev){ formula += " " + (prev>=0?"+ ":"- ") + Math.abs(prev) + " Coord. precedente"; }
 formula += " — Opinione pubblica = 1d" + pubSides;
 setHTML("a3f3formula_" + id, formula);
-guardRoll("a3f3_"+id,[volForDie,pubSides,dial,dip.persuasore,bonusF1,bonusF2,bonusNd,pickedNd,prev].join("|"),["a3f3dipval_"+id,"a3f3pubval_"+id]);
+guardRoll("a3f3_"+id,[volForDie,pubSides,dial,dip.persuasore,bonusF1,bonusF2,bonusNd,pickedNd,obj.flat,prev].join("|"),["a3f3dipval_"+id,"a3f3pubval_"+id]);
 var drs = rollState("a3f3dipval_" + id, volForDie);
 var prs = rollState("a3f3pubval_" + id, pubSides);
 if(drs.status === "invalid"){
@@ -3781,7 +3818,7 @@ completed = completed + 1;
 if(success){ wins = wins + 1; }
 results[id] = success;
 var msg = "Diplomatico: <b>" + dipTotal + "</b> (" + drs.value + " su 1d" + volForDie + " + Dialettica " + dial + " + Persuasore " + dip.persuasore + " + esiti " + (bonusF1 + bonusF2) +
-(bonusNd?(" +" + bonusNd + " ND"):"") + (obj.flat?(" +" + obj.flat + " Oggetto"):"") + ") · Opinione pubblica: <b>" + prs.value + "</b>.";
+(bonusNd?(" +" + bonusNd + " ND"):"") + (obj.flat?(" +" + obj.flat + " Oggetto"):"") + (prev?(" " + (prev>=0?"+":"") + prev + " Coord. precedente"):"") + ") · Opinione pubblica: <b>" + prs.value + "</b>.";
 msg += "<br>" + (success ? stampHTML(true) + " Messaggio efficace." :
 stampHTML(false) + " La reputazione resta danneggiata per questo Diplomatico.");
 setHTML("a3f3out_" + id, msg);
@@ -3820,21 +3857,21 @@ clearInput("a1f1val_" + id); clearInput("a1f1numenVal_" + id); clearInput("a1f1s
 + id);
 resetSelect("a1f1numenChoice_" + id,"decidi"); resetSelect("a1f1sensusChoice_" +
 id,"decidi");
+resetSelect("a1f1ndpick_" + id,"none");
+clearInput("a1f1supportVal_" + id);
+resetSelect("a1f1supportPotion_" + id,"0");
+resetSelect("a1f1supportObj_" + id,"none");
+clearInput("a1f1supportObjCustom_" + id);
+clearInput("a1f1arsVal_" + id);
 resetSelect("a1f1potion_" + id,"0");
 resetSelect("a1f1obj_" + id,"none");
 clearInput("a1f1objCustom_" + id);
 clearInput("a1f2val_" + id);
+resetSelect("a1f2ndpick_" + id,"none");
 resetSelect("a1f2obj_" + id,"none");
 clearInput("a1f2objCustom_" + id);
 j = j + 1;
 }
-clearInput("a1f1arsVal");
-resetSelect("a1f1ndpick","none");
-resetSelect("a1f2ndpick","none");
-clearInput("a1f1supportVal");
-resetSelect("a1f1supportPotion","0");
-resetSelect("a1f1supportObj","none");
-clearInput("a1f1supportObjCustom");
 a1f1LastSupportKey = {};
 var rounds = document.getElementById("a1f3rounds");
 if(rounds){ rounds.removeAttribute("data-signature"); rounds.innerHTML = ""; }
@@ -3859,6 +3896,7 @@ var id = ids[j];
 clearInput("a2f1val" + suf + "_" + id);
 clearInput("a2f1ndval" + suf + "_" + id);
 resetSelect("a2f1potion" + suf + "_" + id,"0");
+resetSelect("a2f1potionTarget" + suf + "_" + id,"volonta");
 resetSelect("a2f1ndpick" + suf + "_" + id,"none");
 resetSelect("a2f1obj" + suf + "_" + id + "_sel","none");
 clearInput("a2f1obj" + suf + "_" + id + "_vol");
@@ -3873,8 +3911,10 @@ while(k < ids.length){
 var did = ids[k];
 clearInput("a2f2val_" + did);
 resetSelect("a2f2potion_" + did,"0");
+resetSelect("a2f2potionTarget_" + did,"volonta");
 resetSelect("a2f2ndpick_" + did,"none");
 resetSelect("a2f2ndpotion_" + did,"0");
+resetSelect("a2f2ndpotionTarget_" + did,"volonta");
 resetSelect("a2f2obj_" + did + "_sel","none");
 clearInput("a2f2obj_" + did + "_vol"); clearInput("a2f2obj_" + did + "_dial");
 clearInput("a2f2obj_" + did + "_flat");
@@ -3884,6 +3924,7 @@ clearInput("a2f2ndobj_" + did + "_flat");
 clearInput("a2f3dipval_" + did);
 clearInput("a2f3avvval_" + did);
 resetSelect("a2f3potion_" + did,"0");
+resetSelect("a2f3potionTarget_" + did,"volonta");
 resetSelect("a2f3obj_" + did + "_sel","none");
 clearInput("a2f3obj_" + did + "_vol"); clearInput("a2f3obj_" + did + "_dial");
 clearInput("a2f3obj_" + did + "_flat");
@@ -3898,6 +3939,7 @@ refreshAll();
 function resetA3(){
 clearSignaturePrefix("a3");
 a3f1LastNdKey = {};
+a3ScandalLastGravita = null;
 var gz = gravitaFromZona();
 state.a3 = { gravita:gz, malusG:malusGravita(gz), bonusF2F3:{}, bonusF3only:{},
 f1complete:false, f2complete:false };
@@ -3924,6 +3966,7 @@ clearInput("a3f2ndobjCustom_" + id);
 clearInput("a3f3dipval_" + id);
 clearInput("a3f3pubval_" + id);
 resetSelect("a3f3potion_" + id, "0");
+resetSelect("a3f3potionTarget_" + id, "volonta");
 resetSelect("a3f3obj_" + id + "_sel", "none");
 clearInput("a3f3obj_" + id + "_vol"); clearInput("a3f3obj_" + id + "_dial");
 clearInput("a3f3obj_" + id + "_flat");
