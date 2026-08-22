@@ -1,3 +1,4 @@
+<!-- Revisione v9: standard completo Ricerche — riepilogo iniziale copiabile, difficoltà complessiva sulle 3 Fasi, copia stabile, grammatica dadi, navigazione Configurazione/Riepilogo/Fasi e ripresa intelligente -->
 <!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
 <!-- Revisione v7: copia dadi senza salto della pagina + formulazione più naturale delle domande BBCode -->
 <!-- Revisione v6: BBCode dei dadi con domanda/risposte + popup eliminazione ancorato al punto visualizzato -->
@@ -1009,6 +1010,31 @@ header.masthead .seal i{
 .flow-proceed-btn:disabled{opacity:.5;cursor:not-allowed;}
 @media(max-width:760px){.flow-page-btn{flex:1 1 100%;}.flow-proceed-wrap{justify-content:stretch}.flow-proceed-btn{width:100%;}}
 
+/* ===== RIEPILOGO INIZIALE DELL'ACCORDO ===== */
+#accordi-workspace.flow-mode-summary .flow-config-card{display:none !important;}
+#accordi-workspace.flow-mode-summary .tab-panel{display:none !important;}
+#accordi-workspace.flow-mode-summary #accordi-initial-summary-card{display:block !important;}
+#accordi-initial-summary-card{display:none;}
+.accord-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:8px 0 18px;}
+.accord-summary-item{padding:11px 13px;border:1px solid rgba(112,66,122,.18);border-radius:8px;background:#FBF5E8;color:var(--text-dark);font-size:14px;line-height:1.55;}
+.accord-summary-item b{color:var(--seal);}
+.accord-summary-section{margin:20px 0 8px;color:var(--seal);font-family:'magic',var(--serif);font-size:1.22rem;letter-spacing:.02em;}
+.accord-summary-character{margin:10px 0 14px;padding:14px 16px;border:1px solid #CDBD9F;border-radius:9px;background:rgba(251,245,232,.78);}
+.accord-summary-character-title{margin:0 0 9px;color:var(--seal);font-family:var(--serif);font-weight:700;font-size:15px;}
+.accord-summary-list{margin:6px 0 0;padding-left:21px;color:var(--text-dark);font-size:14px;line-height:1.65;}
+.accord-summary-impact{margin:6px 0 14px;padding-left:21px;color:var(--text-dark);font-size:14px;line-height:1.7;}
+.accord-summary-impact .favorable{font-weight:700;color:var(--seal);}
+.accord-summary-difficulty{margin:17px 0;padding:14px 16px;border:1px solid rgba(112,66,122,.22);border-left:4px solid var(--seal);border-radius:8px;background:rgba(112,66,122,.06);color:var(--text-dark);font-size:14px;line-height:1.65;}
+.accord-summary-difficulty strong{color:var(--seal);}
+.accord-summary-copybox{max-height:280px;overflow:auto;margin:12px 0;padding:13px 15px;background:#FBF5E8;border:1px solid #CDBD9F;border-radius:8px;color:var(--text-dark);font-family:var(--mono);font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+.accord-summary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.accord-summary-copy-btn,.accord-summary-go-btn{min-height:44px;padding:9px 15px;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;}
+.accord-summary-copy-btn{background:#FBF5E8;border:1px solid var(--seal);color:var(--seal);}
+.accord-summary-copy-btn.copied{background:rgba(47,110,70,.10);border-color:var(--ok);color:var(--ok);}
+.accord-summary-go-btn{background:var(--ink-navy-2);border:1px solid var(--seal);color:var(--parchment-2);}
+.accord-summary-note{font-size:13px;color:var(--text-soft);line-height:1.55;margin-top:10px;}
+@media(max-width:700px){.accord-summary-grid{grid-template-columns:1fr}.accord-summary-actions>*{width:100%;}}
+
 /* ================================================================
    SESSIONI FIREBASE — Ricerca Accordi
 ================================================================ */
@@ -1203,11 +1229,24 @@ coerenti con il regolamento.</div>
   <p class="hint" style="margin-top:0;">Dopo la configurazione procedi una Fase alla volta. Le Fasi successive si sbloccano soltanto quando la precedente è realmente completata; puoi sempre tornare alle pagine già raggiunte senza perdere i dati.</p>
   <div class="flow-page-nav" id="flow-page-nav">
     <button type="button" class="flow-page-btn active" data-flow-page="config" data-session-control="1">Configurazione</button>
+    <button type="button" class="flow-page-btn" data-flow-page="summary" data-session-control="1">Riepilogo</button>
     <button type="button" class="flow-page-btn" data-flow-page="f1" data-session-control="1">Fase I</button>
     <button type="button" class="flow-page-btn" data-flow-page="f2" data-session-control="1">Fase II</button>
     <button type="button" class="flow-page-btn" data-flow-page="f3" data-session-control="1">Fase III / Esito</button>
   </div>
   <div class="assignment-status" id="flow-page-status">Completa la configurazione per iniziare la Fase I.</div>
+</div>
+<!-- RIEPILOGO INIZIALE -->
+<div class="filecard" id="accordi-initial-summary-card">
+  <div class="section-label"><span class="step-num" style="margin-right:2px;">6</span>Situazione iniziale dell’Accordo</div>
+  <p class="hint" style="margin-top:0;">Quadro sintetico della configurazione prima della Fase I. Mostra soltanto dati già determinati e Parametri realmente utili all’Accordo, quindi stima l’impatto delle tre Fasi senza presumere bonus o malus che dipendono da esiti futuri.</p>
+  <div id="accordi-initial-summary-content"></div>
+  <div class="accord-summary-note">Il riepilogo copiabile usa i codici ForumFree del GDR: <code>&lt;b&gt;...&lt;/b&gt;</code> per il grassetto e <code>[spoiler=...]</code> per lo spoiler.</div>
+  <div class="accord-summary-copybox" id="accordi-initial-summary-copy"></div>
+  <div class="accord-summary-actions">
+    <button type="button" class="accord-summary-copy-btn" id="btn-copy-accord-summary" data-session-control="1">Copia riepilogo per il post</button>
+    <button type="button" class="accord-summary-go-btn" id="btn-summary-phase1" data-action="flowStartF1">Vai alla Fase I</button>
+  </div>
 </div>
 <!-- ACCORDO 1 -->
 <div class="tab-panel active" id="panel-a1">
@@ -2457,7 +2496,10 @@ var parts=[{op:"+",value:dip.acume,label:"Acume"},{op:"+",value:pozione,label:"P
 if(bonusNd){ parts.push({op:"+",value:bonusNd,label:"Bonus ND"}); } if(extraArs){ parts.push({op:"+",value:extraArs,label:"Ars"}); } if(prev){ parts.push({op:prev>=0?"+":"-",value:Math.abs(prev),label:"Coord. precedente"}); }
 setHTML("a1f1title_"+id,"Diplomatico "+pos); setHTML("a1f1formula_"+id,buildDisplayFormula(parts,soglia));
 var breakdown=buildBreakdown(parts,soglia);
-setDiceCmd("a1f1cmd_"+id,"Diplomatico "+pos+" — tira 1d100","1d100","Trattativa Fase I - Diplomatico "+pos); setDiceFormula("a1f1cmd_"+id,breakdown); setDiceFormula("a1f1numencmd_"+id,breakdown); setDiceFormula("a1f1sensuscmd_"+id,breakdown);
+setDiceCmd("a1f1cmd_"+id,"Diplomatico "+pos+" — tira 1d100","1d100","Trattativa Fase I - Diplomatico "+pos);
+setDiceCmd("a1f1numencmd_"+id,"Numen — secondo tiro 1d100","1d100","Trattativa Fase I - secondo tiro Numen - Diplomatico "+pos);
+setDiceCmd("a1f1sensuscmd_"+id,"Sensus — rilancio 1d100","1d100","Trattativa Fase I - rilancio Sensus - Diplomatico "+pos);
+setDiceFormula("a1f1cmd_"+id,breakdown); setDiceFormula("a1f1numencmd_"+id,breakdown); setDiceFormula("a1f1sensuscmd_"+id,breakdown);
 var mainSig=[soglia,pickedNd,categoria,supportSuccess,numenActive,sensusActive].join("|");
 guardRoll("a1f1main_"+id,mainSig,["a1f1val_"+id,"a1f1numenVal_"+id,"a1f1sensusVal_"+id]);
 if(pickedNd!=="none"&&!supportResolved){ setHTML("a1f1stamp_"+id,'<span class="stamp wait">completa prima il supporto 1d35</span>'); successMap[id]=undefined; j=j+1; continue; }
@@ -3649,6 +3691,9 @@ refreshObjectSelectForContext("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+id
 if(pickedNd!=="none"){var nd=getNd(pickedNd); var ndBase=context==="volonta"?nd.volonta:(context==="empatia"?nd.empatia:nd.acume); var ndPotion=potionBonus("a1ndpotion_"+did+"_"+idx); var ndObj=objectBonus("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,nd,ndContext); var ndModified=ndBase+ndPotion+ndObj; bonusNd=floorDiv(ndModified,3); ndDetail=ndParamLabel+" "+ndBase+(ndPotion?(" +"+ndPotion+" Pozione"):"")+(ndObj?(" +"+ndObj+" Oggetto"):"")+" = "+ndModified+"; /3"; setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND = "+ndDetail+" = <b>+"+bonusNd+"</b>");} else {setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND: <b>+0</b> — nessun non Diplomatico selezionato.");}
 var bonusF2=mapVal(state.a1.bonusF3round,did), prev=prevCoordForZone(getZona()), pos=diplomatIds.indexOf(did)+1;
 setDiceCmd("a1roundcmd_"+did+"_"+idx,"Diplomatico "+pos+" — tira 1d"+dipSides+" ("+info.label+")","1d"+dipSides,"Trattativa Round "+idx+" - Diplomatico "+pos); setDiceCmd("a1roundavvcmd_"+did+"_"+idx,"Avversario — tira 1d"+info.avvSides,"1d"+info.avvSides,"Trattativa Round "+idx+" - Avversario contro Diplomatico "+pos);
+var a1Flat=bonusF2+bonusNd+prev;
+setDiceFormula("a1roundcmd_"+did+"_"+idx,"Al risultato del dado aggiungi "+(a1Flat>=0?"+":"")+a1Flat+" (esito Fase II "+(bonusF2>=0?"+":"")+bonusF2+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", Coordinazione precedente "+(prev>=0?"+":"")+prev+"). Il totale si confronta con quello dell’Avversario.");
+setDiceFormula("a1roundavvcmd_"+did+"_"+idx,"Il risultato del dado costituisce il totale dell’Avversario in questo round.");
 var sig=[info.approach,dipSides,info.avvSides,bonusF2,bonusNd,pickedNd,prev].join("|"); guardRoll("a1f3_"+did+"_"+idx,sig,["a1roundval_"+did+"_"+idx,"a1roundavvval_"+did+"_"+idx]);
 var dr=rollState("a1roundval_"+did+"_"+idx,dipSides), ar=rollState("a1roundavvval_"+did+"_"+idx,info.avvSides);
 if(dr.status==="empty"||ar.status==="empty"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,'<span class="muted">in attesa di entrambi i risultati</span>');a1Recount();a1FinalTally();return;} if(dr.status==="invalid"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,rollErrorHTML(dipSides));a1Recount();a1FinalTally();return;} if(ar.status==="invalid"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,rollErrorHTML(info.avvSides));a1Recount();a1FinalTally();return;}
@@ -3786,6 +3831,9 @@ formula += " — Avversario = 1d" + avvDado + (avvMalus ? " −5 Supporto ND" : 
 setHTML("a2f3formula_" + id,formula);
 var prev = prevCoordForZone(getZona());
 if(prev){ formula += " " + (prev>=0?"+ ":"- ") + Math.abs(prev) + " Coord. precedente"; setHTML("a2f3formula_" + id,formula); }
+var a2Flat=dialFinal+floorDiv(dip.prestigio,2)+bonusF2+dipBonus+flatObj+prev;
+setDiceFormula("a2f3dipcmd_"+id,"Al risultato del dado aggiungi "+(a2Flat>=0?"+":"")+a2Flat+" (Dialettica "+dialFinal+", Prestigio/2 "+floorDiv(dip.prestigio,2)+", esito Fase II "+(bonusF2>=0?"+":"")+bonusF2+", supporto ND "+(dipBonus>=0?"+":"")+dipBonus+", oggetto "+(flatObj>=0?"+":"")+flatObj+", Coordinazione precedente "+(prev>=0?"+":"")+prev+").");
+setDiceFormula("a2f3avvcmd_"+id,avvMalus?"Al risultato dell’Avversario sottrai 5 per il supporto protettivo del non Diplomatico.":"Il risultato del dado costituisce il totale dell’Avversario.");
 guardRoll("a2f3_" + id,[volForDie,avvDado,dialFinal,bonusF2,dipBonus,avvMalus,flatObj,ndPick,effect,prev,dip.prestigio].join("|"),["a2f3dipval_"+id,"a2f3avvval_"+id]);
 var dr = rollState("a2f3dipval_" + id,volForDie);
 var ar = rollState("a2f3avvval_" + id,avvDado);
@@ -3923,6 +3971,9 @@ var prev = prevCoordForZone(getZona());
 if(prev){ formula += " " + (prev>=0?"+ ":"- ") + Math.abs(prev) + " Coord. precedente"; }
 formula += " — Opinione pubblica = 1d" + pubSides;
 setHTML("a3f3formula_" + id, formula);
+var a3Flat=dial+dip.persuasore+bonusF1+bonusF2+bonusNd+obj.flat+prev;
+setDiceFormula("a3f3dipcmd_"+id,"Al risultato del dado aggiungi "+(a3Flat>=0?"+":"")+a3Flat+" (Dialettica "+dial+", Persuasore "+dip.persuasore+", esiti Fasi I/II "+((bonusF1+bonusF2)>=0?"+":"")+(bonusF1+bonusF2)+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", oggetto "+(obj.flat>=0?"+":"")+obj.flat+", Coordinazione precedente "+(prev>=0?"+":"")+prev+").");
+setDiceFormula("a3f3pubcmd_"+id,"Il risultato del dado costituisce il totale dell’opinione pubblica.");
 guardRoll("a3f3_"+id,[volForDie,pubSides,dial,dip.persuasore,bonusF1,bonusF2,bonusNd,pickedNd,obj.flat,prev].join("|"),["a3f3dipval_"+id,"a3f3pubval_"+id]);
 var drs = rollState("a3f3dipval_" + id, volForDie);
 var prs = rollState("a3f3pubval_" + id, pubSides);
@@ -4151,249 +4202,130 @@ setHTML("a4f3aggregate","<h4>Riepilogo finale della Coordinazione Interministeri
 refreshAll();
 }
 /* =================== COPY-TO-CLIPBOARD =================== */
+function restoreCopyViewport(x,y){
+ try{window.scrollTo(x,y);}catch(e){}
+}
 function doCopy(str){
-if(navigator.clipboard){
-if(navigator.clipboard.writeText){
-navigator.clipboard.writeText(str).then(function(){}, function(){ fallbackCopy(str); });
-return;
-}
-}
-fallbackCopy(str);
+ var sx=window.scrollX||window.pageXOffset||0, sy=window.scrollY||window.pageYOffset||0;
+ function keep(){restoreCopyViewport(sx,sy);}
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(str).then(keep,function(){fallbackCopy(str);keep();});
+ }else{fallbackCopy(str);}
+ keep();
+ if(window.requestAnimationFrame){requestAnimationFrame(keep);}
+ setTimeout(keep,0);setTimeout(keep,40);
 }
 function fallbackCopy(str){
-/* Fallback senza focus: evita che ForumFree sposti la pagina nell’iframe. */
-var holder=document.createElement("span");
-holder.textContent=str;
-holder.setAttribute("aria-hidden","true");
-holder.style.position="fixed";holder.style.left="0";holder.style.top="0";holder.style.width="1px";holder.style.height="1px";holder.style.overflow="hidden";holder.style.opacity="0";holder.style.pointerEvents="none";holder.style.whiteSpace="pre";
-document.body.appendChild(holder);
-var sel=window.getSelection?window.getSelection():null,previous=[];
-try{
- if(sel){for(var i=0;i<sel.rangeCount;i++){previous.push(sel.getRangeAt(i).cloneRange());}var range=document.createRange();range.selectNodeContents(holder);sel.removeAllRanges();sel.addRange(range);}
- var copyCmd="co"+"py";document.execCommand(copyCmd);
-}catch(e){}
-if(sel){sel.removeAllRanges();for(var j=0;j<previous.length;j++){try{sel.addRange(previous[j]);}catch(e2){}}}
-if(holder.parentNode){holder.parentNode.removeChild(holder);}
+ /* Fallback senza focus: evita che ForumFree sposti la pagina nell’iframe. */
+ var holder=document.createElement("span");
+ holder.textContent=str;holder.setAttribute("aria-hidden","true");
+ holder.style.position="fixed";holder.style.left="0";holder.style.top="0";holder.style.width="1px";holder.style.height="1px";holder.style.overflow="hidden";holder.style.opacity="0";holder.style.pointerEvents="none";holder.style.whiteSpace="pre";
+ document.body.appendChild(holder);
+ var sel=window.getSelection?window.getSelection():null,previous=[];
+ try{if(sel){for(var i=0;i<sel.rangeCount;i++){previous.push(sel.getRangeAt(i).cloneRange());}var range=document.createRange();range.selectNodeContents(holder);sel.removeAllRanges();sel.addRange(range);}var copyCmd="co"+"py";document.execCommand(copyCmd);}catch(e){}
+ if(sel){sel.removeAllRanges();for(var j=0;j<previous.length;j++){try{sel.addRange(previous[j]);}catch(e2){}}}
+ if(holder.parentNode){holder.parentNode.removeChild(holder);}
 }
-function flashCopied(elm){
-elm.classList.add("copied");
-setTimeout(function(){ elm.classList.remove("copied"); }, 900);
-}
-function forumDiceBlock(domanda, risposte, dado){
-var out = "<b>" + domanda + "</b>";
-if(risposte){ out += "\n[quote]" + risposte + "[/quote]"; }
-out += "\n\n" + dado;
-return out;
-}
-function diceFacesFromSpec(spec){
-var m = String(spec || "").match(/^1d(\d+)$/i);
-return m ? parseInt(m[1],10) : null;
-}
-function thresholdAnswers(threshold, faces){
-if(!Number.isFinite(threshold) || !Number.isFinite(faces)){ return ""; }
-var th = Math.floor(threshold), f = Math.floor(faces);
-if(th < 1){ return "1-" + f + ". Fallimento"; }
-if(th >= f){ return "1-" + f + ". Successo"; }
-return "1-" + th + ". Successo\n" + (th + 1) + "-" + f + ". Fallimento";
-}
-function oneToOneBonusAnswers(faces){
-var out = [], i = 1;
-while(i <= faces){ out.push(i + ". +" + i); i = i + 1; }
-return out.join("\n");
-}
+function flashCopied(elm){if(!elm)return;var original=elm.textContent;elm.classList.add("copied");if(elm.id==="btn-copy-accord-summary")elm.textContent="Copiato";setTimeout(function(){elm.classList.remove("copied");if(elm.id==="btn-copy-accord-summary")elm.textContent=original;},900);}
+function forumDiceBlock(domanda,risposte,dado){var out="<b>"+domanda+"</b>";if(risposte){out+="\n[quote]"+risposte+"[/quote]";}out+="\n\n"+dado;return out;}
+function diceFacesFromSpec(spec){var m=String(spec||"").match(/^1d(\d+)$/i);return m?parseInt(m[1],10):null;}
+function thresholdAnswers(threshold,faces){if(!Number.isFinite(threshold)||!Number.isFinite(faces))return "";var th=Math.floor(threshold),f=Math.floor(faces);if(th<1)return "1-"+f+". Fallimento";if(th>=f)return "1-"+f+". Successo";return "1-"+th+". Successo\n"+(th+1)+"-"+f+". Fallimento";}
+function oneToOneBonusAnswers(faces){var out=[],i=1;while(i<=faces){out.push(i+". +"+i);i++;}return out.join("\n");}
+function agreementQuestionName(name){if(/^Trattativa\b/i.test(name))return "Trattativa";if(/^Networking\b/i.test(name))return "Networking";if(/^Scandali\b/i.test(name))return "Gestione Scandali";if(/^Coordinazione\b/i.test(name))return "Coordinazione Interministeriale";return "questa prova";}
 function naturalThresholdQuestion(name){
-var m=String(name||"").match(/^(Trattativa|Networking|Scandali|Coordinazione) Fase ([IVX]+) - Diplomatico (\d+)/i);
-if(m){return "Il Diplomatico "+m[3]+" supera la Fase "+m[2]+" di "+m[1]+"?";}
-var s=String(name||"").replace(/\s+-\s+/g," — ");
-return "La prova «"+s+"» riesce?";
+ var n=String(name||"");
+ var m=n.match(/^(Trattativa|Networking|Scandali|Coordinazione) Fase ([IVX]+)(?: secondo tentativo)? - Diplomatico (\d+)/i);
+ if(m){return "Il Diplomatico "+m[3]+" supera la Fase "+m[2]+" di "+agreementQuestionName(m[1])+"?";}
+ m=n.match(/^Trattativa Fase I - Supporto ND - Diplomatico (\d+)/i);if(m)return "Il supporto del non Diplomatico per il Diplomatico "+m[1]+" riesce nella Fase I della Trattativa?";
+ m=n.match(/^Networking Fase I - supporto ND per Diplomatico (\d+)/i);if(m)return "Il supporto del non Diplomatico per il Diplomatico "+m[1]+" riesce nella Fase I del Networking?";
+ m=n.match(/^Trattativa Fase I - (?:secondo tiro Numen|rilancio Sensus) - Diplomatico (\d+)/i);if(m)return "Il Diplomatico "+m[1]+" supera la Fase I della Trattativa con questo tiro?";
+ m=n.match(/^Coordinazione Fase II - Rilancio Sensus - Diplomatico (\d+)/i);if(m)return "Il Diplomatico "+m[1]+" supera la Fase II della Coordinazione con il rilancio Sensus?";
+ return "La prova «"+n.replace(/\s+-\s+/g," — ")+"» riesce?";
 }
-function naturalBonusQuestion(name){
-var m=String(name||"").match(/Diplomatico\s+(\d+)/i);
-if(m){return "Quanto bonus ottiene il Diplomatico "+m[1]+"?";}
-return "Qual è il bonus ottenuto?";
-}
-function naturalResultQuestion(name){
-var m=String(name||"").match(/Diplomatico\s+(\d+)/i);
-if(m){return "Qual è il risultato del tiro del Diplomatico "+m[1]+"?";}
-return "Qual è il risultato del tiro «"+String(name||"Tiro").replace(/\s+-\s+/g," — ")+"»?";
-}
+function naturalBonusQuestion(name){var n=String(name||""),m=n.match(/Diplomatico\s+(\d+)/i);if(/Bonus Ars/i.test(n)&&m)return "Di quanto aumenta la soglia del Diplomatico "+m[1]+" grazie al supporto Ars?";if(/Scandali Fase I - Bonus ND/i.test(n)&&m)return "Di quanto aumenta la soglia del Diplomatico "+m[1]+" grazie al supporto del non Diplomatico?";if(/Coordinazione Fase II - Bonus Voluntas/i.test(n))return "Di quanto aumenta la soglia grazie al supporto Voluntas?";return m?"Di quanto aumenta la soglia del Diplomatico "+m[1]+"?":"Qual è il bonus ottenuto?";}
 function forumDiceForBadge(badge){
-var dice = badge.getAttribute("data-dice") || "";
-var name = badge.getAttribute("data-name") || "";
-var formula = badge.getAttribute("data-formula") || "";
-var id = badge.id || "";
-var faces = diceFacesFromSpec(dice);
-var label = name;
-if(formula){ label = (name ? name + " - " : "") + formula; }
-if(!label){ label = badge.textContent ? badge.textContent.trim() : "Tiro"; }
-var dado = "[dice=" + dice + "]" + label + "[/dice]";
-var domanda = name ? name + "?" : "Qual è il risultato?";
-var risposte = "";
-
-if(name === "Scelta Zona"){
-  domanda = "Qual è la Zona di provenienza della controparte?";
-  risposte = "1. Verde\n2. Giallo\n3. Rosso";
-}else if(name === "Scelta Accordo"){
-  domanda = "Quale Accordo giocherai?";
-  risposte = "1. Trattativa e Mediazione\n2. Networking e Influenza Sociale\n3. Gestione Scandali\n4. Coordinazione Interministeriale";
-}else if(id === "a3gbcmd"){
-  domanda = "Qual è la Gravità dello scandalo in Gran Bretagna?";
-  risposte = "1. Minore\n2. Media\n3. Alta\n4. Critica";
-}else if(formula){
-  var tm = formula.match(/Riesce se\s+1-(-?\d+)/i);
-  if(tm && faces){
-    var threshold = parseInt(tm[1],10);
-    domanda = naturalThresholdQuestion(name || "Questa prova");
-    risposte = thresholdAnswers(threshold, faces);
-  }else{
-    domanda = (name || "Questo tiro") + ": qual è l'esito?";
-    risposte = formula;
-  }
-}else if(faces === 10 && (/Bonus/i.test(name) || /Ars/i.test(name) || /Voluntas/i.test(name))){
-  domanda = naturalBonusQuestion(name || "Bonus");
-  risposte = oneToOneBonusAnswers(10);
-}else if(name.indexOf("Trattativa Round ") === 0){
-  domanda = name + ": qual è l'esito del confronto?";
-  risposte = "Somma al risultato del Diplomatico gli eventuali bonus indicati dal tool.\nTotale Diplomatico > Avversario: Vittoria (+2 PI)\nTotale Diplomatico = Avversario: Pareggio (+1 PI)\nTotale Diplomatico < Avversario: Sconfitta (+0 PI)";
-}else if(name.indexOf("Networking Fase III") === 0){
-  domanda = name + ": il Diplomatico consolida la relazione?";
-  risposte = "Calcola i totali con i bonus/malus indicati dal tool.\nTotale Diplomatico > Totale Avversario: Successo\nTotale Diplomatico ≤ Totale Avversario: Fallimento";
-}else if(name.indexOf("Scandali Fase III") === 0){
-  domanda = name + ": il messaggio è efficace?";
-  risposte = "Calcola il totale del Diplomatico con i bonus/malus indicati dal tool.\nTotale Diplomatico > Opinione pubblica: Successo\nTotale Diplomatico ≤ Opinione pubblica: Fallimento";
-}else if(faces){
-  domanda = naturalResultQuestion(name || "Questo tiro");
-  risposte = "1-" + faces + ". Inserisci il risultato nel tool per applicare l'esito previsto dalla Fase.";
+ var dice=badge.getAttribute("data-dice")||"",name=badge.getAttribute("data-name")||"",formula=badge.getAttribute("data-formula")||"",id=badge.id||"",faces=diceFacesFromSpec(dice);
+ var label=formula?(name?name+" - ":"")+formula:(name||((badge.textContent||"Tiro").trim()));
+ var dado="[dice="+dice+"]"+label+"[/dice]",domanda="Qual è il risultato?",risposte="";
+ if(name==="Scelta Zona"){domanda="Qual è la Zona di provenienza della controparte?";risposte="1. Verde\n2. Giallo\n3. Rosso";}
+ else if(name==="Scelta Accordo"){domanda="Quale Accordo viene assegnato?";risposte="1. Trattativa e Mediazione\n2. Networking e Influenza Sociale\n3. Gestione Scandali\n4. Coordinazione Interministeriale";}
+ else if(id==="a3gbcmd"){domanda="Qual è la Gravità dello scandalo in Gran Bretagna?";risposte="1. Minore\n2. Media\n3. Alta\n4. Critica";}
+ else if(/^Trattativa Round \d+ - Diplomatico \d+/i.test(name)){var mm=name.match(/^Trattativa Round (\d+) - Diplomatico (\d+)/i);domanda="Qual è il totale ottenuto dal Diplomatico "+mm[2]+" nel Round "+mm[1]+" della Trattativa?";risposte=(formula?formula+"\n":"")+"Confronta poi il totale con quello dell’Avversario: superiore = Vittoria (+2 PI); uguale = Pareggio (+1 PI); inferiore = Sconfitta (+0 PI).";}
+ else if(/^Trattativa Round \d+ - Avversario contro Diplomatico \d+/i.test(name)){var ma=name.match(/^Trattativa Round (\d+) - Avversario contro Diplomatico (\d+)/i);domanda="Qual è il totale dell’Avversario contro il Diplomatico "+ma[2]+" nel Round "+ma[1]+" della Trattativa?";risposte=formula||"Il risultato del dado costituisce il totale dell’Avversario.";}
+ else if(/^Networking Fase III - Diplomatico \d+/i.test(name)){var mn=name.match(/Diplomatico (\d+)/i);domanda="Qual è il totale ottenuto dal Diplomatico "+mn[1]+" nel confronto finale del Networking?";risposte=(formula?formula+"\n":"")+"Totale Diplomatico > Totale Avversario: Successo; altrimenti Fallimento.";}
+ else if(/^Networking Fase III - Avversario contro Diplomatico \d+/i.test(name)){var mav=name.match(/Diplomatico (\d+)/i);domanda="Qual è il totale dell’Avversario contro il Diplomatico "+mav[1]+" nel confronto finale del Networking?";risposte=formula||"Il risultato del dado costituisce il totale dell’Avversario.";}
+ else if(/^Scandali Fase III - Diplomatico \d+/i.test(name)){var ms=name.match(/Diplomatico (\d+)/i);domanda="Qual è il totale ottenuto dal Diplomatico "+ms[1]+" nel confronto con l’opinione pubblica?";risposte=(formula?formula+"\n":"")+"Totale Diplomatico > Opinione pubblica: Successo; altrimenti Fallimento.";}
+ else if(/^Scandali Fase III - Opinione pubblica - Diplomatico \d+/i.test(name)){var mp=name.match(/Diplomatico (\d+)/i);domanda="Qual è il totale dell’opinione pubblica contro il Diplomatico "+mp[1]+"?";risposte=formula||"Il risultato del dado costituisce il totale dell’opinione pubblica.";}
+ else if(faces===10&&(/Bonus/i.test(name)||/Ars/i.test(name)||/Voluntas/i.test(name))){domanda=naturalBonusQuestion(name);risposte=oneToOneBonusAnswers(10);}
+ else if(formula){var tm=formula.match(/Riesce se\s+1-(-?\d+)/i);if(tm&&faces){domanda=naturalThresholdQuestion(name||"Questa prova");risposte=thresholdAnswers(parseInt(tm[1],10),faces);}else{domanda="Qual è il risultato del tiro «"+(name||"questa prova").replace(/\s+-\s+/g," — ")+"»?";risposte=formula;}}
+ else if(faces){domanda="Qual è il risultato del tiro «"+(name||"questa prova").replace(/\s+-\s+/g," — ")+"»?";risposte="1-"+faces+". Inserisci il risultato nel tool per applicare l’esito previsto dalla Fase.";}
+ return "[url=linkrole]Nome role[/url]\n"+forumDiceBlock(domanda,risposte,dado);
 }
 
-/* Mantiene il collegamento alla role già previsto da Ricerca Accordi. */
-return "[url=linkrole]Nome role[/url]\n" + forumDiceBlock(domanda, risposte, dado);
+/* =================== RIEPILOGO INIZIALE / DIFFICOLTÀ =================== */
+function summaryEscape(v){return String(v===undefined||v===null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function summaryPrimaryName(){return String(window.RA_SESSION_PRIMARY_NAME||"").trim();}
+function summaryDipName(index){return index===0&&summaryPrimaryName()?summaryPrimaryName():"Diplomatico "+(index+1);}
+function summaryNdName(index){return "non Diplomatico "+(index+1);}
+function summaryClampProb(p){return Math.max(0,Math.min(1,Number.isFinite(p)?p:0));}
+function summaryThresholdProb(threshold,faces){var t=Math.floor(Number(threshold));if(!Number.isFinite(t)||!faces)return 0;if(t<1)return 0;if(t>=faces)return 1;return t/faces;}
+function summaryAny(probs){var fail=1;for(var i=0;i<probs.length;i++)fail*=1-summaryClampProb(probs[i]);return 1-fail;}
+function summaryAll(probs){var p=1;for(var i=0;i<probs.length;i++)p*=summaryClampProb(probs[i]);return p;}
+function summaryAvg(probs){if(!probs.length)return null;var s=0;for(var i=0;i<probs.length;i++)s+=summaryClampProb(probs[i]);return s/probs.length;}
+function summaryOpposedProb(aFaces,aFlat,bFaces,bFlat){aFaces=Math.max(1,Math.floor(aFaces));bFaces=Math.max(1,Math.floor(bFaces));var wins=0,total=aFaces*bFaces;for(var a=1;a<=aFaces;a++){for(var b=1;b<=bFaces;b++){if(a+aFlat>b+bFlat)wins++;}}return total?wins/total:0;}
+function summaryBand(p){if(p===null||!Number.isFinite(p))return "non stimabile";if(p>=.62)return "situazione favorevole";if(p<=.38)return "situazione impegnativa";return "situazione equilibrata";}
+function summaryDifficultyLevel(p){if(p>=.62)return "Facile";if(p<=.38)return "Difficile";return "Media";}
+function summaryRangoText(id){var e=document.getElementById("dipRango_"+id);if(!e)return "—";var opt=e.options&&e.selectedIndex>=0?e.options[e.selectedIndex]:null;return opt?opt.textContent+" (Bonus "+(Number(e.value)>=0?"+":"")+Number(e.value)+")":"—";}
+function summaryRelevantDipFields(n){if(n===1)return [["Acume","acume"],["Volontà","volonta"],["Empatia","empatia"],["Totale Sapienze Magiche","sapienze"],["Persuasore","persuasore"]];if(n===2)return [["Volontà","volonta"],["Dialettica","dialettica"],["Prestigio attuale","prestigio"],["Rango Diplomatico","rango"]];if(n===3)return [["Acume","acume"],["Percezione","percezione"],["Popolarità","popolarita"],["Persuasore","persuasore"],["Volontà","volonta"],["Dialettica","dialettica"]];if(n===4)return [["Acume","acume"],["Volontà","volonta"],["Popolarità","popolarita"],["Totale Sapienze Magiche","sapienze"]];return [];}
+function summaryRelevantNdFields(n){if(n===1)return [["Categoria","categoria"],["Acume","acume"],["Volontà","volonta"],["Empatia","empatia"],["Sapienza Magica Affine","sapienzaAffine"],["Totale Sapienze Magiche","sapienzeTotali"],["Parametro di riferimento","paramRif"]];if(n===2)return [["Categoria","categoria"],["Volontà","volonta"],["Dialettica","dialettica"]];if(n===3)return [["Categoria","categoria"],["Acume","acume"],["Volontà","volonta"]];if(n===4)return [["Categoria","categoria"],["Acume","acume"],["Volontà","volonta"],["Popolarità","popolarita"]];return [];}
+function summaryPhaseScores(n){
+ var z=n===4?a4Zona():getZona(),prev=prevCoordForZone(z),dips=diplomatIds.map(getDip),scores=[],note="";
+ if(!z||!dips.length)return null;
+ if(n===1){var mal=z==="verde"?0:(z==="giallo"?10:20),p1=[],p2=[],p3=[];for(var i=0;i<dips.length;i++){var d=dips[i];p1.push(summaryThresholdProb(d.acume+floorDiv(d.sapienze,2)-mal+prev,100));p2.push(summaryThresholdProb(floorDiv(d.sapienze,2)+d.persuasore+prev,70));var log=summaryOpposedProb(Math.max(1,d.acume),prev,z==="verde"?25:(z==="giallo"?30:20),0),pre=summaryOpposedProb(Math.max(1,d.volonta),prev,z==="verde"?20:(z==="giallo"?25:30),0),emp=summaryOpposedProb(Math.max(1,d.empatia),prev,z==="verde"?30:(z==="giallo"?20:25),0);p3.push(Math.max(log,pre,emp));}scores=[summaryAny(p1),summaryAny(p2),summaryAvg(p3)];note="Per la Fase III la stima considera, per ciascun Diplomatico, l’approccio di base più favorevole fra Logica, Pressione ed Empatia.";}
+ else if(n===2){var mal2=z==="giallo"?5:(z==="rosso"?10:0),a=[],b=[],c=[],av=z==="verde"?20:(z==="giallo"?30:50);for(var j=0;j<dips.length;j++){var x=dips[j];a.push(summaryThresholdProb(x.volonta+x.dialettica-mal2+prev,40));b.push(summaryThresholdProb(x.volonta+x.dialettica+x.rango-mal2+prev,70));c.push(summaryOpposedProb(Math.max(1,x.volonta),x.dialettica+floorDiv(x.prestigio,2)+prev,av,0));}var first=summaryAny(a);scores=[1-Math.pow(1-first,2),summaryAvg(b),summaryAvg(c)];note="Per la Fase I la stima tiene conto anche del secondo e ultimo tentativo previsto se il primo non produce successi.";}
+ else if(n===3){var g;if(document.getElementById("a3gbToggle")&&document.getElementById("a3gbToggle").checked){if(!a3GravitaReady())return {scores:null,note:"La difficoltà complessiva sarà stimabile dopo il 1d4 obbligatorio della Gravità in Gran Bretagna."};g=state.a3.gravita;}else{g=gravitaFromZona();note="Finché non attivi l’eccezione Gran Bretagna, la stima usa la Gravità derivata dalla Zona.";}var mg=malusGravita(g),pub=pubblicoDado(g),q1=[],q2=[],q3=[];for(var k=0;k<dips.length;k++){var y=dips[k];q1.push(summaryThresholdProb(Math.max(y.acume,y.percezione)+floorDiv(y.popolarita,2)+y.persuasore-mg+prev,50));q2.push(summaryThresholdProb(y.acume-mg+prev,40));q3.push(summaryOpposedProb(Math.max(1,y.volonta),y.dialettica+y.persuasore+prev,pub,0));}scores=[summaryAny(q1),summaryAny(q2),summaryAvg(q3)];}
+ else if(n===4){var r1=[],r2=[],r3=[];for(var h=0;h<dips.length;h++){var u=dips[h];r1.push(summaryThresholdProb(u.acume+u.volonta+floorDiv(u.popolarita,2)-malusColore(z,1)+prev,80));r2.push(summaryThresholdProb(u.acume-malusColore(z,2)+prev,35));r3.push(summaryThresholdProb(u.acume+u.sapienze+5-malusColore(z,3)+prev,100));}scores=[summaryAny(r1),summaryAll(r2),summaryAny(r3)];note="La Fase I è favorevole se riesce almeno un Diplomatico; la Fase II richiede il successo di tutti per il bonus positivo; la Fase III conclude con successo se riesce almeno un Diplomatico.";}
+ return {scores:scores,note:note};
 }
+function buildAccordSummaryData(){
+ var n=flowAgreementNumber();if(!n||!flowSetupOk())return null;var z=n===4?a4Zona():getZona(),html=[],copy=[],rows=[];
+ rows.push(["Accordo",agreementNameFromNumber(n)]);rows.push(["Zona effettiva",zonaLabel(z)]);rows.push(["Partecipanti",(diplomatIds.length+ndIds.length)+" PG · "+diplomatIds.length+" Diplomatic"+(diplomatIds.length===1?"o":"i")+" · "+ndIds.length+" non Diplomatic"+(ndIds.length===1?"o":"i")]);
+ var prev=prevCoordForZone(z);if(prev)rows.push(["Coordinazione precedente",(prev>0?"+":"")+prev+" nella stessa Zona"]);if(n===4&&document.getElementById("a4ukToggle")&&document.getElementById("a4ukToggle").checked)rows.push(["Eccezione Gran Bretagna","attiva · la Missione è trattata come Zona Verde"]);
+ if(n===3){if(document.getElementById("a3gbToggle")&&document.getElementById("a3gbToggle").checked){rows.push(["Gran Bretagna","sì"]);rows.push(["Gravità",a3GravitaReady()?gravitaLabel(state.a3.gravita):"da determinare con 1d4 nella Fase I"]);}else rows.push(["Gravità",gravitaLabel(gravitaFromZona())+" (derivata dalla Zona)"]);}
+ html.push('<div class="accord-summary-grid">');copy.push('[spoiler=Situazione iniziale dell’Accordo]');for(var ri=0;ri<rows.length;ri++){html.push('<div class="accord-summary-item"><b>'+summaryEscape(rows[ri][0])+':</b> '+summaryEscape(rows[ri][1])+'</div>');copy.push('<b>'+rows[ri][0]+':</b> '+rows[ri][1]);}html.push('</div>');
+ html.push('<div class="accord-summary-section">Parametri utili all’Accordo</div>');copy.push('','<b>Parametri utili all’Accordo</b>');var df=summaryRelevantDipFields(n);for(var i=0;i<diplomatIds.length;i++){var id=diplomatIds[i],d=getDip(id),dn=summaryDipName(i);html.push('<div class="accord-summary-character"><div class="accord-summary-character-title">'+summaryEscape(dn)+'</div><ul class="accord-summary-list">');copy.push('','<b>'+dn+'</b>');for(var di=0;di<df.length;di++){var lab=df[di][0],key=df[di][1],val=key==="rango"?summaryRangoText(id):d[key];html.push('<li><b>'+summaryEscape(lab)+':</b> '+summaryEscape(val)+'</li>');copy.push('• '+lab+': '+val);}html.push('</ul></div>');}
+ var nf=summaryRelevantNdFields(n);for(var j=0;j<ndIds.length;j++){var nid=ndIds[j],nd=getNd(nid),nn=summaryNdName(j);html.push('<div class="accord-summary-character"><div class="accord-summary-character-title">'+summaryEscape(nn)+'</div><ul class="accord-summary-list">');copy.push('','<b>'+nn+'</b>');for(var ni=0;ni<nf.length;ni++){var nl=nf[ni][0],nk=nf[ni][1],nv=nk==="categoria"?nd.label:nd[nk];html.push('<li><b>'+summaryEscape(nl)+':</b> '+summaryEscape(nv)+'</li>');copy.push('• '+nl+': '+nv);}html.push('</ul></div>');}
+ var ps=summaryPhaseScores(n);if(ps&&ps.scores){html.push('<div class="accord-summary-section">Impatto previsto sulle Fasi</div><ul class="accord-summary-impact">');copy.push('','<b>Impatto previsto sulle Fasi</b>');for(var p=0;p<ps.scores.length;p++){var band=summaryBand(ps.scores[p]),fav=band==="situazione favorevole";html.push('<li><b>Fase '+["I","II","III"][p]+':</b> '+(fav?'<span class="favorable">'+summaryEscape(band)+'</span>':summaryEscape(band))+'</li>');copy.push('• Fase '+["I","II","III"][p]+': '+(fav?'<b>'+band+'</b>':band));}html.push('</ul>');var overall=summaryAvg(ps.scores),level=summaryDifficultyLevel(overall),favCount=ps.scores.filter(function(x){return x>=.62;}).length,hardCount=ps.scores.filter(function(x){return x<=.38;}).length;var reason=favCount>=2?'La configurazione di base risulta favorevole nella maggior parte delle Fasi.':(hardCount>=2?'La configurazione di base presenta criticità nella maggior parte delle Fasi.':'Il quadro complessivo è misto: alcune Fasi risultano più favorevoli e altre più impegnative.');if(ps.note)reason+=' '+ps.note;reason+=' La stima non presume Pozioni, Oggetti o supporti facoltativi e tratta come neutri i bonus/malus che dipendono da esiti ancora da giocare.';html.push('<div class="accord-summary-difficulty"><strong>Difficoltà complessiva stimata dell’Accordo: '+summaryEscape(level)+'</strong><br>'+summaryEscape(reason)+'</div>');copy.push('','<b>Difficoltà complessiva stimata dell’Accordo:</b> '+level,reason);}else if(ps&&ps.note){html.push('<div class="accord-summary-difficulty"><strong>Difficoltà complessiva stimata dell’Accordo: non ancora determinabile</strong><br>'+summaryEscape(ps.note)+'</div>');copy.push('','<b>Difficoltà complessiva stimata dell’Accordo:</b> non ancora determinabile',ps.note);}
+ copy.push('[/spoiler]');return {html:html.join(''),copy:copy.join('\n')};
+}
+function renderAccordInitialSummary(){var c=document.getElementById("accordi-initial-summary-content"),b=document.getElementById("accordi-initial-summary-copy");if(!c||!b)return;var d=buildAccordSummaryData();if(!d){c.innerHTML="";b.textContent="";return;}c.innerHTML=d.html;b.textContent=d.copy;}
+
 /* =================== NAVIGAZIONE PROGRESSIVA / RIPRESA =================== */
-var FLOW_PAGE="config";
-var FLOW_RESUME_TOKEN=0;
-var FLOW_USER_INTERACTED=false;
+var FLOW_PAGE="config",FLOW_SUMMARY_ACK=false,FLOW_SUMMARY_AGREEMENT=null;
+var FLOW_RESUME_TOKEN=0,FLOW_USER_INTERACTED=false;
 function flowAgreementNumber(){return accordoAssigned!==null?Number(accordoAssigned):null;}
 function flowSetupOk(){try{return setupValidation().ok;}catch(e){return false;}}
-function flowPhaseOneComplete(n){
- if(n===1)return !!state.a1.f1complete;
- if(n===2)return !!state.a2.f1passed;
- if(n===3)return !!state.a3.f1complete;
- if(n===4)return !!state.a4.f1complete;
- return false;
-}
-function flowPhaseTwoComplete(n){
- if(n===1)return !!state.a1.f2complete;
- if(n===2)return !!state.a2.f2complete;
- if(n===3)return !!state.a3.f2complete;
- if(n===4)return !!state.a4.f2complete;
- return false;
-}
-function flowAgreementEndedInF1(n){return n===2 && !!state.a2.f1failed && !state.a2.f1passed;}
-function flowUnlocked(page){
- if(page==="config")return true;
- var n=flowAgreementNumber();if(!n||!flowSetupOk())return false;
- if(page==="f1")return true;
- if(page==="f2")return flowPhaseOneComplete(n) && !flowAgreementEndedInF1(n);
- if(page==="f3")return flowPhaseTwoComplete(n);
- return false;
-}
-function flowRecommendedPage(){
- var n=flowAgreementNumber();
- if(!n||!flowSetupOk())return "config";
- if(flowAgreementEndedInF1(n))return "f1";
- if(!flowPhaseOneComplete(n))return "f1";
- if(!flowPhaseTwoComplete(n))return "f2";
- return "f3";
-}
-function flowPhaseNodes(n,page){
- var out=[];if(!n)return out;
- if(n===3&&page==="f1"){
-  var p0=document.querySelector('[data-phase="a3f0"]'),p1=document.querySelector('[data-phase="a3f1"]');if(p0)out.push(p0);if(p1)out.push(p1);return out;
- }
- var ph=document.querySelector('[data-phase="a'+n+page+'"]');if(ph)out.push(ph);return out;
-}
-function flowStatusText(){
- var n=flowAgreementNumber();
- if(!n)return "Determina prima l’Accordo da giocare.";
- if(!flowSetupOk())return "Completa la configurazione obbligatoria per sbloccare la Fase I.";
- if(flowAgreementEndedInF1(n))return "Il Networking si è concluso in Fase I dopo il fallimento dei tentativi previsti.";
- if(!flowPhaseOneComplete(n))return "Fase I in corso. Completa tutti i passaggi obbligatori per sbloccare la Fase II.";
- if(!flowPhaseTwoComplete(n))return "Fase I completata. La Fase II è disponibile; completala per sbloccare la Fase III.";
- return "Fasi I e II completate. Puoi svolgere la Fase III e arrivare all’esito conclusivo.";
-}
-function flowApplyPage(page,doScroll){
- var w=document.getElementById("accordi-workspace");if(!w)return;
- if(!flowUnlocked(page))page=flowRecommendedPage();
- FLOW_PAGE=page;
- w.classList.toggle("flow-mode-config",page==="config");
- w.classList.toggle("flow-mode-phase",page!=="config");
- var phases=w.querySelectorAll(".phase"),i;for(i=0;i<phases.length;i++)phases[i].classList.remove("flow-page-current");
- if(page!=="config"){
-  var nodes=flowPhaseNodes(flowAgreementNumber(),page);for(i=0;i<nodes.length;i++)nodes[i].classList.add("flow-page-current");
- }
- var btns=document.querySelectorAll("[data-flow-page]");for(i=0;i<btns.length;i++){var p=btns[i].getAttribute("data-flow-page");btns[i].disabled=!flowUnlocked(p);btns[i].classList.toggle("locked",!flowUnlocked(p));btns[i].classList.toggle("active",p===page);}
- var st=document.getElementById("flow-page-status");if(st)st.textContent=flowStatusText();
- flowUpdateProceedButtons();
- if(doScroll){var target=page==="config"?document.getElementById("flow-config-zone"):(flowPhaseNodes(flowAgreementNumber(),page)[0]||document.getElementById("flow-page-card"));if(target){setTimeout(function(){try{target.scrollIntoView({behavior:"auto",block:"start"});}catch(e){}},20);}}
-}
-function flowUpdateNavigation(){
- var card=document.getElementById("flow-page-card");if(card)card.style.display=flowAgreementNumber()!==null?"block":"none";
- if(FLOW_PAGE!=="config"&&!flowUnlocked(FLOW_PAGE))FLOW_PAGE=flowRecommendedPage();
- flowApplyPage(FLOW_PAGE,false);
-}
-function flowEnsureProceedButtons(){
- var specs=[
-  [1,"a1f1","f2","Procedi alla Fase II"],[1,"a1f2","f3","Procedi alla Fase III"],
-  [2,"a2f1","f2","Procedi alla Fase II"],[2,"a2f2","f3","Procedi alla Fase III"],
-  [3,"a3f1","f2","Procedi alla Fase II"],[3,"a3f2","f3","Procedi alla Fase III"],
-  [4,"a4f1","f2","Procedi alla Fase II"],[4,"a4f2","f3","Procedi alla Fase III"]
- ];
- specs.forEach(function(sp){var ph=document.querySelector('[data-phase="'+sp[1]+'"]');if(!ph||ph.querySelector('.flow-proceed-wrap[data-flow-for="'+sp[1]+'"]'))return;var wrap=document.createElement("div");wrap.className="flow-proceed-wrap";wrap.setAttribute("data-flow-for",sp[1]);var b=document.createElement("button");b.type="button";b.className="flow-proceed-btn";b.textContent=sp[3];b.setAttribute("data-flow-to",sp[2]);b.setAttribute("data-flow-agreement",String(sp[0]));b.setAttribute("data-session-control","1");b.addEventListener("click",function(){if(!b.disabled)flowApplyPage(sp[2],true);});wrap.appendChild(b);ph.appendChild(wrap);});
-}
-function flowUpdateProceedButtons(){
- var bs=document.querySelectorAll(".flow-proceed-btn"),n=flowAgreementNumber();for(var i=0;i<bs.length;i++){var b=bs[i],agreement=Number(b.getAttribute("data-flow-agreement")),to=b.getAttribute("data-flow-to");b.style.display=agreement===n?"inline-block":"none";b.disabled=agreement!==n||!flowUnlocked(to);}
-}
-function flowFirstMissingSetupTarget(){
- if(accordoAssigned===null){var linked=document.getElementById("accordoLinkedToggle");if(linked&&linked.checked)return document.querySelector('.tab-btn:not(.locked)')||linked;return document.getElementById("accordoRollVal")||document.getElementById("flow-config-agreement");}
- var z=getZona(),uk=document.getElementById("a4ukToggle");if(!z&&!(accordoAssigned===4&&uk&&uk.checked)){var zr=document.querySelector('input[name="zona"]');return zr||uk||document.getElementById("flow-config-zone");}
- if(diplomatIds.length<1||diplomatIds.length+ndIds.length<2)return document.querySelector('[data-action="addDip"]')||document.getElementById("flow-config-participants");
- var sets=[[diplomatIds,"dip"],[ndIds,"nd"]];
- for(var si=0;si<sets.length;si++){var ids=sets[si][0],kind=sets[si][1],fields=requiredFieldsForAgreement(accordoAssigned,kind);for(var ii=0;ii<ids.length;ii++){for(var fi=0;fi<fields.length;fi++){var suffix=fields[fi],id=(kind==="dip"?"dip":"nd")+suffix+"_"+ids[ii],node=document.getElementById(id);if(!node)continue;var val=String(node.value||"").trim();if(val==="")return node;}if(kind==="nd"){var cat=document.getElementById("ndCategoria_"+ids[ii]),aff=document.getElementById("ndCategoriaAffine_"+ids[ii]);if(cat&&cat.value==="Intracciabile"&&aff&&!aff.value)return aff;}}}
- return document.getElementById("flow-page-card")||document.getElementById("flow-config-guide");
-}
+function flowPhaseOneComplete(n){if(n===1)return !!state.a1.f1complete;if(n===2)return !!state.a2.f1passed;if(n===3)return !!state.a3.f1complete;if(n===4)return !!state.a4.f1complete;return false;}
+function flowPhaseTwoComplete(n){if(n===1)return !!state.a1.f2complete;if(n===2)return !!state.a2.f2complete;if(n===3)return !!state.a3.f2complete;if(n===4)return !!state.a4.f2complete;return false;}
+function flowAgreementEndedInF1(n){return n===2&&!!state.a2.f1failed&&!state.a2.f1passed;}
+function flowHasPhaseProgress(n){if(!n)return false;if(flowPhaseOneComplete(n)||flowPhaseTwoComplete(n)||flowAgreementEndedInF1(n))return true;var panel=document.getElementById("panel-a"+n);if(!panel)return false;var els=panel.querySelectorAll('.phase input[type="number"],.phase input[type="checkbox"]');for(var i=0;i<els.length;i++){var e=els[i];if(e.type==="number"&&/val/i.test(e.id||"")&&String(e.value||"").trim()!=="")return true;if(e.type==="checkbox"&&e.checked)return true;}return false;}
+function flowSyncSummaryAgreement(){var n=flowAgreementNumber();if(n!==FLOW_SUMMARY_AGREEMENT){FLOW_SUMMARY_AGREEMENT=n;FLOW_SUMMARY_ACK=false;}if(n&&flowHasPhaseProgress(n))FLOW_SUMMARY_ACK=true;}
+function flowUnlocked(page){if(page==="config")return true;var n=flowAgreementNumber();if(!n||!flowSetupOk())return false;if(page==="summary")return true;if(page==="f1")return FLOW_SUMMARY_ACK||flowHasPhaseProgress(n);if(page==="f2")return flowPhaseOneComplete(n)&&!flowAgreementEndedInF1(n);if(page==="f3")return flowPhaseTwoComplete(n);return false;}
+function flowRecommendedPage(){var n=flowAgreementNumber();if(!n||!flowSetupOk())return "config";flowSyncSummaryAgreement();if(!FLOW_SUMMARY_ACK&&!flowHasPhaseProgress(n))return "summary";if(flowAgreementEndedInF1(n))return "f1";if(!flowPhaseOneComplete(n))return "f1";if(!flowPhaseTwoComplete(n))return "f2";return "f3";}
+function flowPhaseNodes(n,page){var out=[];if(!n)return out;if(n===3&&page==="f1"){var p0=document.querySelector('[data-phase="a3f0"]'),p1=document.querySelector('[data-phase="a3f1"]');if(p0)out.push(p0);if(p1)out.push(p1);return out;}var ph=document.querySelector('[data-phase="a'+n+page+'"]');if(ph)out.push(ph);return out;}
+function flowStatusText(){var n=flowAgreementNumber();if(!n)return "Determina prima l’Accordo da giocare.";if(!flowSetupOk())return "Completa la configurazione obbligatoria per sbloccare il riepilogo.";if(!FLOW_SUMMARY_ACK&&!flowHasPhaseProgress(n))return "Configurazione completa. Controlla il riepilogo della situazione iniziale prima di iniziare la Fase I.";if(flowAgreementEndedInF1(n))return "Il Networking si è concluso in Fase I dopo il fallimento dei tentativi previsti.";if(!flowPhaseOneComplete(n))return "Fase I in corso. Completa tutti i passaggi obbligatori per sbloccare la Fase II.";if(!flowPhaseTwoComplete(n))return "Fase I completata. La Fase II è disponibile; completala per sbloccare la Fase III.";return "Fasi I e II completate. Puoi svolgere la Fase III e arrivare all’esito conclusivo.";}
+function flowApplyPage(page,doScroll){var w=document.getElementById("accordi-workspace");if(!w)return;flowSyncSummaryAgreement();if(!flowUnlocked(page))page=flowRecommendedPage();FLOW_PAGE=page;w.classList.toggle("flow-mode-config",page==="config");w.classList.toggle("flow-mode-summary",page==="summary");w.classList.toggle("flow-mode-phase",page==="f1"||page==="f2"||page==="f3");var summary=document.getElementById("accordi-initial-summary-card");if(summary)summary.style.display=page==="summary"?"block":"none";var phases=w.querySelectorAll(".phase"),i;for(i=0;i<phases.length;i++)phases[i].classList.remove("flow-page-current");if(page==="f1"||page==="f2"||page==="f3"){var nodes=flowPhaseNodes(flowAgreementNumber(),page);for(i=0;i<nodes.length;i++)nodes[i].classList.add("flow-page-current");}var btns=document.querySelectorAll("[data-flow-page]");for(i=0;i<btns.length;i++){var p=btns[i].getAttribute("data-flow-page"),un=flowUnlocked(p);btns[i].disabled=!un;btns[i].classList.toggle("locked",!un);btns[i].classList.toggle("active",p===page);}var st=document.getElementById("flow-page-status");if(st)st.textContent=flowStatusText();flowUpdateProceedButtons();if(page==="summary")renderAccordInitialSummary();if(doScroll){var target=page==="config"?document.getElementById("flow-config-zone"):(page==="summary"?summary:(flowPhaseNodes(flowAgreementNumber(),page)[0]||document.getElementById("flow-page-card")));if(target)setTimeout(function(){try{target.scrollIntoView({behavior:"auto",block:"start"});}catch(e){}},20);}}
+function flowUpdateNavigation(){flowSyncSummaryAgreement();var card=document.getElementById("flow-page-card");if(card)card.style.display=flowAgreementNumber()!==null?"block":"none";if(FLOW_PAGE!=="config"&&!flowUnlocked(FLOW_PAGE))FLOW_PAGE=flowRecommendedPage();flowApplyPage(FLOW_PAGE,false);}
+function flowEnsureProceedButtons(){var specs=[[1,"a1f1","f2","Procedi alla Fase II"],[1,"a1f2","f3","Procedi alla Fase III"],[2,"a2f1","f2","Procedi alla Fase II"],[2,"a2f2","f3","Procedi alla Fase III"],[3,"a3f1","f2","Procedi alla Fase II"],[3,"a3f2","f3","Procedi alla Fase III"],[4,"a4f1","f2","Procedi alla Fase II"],[4,"a4f2","f3","Procedi alla Fase III"]];specs.forEach(function(sp){var ph=document.querySelector('[data-phase="'+sp[1]+'"]');if(!ph||ph.querySelector('.flow-proceed-wrap[data-flow-for="'+sp[1]+'"]'))return;var wrap=document.createElement("div");wrap.className="flow-proceed-wrap";wrap.setAttribute("data-flow-for",sp[1]);var b=document.createElement("button");b.type="button";b.className="flow-proceed-btn";b.textContent=sp[3];b.setAttribute("data-flow-to",sp[2]);b.setAttribute("data-flow-agreement",String(sp[0]));b.setAttribute("data-session-control","1");b.addEventListener("click",function(){if(!b.disabled)flowApplyPage(sp[2],true);});wrap.appendChild(b);ph.appendChild(wrap);});}
+function flowUpdateProceedButtons(){var bs=document.querySelectorAll(".flow-proceed-btn"),n=flowAgreementNumber();for(var i=0;i<bs.length;i++){var b=bs[i],agreement=Number(b.getAttribute("data-flow-agreement")),to=b.getAttribute("data-flow-to");b.style.display=agreement===n?"inline-block":"none";b.disabled=agreement!==n||!flowUnlocked(to);}}
+function flowFirstMissingSetupTarget(){if(accordoAssigned===null){var linked=document.getElementById("accordoLinkedToggle");if(linked&&linked.checked)return document.querySelector('.tab-btn:not(.locked)')||linked;return document.getElementById("accordoRollVal")||document.getElementById("flow-config-agreement");}var z=getZona(),uk=document.getElementById("a4ukToggle");if(!z&&!(accordoAssigned===4&&uk&&uk.checked)){var zr=document.querySelector('input[name="zona"]');return zr||uk||document.getElementById("flow-config-zone");}if(diplomatIds.length<1||diplomatIds.length+ndIds.length<2)return document.querySelector('[data-action="addDip"]')||document.getElementById("flow-config-participants");var sets=[[diplomatIds,"dip"],[ndIds,"nd"]];for(var si=0;si<sets.length;si++){var ids=sets[si][0],kind=sets[si][1],fields=requiredFieldsForAgreement(accordoAssigned,kind);for(var ii=0;ii<ids.length;ii++){for(var fi=0;fi<fields.length;fi++){var suffix=fields[fi],id=(kind==="dip"?"dip":"nd")+suffix+"_"+ids[ii],node=document.getElementById(id);if(!node)continue;if(String(node.value||"").trim()==="")return node;}if(kind==="nd"){var cat=document.getElementById("ndCategoria_"+ids[ii]),aff=document.getElementById("ndCategoriaAffine_"+ids[ii]);if(cat&&cat.value==="Intracciabile"&&aff&&!aff.value)return aff;}}}return document.getElementById("flow-page-card")||document.getElementById("flow-config-guide");}
 function flowVisible(node){if(!node)return false;var p=node;while(p&&p!==document.body){var st=window.getComputedStyle?window.getComputedStyle(p):null;if(p.hidden||(st&&(st.display==="none"||st.visibility==="hidden")))return false;p=p.parentElement;}return true;}
-function flowFirstIncompleteIn(nodes){
- for(var ni=0;ni<nodes.length;ni++){
-  var root=nodes[ni],controls=root.querySelectorAll("input,select,textarea");
-  for(var i=0;i<controls.length;i++){var c=controls[i];if(c.disabled||!flowVisible(c))continue;var typ=(c.type||"").toLowerCase();if(typ==="hidden"||typ==="button"||typ==="submit")continue;if(typ==="checkbox")continue;if(typ==="radio"){var name=c.name;if(name){var checked=root.querySelector('input[type="radio"][name="'+name+'"]:checked');if(!checked)return c;}continue;}if(String(c.value||"").trim()==="")return c;}
- }
- return nodes.length?nodes[0]:document.getElementById("flow-page-card");
-}
-function flowResumeTarget(readonly){
- var page=flowRecommendedPage();flowApplyPage(page,false);
- if(page==="config")return readonly?(document.getElementById("flow-config-guide")||document.getElementById("flow-config-zone")):flowFirstMissingSetupTarget();
- var n=flowAgreementNumber(),nodes=flowPhaseNodes(n,page);
- if(readonly)return nodes.length?nodes[0]:document.getElementById("flow-page-card");
- if(n===2&&page==="f1"&&state.a2.f1failed&&!state.a2.f1passed){var tog=document.getElementById("a2f1secondToggle");if(tog&&!tog.checked)return tog;}
- return flowFirstIncompleteIn(nodes);
-}
-function flowScrollToResumeTarget(target){
- if(!target||FLOW_USER_INTERACTED)return;
- try{target.scrollIntoView({behavior:"auto",block:"center",inline:"nearest"});}catch(e){try{target.scrollIntoView();}catch(e2){}}
- if(target.focus&&/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(target.tagName||"")){setTimeout(function(){if(FLOW_USER_INTERACTED)return;try{target.focus();}catch(e){}},25);}
-}
-function scheduleSmartAgreementResume(readonly){
- var token=++FLOW_RESUME_TOKEN;FLOW_USER_INTERACTED=false;
- setTimeout(function(){requestAnimationFrame(function(){if(token!==FLOW_RESUME_TOKEN||FLOW_USER_INTERACTED)return;refreshAll();var target=flowResumeTarget(!!readonly);flowScrollToResumeTarget(target);});},180);
-}
+function flowFirstIncompleteIn(nodes){for(var ni=0;ni<nodes.length;ni++){var root=nodes[ni],controls=root.querySelectorAll("input,select,textarea");for(var i=0;i<controls.length;i++){var c=controls[i];if(c.disabled||!flowVisible(c))continue;var typ=(c.type||"").toLowerCase();if(typ==="hidden"||typ==="button"||typ==="submit"||typ==="checkbox")continue;if(typ==="radio"){var name=c.name;if(name){var checked=root.querySelector('input[type="radio"][name="'+name+'"]:checked');if(!checked)return c;}continue;}if(String(c.value||"").trim()==="")return c;}}return nodes.length?nodes[0]:document.getElementById("flow-page-card");}
+function flowResumeTarget(readonly){var page=flowRecommendedPage();flowApplyPage(page,false);if(page==="config")return readonly?(document.getElementById("flow-config-guide")||document.getElementById("flow-config-zone")):flowFirstMissingSetupTarget();if(page==="summary")return document.getElementById("accordi-initial-summary-card");var n=flowAgreementNumber(),nodes=flowPhaseNodes(n,page);if(readonly)return nodes.length?nodes[0]:document.getElementById("flow-page-card");if(n===2&&page==="f1"&&state.a2.f1failed&&!state.a2.f1passed){var tog=document.getElementById("a2f1secondToggle");if(tog&&!tog.checked)return tog;}return flowFirstIncompleteIn(nodes);}
+function flowScrollToResumeTarget(target){if(!target||FLOW_USER_INTERACTED)return;try{target.scrollIntoView({behavior:"auto",block:"center",inline:"nearest"});}catch(e){try{target.scrollIntoView();}catch(e2){}}var tag=(target.tagName||"").toUpperCase();if(target.focus&&(tag==="INPUT"||tag==="TEXTAREA")){setTimeout(function(){if(FLOW_USER_INTERACTED)return;try{target.focus({preventScroll:true});}catch(e){}},25);}}
+function scheduleSmartAgreementResume(readonly){var token=++FLOW_RESUME_TOKEN;FLOW_USER_INTERACTED=false;setTimeout(function(){requestAnimationFrame(function(){if(token!==FLOW_RESUME_TOKEN||FLOW_USER_INTERACTED)return;refreshAll();var target=flowResumeTarget(!!readonly);flowScrollToResumeTarget(target);});},180);}
 function cancelSmartAgreementResume(){FLOW_USER_INTERACTED=true;FLOW_RESUME_TOKEN++;}
-function flowWireNavigation(){
- flowEnsureProceedButtons();
- var nav=document.getElementById("flow-page-nav");if(nav&&!nav.getAttribute("data-wired")){nav.setAttribute("data-wired","1");nav.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-flow-page]"):null;if(!b||b.disabled)return;FLOW_USER_INTERACTED=true;flowApplyPage(b.getAttribute("data-flow-page"),true);});}
- document.addEventListener("mousedown",function(e){var b=e.target&&e.target.closest?e.target.closest(".dice-cmd"):null;if(b)e.preventDefault();},true);
- flowUpdateNavigation();
-}
+function flowWireNavigation(){flowEnsureProceedButtons();var nav=document.getElementById("flow-page-nav");if(nav&&!nav.getAttribute("data-wired")){nav.setAttribute("data-wired","1");nav.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-flow-page]"):null;if(!b||b.disabled)return;FLOW_USER_INTERACTED=true;flowApplyPage(b.getAttribute("data-flow-page"),true);});}document.addEventListener("mousedown",function(e){var b=e.target&&e.target.closest?e.target.closest(".dice-cmd,.accord-summary-copy-btn"):null;if(b)e.preventDefault();},true);flowUpdateNavigation();}
 window.RA_FLOW={resume:scheduleSmartAgreementResume,cancelResume:cancelSmartAgreementResume,update:flowUpdateNavigation,apply:flowApplyPage,recommended:flowRecommendedPage};
 /* =================== TABS =================== */
 var accordoRinunceLeft = 3;
@@ -4536,6 +4468,7 @@ refreshA3F3();
 refreshA4F1();
 refreshA4F2();
 refreshA4F3();
+if(typeof renderAccordInitialSummary==="function"){renderAccordInitialSummary();}
 if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
 }
 /* =================== DEPENDENCY INVALIDATION =================== */
@@ -4602,16 +4535,11 @@ if(action === "addNd"){ addNd(); return; }
 if(action === "removeDip"){ removeDip(parseInt(t.getAttribute("data-id"),10)); return; }
 if(action === "removeNd"){ removeNd(parseInt(t.getAttribute("data-id"),10)); return; }
 if(action === "rinunciaAccordo"){ rinunciaAccordo(); return; }
+if(action === "flowStartF1"){ FLOW_SUMMARY_ACK=true; FLOW_SUMMARY_AGREEMENT=flowAgreementNumber(); flowApplyPage("f1",true); return; }
+if(t.id === "btn-copy-accord-summary"){ evt.preventDefault(); var sd=buildAccordSummaryData(); if(sd){doCopy(sd.copy);flashCopied(t);} return; }
 if(t.closest){
 var badge = t.closest(".dice-cmd");
-if(badge){
-var dice = badge.getAttribute("data-dice");
-if(dice){
-var out = forumDiceForBadge(badge);
-doCopy(out);
-flashCopied(badge);
-}
-}
+if(badge){evt.preventDefault();var dice = badge.getAttribute("data-dice");if(dice){var out = forumDiceForBadge(badge);doCopy(out);flashCopied(badge);}return;}
 }
 });
 document.addEventListener("input", function(e){
@@ -4751,7 +4679,7 @@ function saveNow(){
   return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();}).catch(function(err){console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
 }
 function openSessionDoc(id,data){
-  CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;SESSION_ACTIONS=Array.isArray(data.actionLog)?data.actionLog.slice():[];SESSION_READONLY=!sessionCanEdit(data);
+  CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;window.RA_SESSION_PRIMARY_NAME=String(data.pgName||data.initialPgName||"").trim();SESSION_ACTIONS=Array.isArray(data.actionLog)?data.actionLog.slice():[];SESSION_READONLY=!sessionCanEdit(data);
   if(sq('accordi-session-home'))sq('accordi-session-home').style.display='none';if(workspace())workspace().style.display='block';
   replayActions(SESSION_ACTIONS);
   if(typeof refreshAll==='function')refreshAll();
