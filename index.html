@@ -1,3 +1,4 @@
+<!-- Revisione Firebase v5: sessioni multiple, autosalvataggio, ripresa, sola lettura e cancellazione definitiva protetta -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -985,8 +986,86 @@ header.masthead .seal i{
   }
 }
 
+
+
+/* ================================================================
+   SESSIONI FIREBASE — Ricerca Accordi
+================================================================ */
+.session-shell{width:100%;max-width:1120px;margin:0 auto;padding:28px 24px 80px;font-family:var(--sans);color:var(--text-dark)}
+.session-home-card,.session-toolbar{background:var(--parchment-2);border:1px solid #CDBD9F;border-radius:10px;padding:22px 24px;box-shadow:0 1px 0 rgba(112,66,122,.05)}
+.session-home-card{margin:24px 0}
+.session-home-card h2,.session-toolbar h2{font-family:'magic',var(--serif);font-weight:normal;color:var(--seal);margin:0 0 8px;font-size:1.55rem}
+.session-home-card p{margin:.45em 0;color:var(--text-soft);line-height:1.65}
+.session-warning{margin:16px 0;padding:13px 16px;border-radius:8px;background:rgba(169,121,31,.08);border:1px solid rgba(169,121,31,.28);border-left:4px solid var(--giallo);font-size:14px;line-height:1.6;color:var(--text-dark)}
+.session-create-row{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:end;margin:18px 0 12px}
+.session-create-row .field input{width:100%;min-height:48px}
+.session-btn,.session-danger-btn{min-height:44px;padding:9px 15px;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s ease}
+.session-btn{background:var(--ink-navy-2);border:1px solid var(--seal);color:var(--parchment-2)}
+.session-btn:hover{background:var(--seal)}
+.session-btn.ghost{background:#FBF5E8;border:1px solid #CDBD9F;color:var(--seal)}
+.session-btn.ghost:hover{background:var(--parchment);border-color:var(--seal)}
+.session-danger-btn{background:rgba(138,47,47,.08);border:1px solid var(--fail);color:var(--fail)}
+.session-danger-btn:hover{background:rgba(138,47,47,.14)}
+.session-status{font-size:13px;color:var(--text-soft);line-height:1.5;margin:8px 0}
+.session-status.ok{color:var(--ok)}
+.session-status.bad{color:var(--fail);font-weight:600}
+.session-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.session-item{background:#FBF5E8;border:1px solid #CDBD9F;border-radius:9px;padding:14px 16px}
+.session-item-row{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.session-title{font-family:'magic',var(--serif);font-size:1.12rem;color:var(--seal)}
+.session-meta{font-size:12px;color:var(--text-soft);margin-top:3px}
+.session-owner{display:inline-block;margin-top:7px;padding:3px 8px;border-radius:999px;border:1px solid #CDBD9F;font-size:11px;color:var(--text-soft)}
+.session-owner.mine{border-color:var(--ok);color:var(--ok)}
+.session-toolbar{margin:22px 0 20px;display:block}
+.session-toolbar-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.session-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.session-toolbar .session-meta{font-size:13px}
+.readonly-banner{display:none;margin-top:12px;padding:11px 13px;border-radius:8px;background:rgba(169,121,31,.08);border:1px solid rgba(169,121,31,.28);color:var(--text-dark);font-size:13px;line-height:1.55}
+.session-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.66);display:none;align-items:center;justify-content:center;padding:20px}
+.session-modal.open{display:flex}
+.session-modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;background:var(--parchment-2);color:var(--text-dark);border:1px solid #CDBD9F;border-radius:12px;padding:24px;box-shadow:0 22px 60px rgba(0,0,0,.35)}
+.session-modal-card h2{margin:0 0 12px;font-family:'magic',var(--serif);font-weight:normal;color:var(--fail);font-size:1.55rem}
+.session-modal-card p{line-height:1.65;color:var(--text-dark)}
+.session-delete-check{display:flex;gap:10px;align-items:flex-start;margin:18px 0;padding:13px;border:1px solid rgba(138,47,47,.35);border-radius:8px;background:rgba(138,47,47,.06);font-size:14px;line-height:1.5}
+.session-delete-check input{width:18px;height:18px;flex:0 0 auto;margin-top:2px}
+.session-modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+@media(max-width:700px){.session-shell{padding:18px 14px 60px}.session-home-card,.session-toolbar{padding:18px 16px}.session-create-row{grid-template-columns:1fr}.session-item-row{align-items:flex-start;flex-direction:column}.session-item-row .session-btn{width:100%}.session-toolbar-actions{width:100%}.session-toolbar-actions button{flex:1 1 auto}}
+
 </style>
-<div class="wrap">
+
+<div id="accordi-session-home" class="session-shell" style="display:none;">
+  <div class="session-home-card">
+    <h2>Accordi in corso</h2>
+    <p>Ogni Accordo viene salvato automaticamente e può essere ripreso in seguito senza reinserire i dati già registrati.</p>
+    <div class="session-warning"><b>Le sessioni in corso sono personali.</b> Puoi visualizzare quelle degli altri giocatori, ma non modificarle o concluderle. Solo chi ha creato la sessione e il Narratore possono intervenire sui suoi dati.</div>
+    <div id="firebase-auth-status" class="session-status">Connessione a Firebase…</div>
+    <div class="session-create-row">
+      <div class="field"><label>Nome del PG Diplomatico principale</label><input id="new-session-pg" type="text" placeholder="Es. Coral" data-session-control="1"></div>
+      <button class="session-btn" id="btn-new-session" type="button" data-session-control="1">Nuovo Accordo</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div id="session-home-msg" class="session-status"></div>
+      <button class="session-btn ghost" id="btn-refresh-sessions" type="button" data-session-control="1">Aggiorna elenco</button>
+    </div>
+    <div id="session-list" class="session-list"></div>
+  </div>
+</div>
+
+<div class="wrap" id="accordi-workspace" style="display:none;">
+<div class="session-toolbar" data-session-control="1">
+  <div class="session-toolbar-row">
+    <div>
+      <h2 id="current-session-title">Accordo in corso</h2>
+      <div id="current-session-meta" class="session-meta"></div>
+    </div>
+    <div class="session-toolbar-actions">
+      <button class="session-btn ghost" id="btn-back-sessions" type="button" data-session-control="1">← Accordi in corso</button>
+      <button class="session-danger-btn" id="btn-delete-session" type="button" data-session-control="1">Concludi ed elimina Accordo</button>
+    </div>
+  </div>
+  <div id="readonly-banner" class="readonly-banner"><b>Modalità sola lettura.</b> Questa sessione appartiene a un altro giocatore: puoi consultarla, ma non modificarla o concluderla.</div>
+  <div id="save-status" class="session-status"></div>
+</div>
 <div class="foglio" style="background:#2B1735"><header class="masthead"><div class="seal"><i class="fa-solid fa-earth-americas"></i></div><h1 class="title" style="font-size:40px; font-family:magic">• Ricerca Accordi •</h1>
 <p class="subtitle">Per PG Diplomatici (e Non Diplomatici in soccorso)</p>
 </header> </div>
@@ -1340,6 +1419,19 @@ azzera Accordo 4</button></div>
 </div>
 </div>
 <footer>Ufficio Affari Diplomatici · Ricerca Accordi · uso interno alla role</footer>
+</div>
+<div class="session-modal" id="delete-session-modal" aria-hidden="true" data-session-control="1">
+  <div class="session-modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-session-title">
+    <h2 id="delete-session-title">ATTENZIONE — ELIMINAZIONE DEFINITIVA</h2>
+    <p>Concludendo questo Accordo, <b>tutti i dati salvati della sessione verranno eliminati definitivamente</b>. Non esiste un archivio e la sessione non potrà essere recuperata.</p>
+    <p>Se vorrai giocare nuovamente questo Accordo, dovrai <b>ricrearlo da zero</b> e reinserire tutti i dati, le scelte e i risultati dei tiri.</p>
+    <label class="session-delete-check"><input type="checkbox" id="delete-session-check" data-session-control="1"><span>Ho capito che l'eliminazione è definitiva e che questa sessione non potrà essere recuperata.</span></label>
+    <div id="delete-session-msg" class="session-status bad"></div>
+    <div class="session-modal-actions">
+      <button class="session-btn ghost" id="btn-cancel-delete" type="button" data-session-control="1">Annulla</button>
+      <button class="session-danger-btn" id="btn-confirm-delete" type="button" disabled data-session-control="1">Elimina definitivamente</button>
+    </div>
+  </div>
 </div>
 <!-- Revisione v4: ripristinata la Zona generale di provenienza anche per gli Scandali in Gran Bretagna; il 1d4 GB modifica solo la Gravità. Ripristinati inoltre i +5 individuali per i Diplomatici riusciti negli Accordi 1, 3 e 4. -->
 <script type="text/javascript">
@@ -4290,17 +4382,182 @@ addNd();
 refreshAll();
 })();
 </script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script type="text/javascript">
+(function(){
+var EVT='cli'+'ck';
+var FIREBASE_CONFIG={
+  apiKey:"AIzaSyCvd56bSEL02s2OY2PSk7uyFX-CYRB4Vz0",
+  authDomain:"conteggi-eee1b.firebaseapp.com",
+  projectId:"conteggi-eee1b",
+  storageBucket:"conteggi-eee1b.firebasestorage.app",
+  messagingSenderId:"481320219586",
+  appId:"1:481320219586:web:87e974d618a302adfadc5b",
+  measurementId:"G-EFHVL4H1XW"
+};
+var SESSION_COLLECTION='ricerca_accordi';
+var NARRATOR_UID='TFgqfVrFLjW5SwqRFXmEi8tDhtM2';
+var FB={app:null,auth:null,db:null,user:null};
+var CURRENT_SESSION=null,CURRENT_SESSION_DATA=null,SESSION_READONLY=false;
+var SESSION_ACTIONS=[],RESTORING_SESSION=false,SAVE_TIMER=null,SAVE_IN_FLIGHT=false,PENDING_SAVE=false;
+
+function sq(id){return document.getElementById(id);}
+function workspace(){return sq('accordi-workspace');}
+function sessionCanEdit(data){return !!(FB.user&&data&&(data.ownerUid===FB.user.uid||FB.user.uid===NARRATOR_UID));}
+function setStatus(id,text,kind){var n=sq(id);if(!n)return;n.textContent=text||'';n.className='session-status'+(kind?' '+kind:'');}
+function formatTs(ts){try{var d=ts&&typeof ts.toDate==='function'?ts.toDate():null;return d?d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}):'';}catch(e){return '';}}
+function sessionIdFromHash(){var h=String(window.location.hash||'').replace(/^#/,'');if(h.indexOf('session=')!==0)return '';try{return decodeURIComponent(h.slice(8));}catch(e){return h.slice(8);}}
+function navigateToSession(id){window.location.hash='session='+encodeURIComponent(id);window.location.reload();}
+function navigateToDashboard(){if(window.location.hash){try{history.replaceState(null,'',window.location.pathname+window.location.search);}catch(e){window.location.hash='';}}window.location.reload();}
+function agreementName(n){return n===1?'Trattativa e Mediazione':n===2?'Networking e Influenza Sociale':n===3?'Gestione Scandali':n===4?'Coordinazione Interministeriale':'';}
+function selectedAgreement(){
+  var linked=sq('accordoLinkedToggle');
+  var roll=sq('accordoRollVal');
+  if(linked&&linked.checked){
+    var a=document.querySelector('.tab-btn.active');
+    if(a){var m=String(a.getAttribute('data-tab')||'').match(/^a([1-4])$/);if(m)return Number(m[1]);}
+  }
+  if(roll&&roll.value!==''){
+    var v=Number(roll.value);if(isFinite(v)&&Math.floor(v)===v&&v>=1&&v<=4)return v;
+  }
+  if(CURRENT_SESSION_DATA&&CURRENT_SESSION_DATA.accordoId){var c=Number(CURRENT_SESSION_DATA.accordoId);if(c>=1&&c<=4)return c;}
+  return null;
+}
+function primaryPgName(){return (CURRENT_SESSION_DATA&&(CURRENT_SESSION_DATA.pgName||CURRENT_SESSION_DATA.initialPgName))||'PG';}
+function activeLabel(){var n=selectedAgreement();return primaryPgName()+' — '+(n?agreementName(n):'Accordo da determinare');}
+function updateToolbar(){
+  if(!CURRENT_SESSION_DATA)return;
+  if(sq('current-session-title'))sq('current-session-title').textContent=activeLabel();
+  var mine=FB.user&&CURRENT_SESSION_DATA.ownerUid===FB.user.uid,narr=FB.user&&FB.user.uid===NARRATOR_UID,parts=[];
+  parts.push(mine?'Sessione creata da questo browser':(narr?'Gestione Narratore':'Sessione di un altro giocatore'));
+  var t=formatTs(CURRENT_SESSION_DATA.updatedAt);if(t)parts.push('ultimo salvataggio '+t);
+  if(sq('current-session-meta'))sq('current-session-meta').textContent=parts.join(' · ');
+  if(sq('readonly-banner'))sq('readonly-banner').style.display=SESSION_READONLY?'block':'none';
+  if(sq('btn-delete-session'))sq('btn-delete-session').style.display=sessionCanEdit(CURRENT_SESSION_DATA)?'inline-block':'none';
+}
+
+function elementPath(target){
+  var w=workspace();if(!w||!target||!w.contains(target))return null;
+  if(target.id)return {id:target.id};
+  var path=[],n=target;
+  while(n&&n!==w){var par=n.parentElement;if(!par)return null;var idx=Array.prototype.indexOf.call(par.children,n);if(idx<0)return null;path.unshift(idx);n=par;}
+  return n===w?{path:path}:null;
+}
+function resolveTarget(a){
+  var w=workspace();if(!w)return null;
+  if(a.loc&&a.loc.id){var by=sq(a.loc.id);return by&&w.contains(by)?by:null;}
+  var n=w,arr=a.loc&&a.loc.path?a.loc.path:[];
+  for(var i=0;i<arr.length;i++){if(!n||!n.children||!n.children[arr[i]])return null;n=n.children[arr[i]];}
+  return n===w?null:n;
+}
+function actionFromEvent(e){
+  var w=workspace(),target=e.target;if(!target||!w||!w.contains(target))return null;
+  if(target.closest&&target.closest('[data-session-control="1"]'))return null;
+  if(e.type==='click'){
+    var b=target.closest?target.closest('button'):null;
+    if(!b||!w.contains(b))return null;
+    if(!(b.classList.contains('tab-btn')||b.getAttribute('data-action')))return null;
+    return {type:'click',loc:elementPath(b)};
+  }
+  if(['INPUT','SELECT','TEXTAREA'].indexOf(target.tagName)===-1)return null;
+  return {type:e.type,loc:elementPath(target),value:target.value,checked:!!target.checked};
+}
+function sameLoc(a,b){return JSON.stringify(a||null)===JSON.stringify(b||null);}
+function recordAction(e){
+  if(RESTORING_SESSION||SESSION_READONLY||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;
+  var a=actionFromEvent(e);if(!a||!a.loc)return;
+  var last=SESSION_ACTIONS.length?SESSION_ACTIONS[SESSION_ACTIONS.length-1]:null;
+  if((a.type==='input'||a.type==='change')&&last&&(last.type==='input'||last.type==='change')&&sameLoc(a.loc,last.loc))SESSION_ACTIONS[SESSION_ACTIONS.length-1]=a;
+  else SESSION_ACTIONS.push(a);
+  scheduleSave();
+}
+function attachRecorder(){var w=workspace();if(!w||w.getAttribute('data-session-recorder')==='1')return;w.setAttribute('data-session-recorder','1');['input','change','click'].forEach(function(ev){w.addEventListener(ev,recordAction,true);});}
+function replayActions(actions){
+  RESTORING_SESSION=true;
+  try{(actions||[]).forEach(function(a){var t=resolveTarget(a);if(!t){console.warn('Ricerca Accordi: azione di ripristino non trovata',a);return;}if(a.type==='click'){if(!t.disabled&&typeof t.click==='function')t.click();}else{if('value' in t)t.value=a.value==null?'':String(a.value);if('checked' in t)t.checked=!!a.checked;t.dispatchEvent(new Event(a.type,{bubbles:true}));}});}finally{RESTORING_SESSION=false;}
+}
+function setWorkspaceReadOnly(ro){
+  SESSION_READONLY=!!ro;var w=workspace();if(!w)return;
+  if(SESSION_READONLY){
+    Array.prototype.forEach.call(w.querySelectorAll('input,select,textarea,button'),function(n){
+      if(n.getAttribute('data-session-control')==='1'||(n.closest&&n.closest('[data-session-control="1"]')))return;
+      if(n.classList&&n.classList.contains('tab-btn')){n.disabled=false;return;}
+      n.disabled=true;
+    });
+  }
+  updateToolbar();
+}
+function payload(){
+  var a=selectedAgreement();
+  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:SESSION_ACTIONS};
+}
+function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(saveNow,850);}
+function saveNow(){
+  if(!CURRENT_SESSION||SESSION_READONLY||!sessionCanEdit(CURRENT_SESSION_DATA))return Promise.resolve();
+  if(SAVE_IN_FLIGHT){PENDING_SAVE=true;return Promise.resolve();}
+  SAVE_IN_FLIGHT=true;PENDING_SAVE=false;var p=payload();
+  return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();}).catch(function(err){console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
+}
+function openSessionDoc(id,data){
+  CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;SESSION_ACTIONS=Array.isArray(data.actionLog)?data.actionLog.slice():[];SESSION_READONLY=!sessionCanEdit(data);
+  if(sq('accordi-session-home'))sq('accordi-session-home').style.display='none';if(workspace())workspace().style.display='block';
+  replayActions(SESSION_ACTIONS);
+  setWorkspaceReadOnly(SESSION_READONLY);updateToolbar();setStatus('save-status',SESSION_READONLY?'Modalità sola lettura.':'Accordo caricato · autosalvataggio attivo',SESSION_READONLY?'':'ok');
+  setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},20);
+}
+function loadSession(id){setStatus('session-home-msg','Caricamento Accordo…','');return FB.db.collection(SESSION_COLLECTION).doc(id).get().then(function(doc){if(!doc.exists)throw new Error('L’Accordo non esiste più.');openSessionDoc(doc.id,doc.data());setStatus('session-home-msg','','');}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile aprire l’Accordo: '+err.message,'bad');if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';});}
+function loadSessionList(){
+  var host=sq('session-list');if(!host||!FB.db||!FB.user)return;host.innerHTML='<div class="session-status">Caricamento sessioni…</div>';
+  FB.db.collection(SESSION_COLLECTION).get().then(function(snap){
+    var rows=[];snap.forEach(function(doc){rows.push({id:doc.id,data:doc.data()});});rows.sort(function(a,b){var at=a.data.updatedAt&&a.data.updatedAt.seconds?a.data.updatedAt.seconds:0,bt=b.data.updatedAt&&b.data.updatedAt.seconds?b.data.updatedAt.seconds:0;return bt-at;});host.innerHTML='';
+    if(!rows.length){host.innerHTML='<div class="session-status">Non ci sono Accordi in corso. Puoi crearne uno qui sopra.</div>';return;}
+    rows.forEach(function(r){var d=r.data,mine=d.ownerUid===FB.user.uid,narr=FB.user.uid===NARRATOR_UID;var box=document.createElement('div');box.className='session-item';var row=document.createElement('div');row.className='session-item-row';var left=document.createElement('div');var ti=document.createElement('div');ti.className='session-title';ti.textContent=(d.pgName||'PG')+' — '+(d.tipoAccordo||'Accordo da determinare');left.appendChild(ti);var meta=document.createElement('div');meta.className='session-meta';var dt=formatTs(d.updatedAt);meta.textContent=dt?'Aggiornata '+dt:'';left.appendChild(meta);var own=document.createElement('span');own.className='session-owner'+(mine?' mine':'');own.textContent=mine?'Tuo Accordo':(narr?'Gestibile dal Narratore':'Altro giocatore');left.appendChild(own);var b=document.createElement('button');b.type='button';b.className='session-btn'+((mine||narr)?'':' ghost');b.setAttribute('data-session-control','1');b.textContent=(mine||narr)?'Riprendi':'Visualizza';b.addEventListener(EVT,function(){navigateToSession(r.id);});row.appendChild(left);row.appendChild(b);box.appendChild(row);host.appendChild(box);});
+  }).catch(function(err){console.error(err);host.innerHTML='<div class="session-status bad">Non riesco a leggere gli Accordi in corso: '+String(err.message||err)+'</div>';});
+}
+function createSession(){
+  var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
+  setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:[]};
+  FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');});
+}
+function openDeleteModal(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';sq('delete-session-modal').classList.add('open');sq('delete-session-modal').setAttribute('aria-hidden','false');}
+function closeDeleteModal(){var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');}
+function deleteCurrentSession(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';FB.db.collection(SESSION_COLLECTION).doc(id).delete().then(function(){CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){console.error(err);sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;});}
+function backToDashboard(){var done=Promise.resolve();if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA))done=saveNow();done.finally(function(){navigateToDashboard();});}
+function setupControls(){
+  attachRecorder();
+  sq('btn-new-session').addEventListener(EVT,createSession);sq('new-session-pg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();createSession();}});sq('btn-refresh-sessions').addEventListener(EVT,loadSessionList);sq('btn-back-sessions').addEventListener(EVT,backToDashboard);sq('btn-delete-session').addEventListener(EVT,openDeleteModal);sq('btn-cancel-delete').addEventListener(EVT,closeDeleteModal);sq('delete-session-check').addEventListener('change',function(){sq('btn-confirm-delete').disabled=!sq('delete-session-check').checked;});sq('btn-confirm-delete').addEventListener(EVT,deleteCurrentSession);sq('delete-session-modal').addEventListener(EVT,function(e){if(e.target===sq('delete-session-modal'))closeDeleteModal();});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&CURRENT_SESSION&&!SESSION_READONLY)saveNow();});window.addEventListener('pagehide',function(){if(CURRENT_SESSION&&!SESSION_READONLY)saveNow();});
+}
+function setupFirebase(){
+  setupControls();if(workspace())workspace().style.display='none';if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';var st=sq('firebase-auth-status');
+  try{
+    if(typeof firebase==='undefined')throw new Error('SDK Firebase non caricato');if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);FB.app=firebase.app();FB.auth=firebase.auth();FB.db=firebase.firestore();
+    FB.auth.onAuthStateChanged(function(user){
+      if(user){FB.user=user;if(st){st.textContent=user.uid===NARRATOR_UID?'Firebase connesso · modalità Narratore':'Firebase connesso · sessione anonima attiva';st.className='session-status ok';}var sid=sessionIdFromHash();if(sid)loadSession(sid);else{try{if(sessionStorage.getItem('ra_deleted_notice')==='1'){sessionStorage.removeItem('ra_deleted_notice');setStatus('session-home-msg','Accordo eliminato definitivamente. Per giocarlo di nuovo dovrà essere ricreato da zero.','ok');}}catch(e){}loadSessionList();}return;}
+      FB.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function(){return FB.auth.signInAnonymously();}).catch(function(err){console.error(err);if(st){st.textContent='Errore autenticazione Firebase: '+err.message;st.className='session-status bad';}});
+    });
+  }catch(err){console.error(err);if(st){st.textContent='Firebase non disponibile: '+err.message;st.className='session-status bad';}}
+}
+document.addEventListener('DOMContentLoaded',setupFirebase);
+})();
+</script>
 <!-- Altezza dinamica per incorporamento ForumFree — misura il contenuto reale, non il viewport -->
 <script type="text/javascript">
 (function(){
 var ultimoValore = 0;
 var timer = null;
-var root = document.querySelector(".wrap");
+var root = document.body || document.documentElement;
 
 function misuraContenuto(){
-if(!root){ return 0; }
-var rect = root.getBoundingClientRect();
-var altezza = Math.max(root.scrollHeight || 0, Math.ceil(rect.height || 0));
+var b = document.body, d = document.documentElement;
+var altezza = Math.max(
+  b ? (b.scrollHeight || 0) : 0,
+  b ? (b.offsetHeight || 0) : 0,
+  d ? (d.scrollHeight || 0) : 0,
+  d ? (d.offsetHeight || 0) : 0
+);
 return Math.ceil(altezza);
 }
 
