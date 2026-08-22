@@ -1,3 +1,4 @@
+<!-- Revisione v6: BBCode dei dadi con domanda/risposte + popup eliminazione ancorato al punto visualizzato -->
 <!-- Revisione Firebase v5: sessioni multiple, autosalvataggio, ripresa, sola lettura e cancellazione definitiva protetta -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -4144,6 +4145,80 @@ function flashCopied(elm){
 elm.classList.add("copied");
 setTimeout(function(){ elm.classList.remove("copied"); }, 900);
 }
+function forumDiceBlock(domanda, risposte, dado){
+var out = "<b>" + domanda + "</b>";
+if(risposte){ out += "\n[quote]" + risposte + "[/quote]"; }
+out += "\n\n" + dado;
+return out;
+}
+function diceFacesFromSpec(spec){
+var m = String(spec || "").match(/^1d(\d+)$/i);
+return m ? parseInt(m[1],10) : null;
+}
+function thresholdAnswers(threshold, faces){
+if(!Number.isFinite(threshold) || !Number.isFinite(faces)){ return ""; }
+var th = Math.floor(threshold), f = Math.floor(faces);
+if(th < 1){ return "1-" + f + ". Fallimento"; }
+if(th >= f){ return "1-" + f + ". Successo"; }
+return "1-" + th + ". Successo\n" + (th + 1) + "-" + f + ". Fallimento";
+}
+function oneToOneBonusAnswers(faces){
+var out = [], i = 1;
+while(i <= faces){ out.push(i + ". +" + i); i = i + 1; }
+return out.join("\n");
+}
+function forumDiceForBadge(badge){
+var dice = badge.getAttribute("data-dice") || "";
+var name = badge.getAttribute("data-name") || "";
+var formula = badge.getAttribute("data-formula") || "";
+var id = badge.id || "";
+var faces = diceFacesFromSpec(dice);
+var label = name;
+if(formula){ label = (name ? name + " - " : "") + formula; }
+if(!label){ label = badge.textContent ? badge.textContent.trim() : "Tiro"; }
+var dado = "[dice=" + dice + "]" + label + "[/dice]";
+var domanda = name ? name + "?" : "Qual è il risultato?";
+var risposte = "";
+
+if(name === "Scelta Zona"){
+  domanda = "Qual è la Zona di provenienza della controparte?";
+  risposte = "1. Verde\n2. Giallo\n3. Rosso";
+}else if(name === "Scelta Accordo"){
+  domanda = "Quale Accordo giocherai?";
+  risposte = "1. Trattativa e Mediazione\n2. Networking e Influenza Sociale\n3. Gestione Scandali\n4. Coordinazione Interministeriale";
+}else if(id === "a3gbcmd"){
+  domanda = "Qual è la Gravità dello scandalo in Gran Bretagna?";
+  risposte = "1. Minore\n2. Media\n3. Alta\n4. Critica";
+}else if(formula){
+  var tm = formula.match(/Riesce se\s+1-(-?\d+)/i);
+  if(tm && faces){
+    var threshold = parseInt(tm[1],10);
+    domanda = (name || "Questo tiro") + ": riesce?";
+    risposte = thresholdAnswers(threshold, faces);
+  }else{
+    domanda = (name || "Questo tiro") + ": qual è l'esito?";
+    risposte = formula;
+  }
+}else if(faces === 10 && (/Bonus/i.test(name) || /Ars/i.test(name) || /Voluntas/i.test(name))){
+  domanda = (name || "Bonus") + ": quanto bonus ottengo?";
+  risposte = oneToOneBonusAnswers(10);
+}else if(name.indexOf("Trattativa Round ") === 0){
+  domanda = name + ": qual è l'esito del confronto?";
+  risposte = "Somma al risultato del Diplomatico gli eventuali bonus indicati dal tool.\nTotale Diplomatico > Avversario: Vittoria (+2 PI)\nTotale Diplomatico = Avversario: Pareggio (+1 PI)\nTotale Diplomatico < Avversario: Sconfitta (+0 PI)";
+}else if(name.indexOf("Networking Fase III") === 0){
+  domanda = name + ": il Diplomatico consolida la relazione?";
+  risposte = "Calcola i totali con i bonus/malus indicati dal tool.\nTotale Diplomatico > Totale Avversario: Successo\nTotale Diplomatico ≤ Totale Avversario: Fallimento";
+}else if(name.indexOf("Scandali Fase III") === 0){
+  domanda = name + ": il messaggio è efficace?";
+  risposte = "Calcola il totale del Diplomatico con i bonus/malus indicati dal tool.\nTotale Diplomatico > Opinione pubblica: Successo\nTotale Diplomatico ≤ Opinione pubblica: Fallimento";
+}else if(faces){
+  domanda = (name || "Questo tiro") + ": qual è il risultato?";
+  risposte = "1-" + faces + ". Inserisci il risultato nel tool per applicare l'esito previsto dalla Fase.";
+}
+
+/* Mantiene il collegamento alla role già previsto da Ricerca Accordi. */
+return "[url=linkrole]Nome role[/url]\n" + forumDiceBlock(domanda, risposte, dado);
+}
 /* =================== TABS =================== */
 var accordoRinunceLeft = 3;
 var accordoAssigned = null;
@@ -4353,12 +4428,7 @@ var badge = t.closest(".dice-cmd");
 if(badge){
 var dice = badge.getAttribute("data-dice");
 if(dice){
-var name = badge.getAttribute("data-name");
-if(!name){ name = ""; }
-var formula = badge.getAttribute("data-formula");
-var label = name;
-if(formula){ label = name + " - " + formula; }
-var out = "[url=linkrole]Nome role[/url]\n[dice=" + dice + "]" + label + "[/dice]";
+var out = forumDiceForBadge(badge);
 doCopy(out);
 flashCopied(badge);
 }
@@ -4521,8 +4591,9 @@ function createSession(){
   setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:[]};
   FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');});
 }
-function openDeleteModal(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';sq('delete-session-modal').classList.add('open');sq('delete-session-modal').setAttribute('aria-hidden','false');}
-function closeDeleteModal(){var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');}
+function positionDeleteModalAtCurrentView(ev){var m=sq('delete-session-modal');if(!m)return;var box=m.querySelector('.session-modal-card');if(!box)return;var anchorY=null;if(ev&&Number.isFinite(ev.clientY)){anchorY=ev.clientY;}if(anchorY===null){var trigger=sq('btn-delete-session');if(trigger){var tr=trigger.getBoundingClientRect();anchorY=tr.top+(tr.height/2);}}if(anchorY===null){anchorY=Math.max(24,Math.min(window.innerHeight/2,window.innerHeight-24));}var mh=m.getBoundingClientRect().height||window.innerHeight||document.documentElement.clientHeight||600;var bh=box.offsetHeight||0;var top=anchorY-(bh/2);var minTop=18;var maxTop=Math.max(minTop,mh-bh-18);top=Math.max(minTop,Math.min(maxTop,top));box.style.position='absolute';box.style.left='50%';box.style.top=Math.round(top)+'px';box.style.transform='translateX(-50%)';box.style.margin='0';}
+function openDeleteModal(ev){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';var m=sq('delete-session-modal');m.classList.add('open');m.setAttribute('aria-hidden','false');requestAnimationFrame(function(){positionDeleteModalAtCurrentView(ev);});}
+function closeDeleteModal(){var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');var box=m.querySelector('.session-modal-card');if(box){box.style.position='';box.style.left='';box.style.top='';box.style.transform='';box.style.margin='';}}
 function deleteCurrentSession(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';FB.db.collection(SESSION_COLLECTION).doc(id).delete().then(function(){CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){console.error(err);sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;});}
 function backToDashboard(){var done=Promise.resolve();if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA))done=saveNow();done.finally(function(){navigateToDashboard();});}
 function setupControls(){
