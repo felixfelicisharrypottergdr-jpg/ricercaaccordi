@@ -1,3 +1,5 @@
+<!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
+<!-- Revisione v7: copia dadi senza salto della pagina + formulazione più naturale delle domande BBCode -->
 <!-- Revisione v6: BBCode dei dadi con domanda/risposte + popup eliminazione ancorato al punto visualizzato -->
 <!-- Revisione Firebase v5: sessioni multiple, autosalvataggio, ripresa, sola lettura e cancellazione definitiva protetta -->
 <meta charset="UTF-8">
@@ -989,6 +991,24 @@ header.masthead .seal i{
 
 
 
+/* ===== NAVIGAZIONE PROGRESSIVA DELLE FASI ===== */
+.flow-page-nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px;}
+.flow-page-btn{flex:1 1 150px;min-height:44px;padding:9px 13px;border:1px solid #CDBD9F;border-radius:8px;background:#FBF5E8;color:var(--text-soft);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s ease;}
+.flow-page-btn:hover:not(:disabled){border-color:var(--seal);background:var(--parchment);color:var(--text-dark);}
+.flow-page-btn.active{background:var(--ink-navy-2);border-color:var(--seal);color:var(--parchment-2);}
+.flow-page-btn:disabled,.flow-page-btn.locked{opacity:.46;cursor:not-allowed;}
+#accordi-workspace.flow-mode-config .tab-panel{display:none !important;}
+#accordi-workspace.flow-mode-phase .flow-config-card{display:none !important;}
+#accordi-workspace.flow-mode-phase .tab-panel:not(.active){display:none !important;}
+#accordi-workspace.flow-mode-phase .tab-panel.active{display:block !important;}
+#accordi-workspace.flow-mode-phase .tab-panel.active .phase{display:none !important;}
+#accordi-workspace.flow-mode-phase .tab-panel.active .phase.flow-page-current{display:block !important;}
+.flow-proceed-wrap{display:flex;justify-content:flex-end;gap:10px;margin:20px 0 4px;padding-top:16px;border-top:1px solid rgba(112,66,122,.14);}
+.flow-proceed-btn{min-height:44px;padding:9px 16px;border:1px solid var(--seal);border-radius:8px;background:var(--ink-navy-2);color:var(--parchment-2);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;}
+.flow-proceed-btn:hover:not(:disabled){background:var(--seal);}
+.flow-proceed-btn:disabled{opacity:.5;cursor:not-allowed;}
+@media(max-width:760px){.flow-page-btn{flex:1 1 100%;}.flow-proceed-wrap{justify-content:stretch}.flow-proceed-btn{width:100%;}}
+
 /* ================================================================
    SESSIONI FIREBASE — Ricerca Accordi
 ================================================================ */
@@ -1071,7 +1091,7 @@ header.masthead .seal i{
 <p class="subtitle">Per PG Diplomatici (e Non Diplomatici in soccorso)</p>
 </header> </div>
 <!-- STEP 1: ZONA -->
-<div class="filecard">
+<div class="filecard flow-config-card" id="flow-config-zone">
 <div class="section-label"><span class="step-num" style="margin-right:2px;">1</span>
 Zona di provenienza della controparte</div>
 <p class="hint" style="margin-top:0;">Tira <span class="dice-cmd" data-dice="1d3"
@@ -1090,7 +1110,7 @@ rosso"></span>Rosso</label>
 </div>
 </div>
 <!-- STEP 2: ACCORDO -->
-<div class="filecard">
+<div class="filecard flow-config-card" id="flow-config-agreement">
 <div class="section-label"><span class="step-num" style="margin-right:2px;">2</span>
 Quale Accordo giocherai</div>
 <p class="hint" style="margin-top:0;">Tira <span class="dice-cmd" data-dice="1d4"
@@ -1118,7 +1138,7 @@ Interm.</button>
 </div>
 </div>
 <!-- STEP 3: SCHEDA PERSONAGGI -->
-<div class="filecard">
+<div class="filecard flow-config-card" id="flow-config-participants">
 <div class="section-label"><span class="step-num" style="margin-right:2px;">3</span>
 Scheda dei Personaggi coinvolti</div>
 <p class="hint" style="margin-top:0;">La role deve coinvolgere <b>almeno 2 PG, di cui almeno 1 Diplomatico</b>. Aggiungi un riquadro per ciascun Diplomatico e
@@ -1145,7 +1165,7 @@ Diplomatico vengono usati anche per il bonus dei round della Fase III. Per gli I
 indica inoltre la Categoria affine.</p>
 </div>
 <!-- STEP 4: COME PROCEDERE -->
-<div class="filecard">
+<div class="filecard flow-config-card" id="flow-config-guide">
 <div class="section-label"><span class="step-num" style="margin-right:2px;">4</span>
 Come procedere dentro l'Accordo</div>
 <p class="hint" style="margin-top:0;">Da qui in poi lavori dentro la scheda dell'Accordo
@@ -1176,6 +1196,18 @@ coerenti con il regolamento.</div>
 </div>
 <div class="ndnote"><b>Arrotondamenti.</b> Tutte le divisioni previste dalle formule vengono arrotondate per difetto.</div>
 <div class="ndnote"><b>FantaWiz.</b> Anche il PG non Diplomatico che partecipa effettivamente alla Ricerca può completare il Livello Difficile della Missione “Il Diplomatico”, come previsto dal regolamento.</div>
+</div>
+<!-- NAVIGAZIONE PROGRESSIVA CONFIGURAZIONE / FASI -->
+<div class="filecard" id="flow-page-card" style="display:none;">
+  <div class="section-label"><span class="step-num" style="margin-right:2px;">5</span>Avanzamento dell’Accordo</div>
+  <p class="hint" style="margin-top:0;">Dopo la configurazione procedi una Fase alla volta. Le Fasi successive si sbloccano soltanto quando la precedente è realmente completata; puoi sempre tornare alle pagine già raggiunte senza perdere i dati.</p>
+  <div class="flow-page-nav" id="flow-page-nav">
+    <button type="button" class="flow-page-btn active" data-flow-page="config" data-session-control="1">Configurazione</button>
+    <button type="button" class="flow-page-btn" data-flow-page="f1" data-session-control="1">Fase I</button>
+    <button type="button" class="flow-page-btn" data-flow-page="f2" data-session-control="1">Fase II</button>
+    <button type="button" class="flow-page-btn" data-flow-page="f3" data-session-control="1">Fase III / Esito</button>
+  </div>
+  <div class="assignment-status" id="flow-page-status">Completa la configurazione per iniziare la Fase I.</div>
 </div>
 <!-- ACCORDO 1 -->
 <div class="tab-panel active" id="panel-a1">
@@ -4129,17 +4161,19 @@ return;
 fallbackCopy(str);
 }
 function fallbackCopy(str){
-var ta = document.createElement("textarea");
-ta.value = str;
-ta.style.position = "fixed";
-ta.style.left = "-9999px";
-document.body.appendChild(ta);
-ta.focus();
-ta.select();
-var copyCmd = "co" + "py";
-try{ document.execCommand(copyCmd); }
-catch(e){}
-document.body.removeChild(ta);
+/* Fallback senza focus: evita che ForumFree sposti la pagina nell’iframe. */
+var holder=document.createElement("span");
+holder.textContent=str;
+holder.setAttribute("aria-hidden","true");
+holder.style.position="fixed";holder.style.left="0";holder.style.top="0";holder.style.width="1px";holder.style.height="1px";holder.style.overflow="hidden";holder.style.opacity="0";holder.style.pointerEvents="none";holder.style.whiteSpace="pre";
+document.body.appendChild(holder);
+var sel=window.getSelection?window.getSelection():null,previous=[];
+try{
+ if(sel){for(var i=0;i<sel.rangeCount;i++){previous.push(sel.getRangeAt(i).cloneRange());}var range=document.createRange();range.selectNodeContents(holder);sel.removeAllRanges();sel.addRange(range);}
+ var copyCmd="co"+"py";document.execCommand(copyCmd);
+}catch(e){}
+if(sel){sel.removeAllRanges();for(var j=0;j<previous.length;j++){try{sel.addRange(previous[j]);}catch(e2){}}}
+if(holder.parentNode){holder.parentNode.removeChild(holder);}
 }
 function flashCopied(elm){
 elm.classList.add("copied");
@@ -4167,6 +4201,22 @@ var out = [], i = 1;
 while(i <= faces){ out.push(i + ". +" + i); i = i + 1; }
 return out.join("\n");
 }
+function naturalThresholdQuestion(name){
+var m=String(name||"").match(/^(Trattativa|Networking|Scandali|Coordinazione) Fase ([IVX]+) - Diplomatico (\d+)/i);
+if(m){return "Il Diplomatico "+m[3]+" supera la Fase "+m[2]+" di "+m[1]+"?";}
+var s=String(name||"").replace(/\s+-\s+/g," — ");
+return "La prova «"+s+"» riesce?";
+}
+function naturalBonusQuestion(name){
+var m=String(name||"").match(/Diplomatico\s+(\d+)/i);
+if(m){return "Quanto bonus ottiene il Diplomatico "+m[1]+"?";}
+return "Qual è il bonus ottenuto?";
+}
+function naturalResultQuestion(name){
+var m=String(name||"").match(/Diplomatico\s+(\d+)/i);
+if(m){return "Qual è il risultato del tiro del Diplomatico "+m[1]+"?";}
+return "Qual è il risultato del tiro «"+String(name||"Tiro").replace(/\s+-\s+/g," — ")+"»?";
+}
 function forumDiceForBadge(badge){
 var dice = badge.getAttribute("data-dice") || "";
 var name = badge.getAttribute("data-name") || "";
@@ -4193,14 +4243,14 @@ if(name === "Scelta Zona"){
   var tm = formula.match(/Riesce se\s+1-(-?\d+)/i);
   if(tm && faces){
     var threshold = parseInt(tm[1],10);
-    domanda = (name || "Questo tiro") + ": riesce?";
+    domanda = naturalThresholdQuestion(name || "Questa prova");
     risposte = thresholdAnswers(threshold, faces);
   }else{
     domanda = (name || "Questo tiro") + ": qual è l'esito?";
     risposte = formula;
   }
 }else if(faces === 10 && (/Bonus/i.test(name) || /Ars/i.test(name) || /Voluntas/i.test(name))){
-  domanda = (name || "Bonus") + ": quanto bonus ottengo?";
+  domanda = naturalBonusQuestion(name || "Bonus");
   risposte = oneToOneBonusAnswers(10);
 }else if(name.indexOf("Trattativa Round ") === 0){
   domanda = name + ": qual è l'esito del confronto?";
@@ -4212,13 +4262,139 @@ if(name === "Scelta Zona"){
   domanda = name + ": il messaggio è efficace?";
   risposte = "Calcola il totale del Diplomatico con i bonus/malus indicati dal tool.\nTotale Diplomatico > Opinione pubblica: Successo\nTotale Diplomatico ≤ Opinione pubblica: Fallimento";
 }else if(faces){
-  domanda = (name || "Questo tiro") + ": qual è il risultato?";
+  domanda = naturalResultQuestion(name || "Questo tiro");
   risposte = "1-" + faces + ". Inserisci il risultato nel tool per applicare l'esito previsto dalla Fase.";
 }
 
 /* Mantiene il collegamento alla role già previsto da Ricerca Accordi. */
 return "[url=linkrole]Nome role[/url]\n" + forumDiceBlock(domanda, risposte, dado);
 }
+/* =================== NAVIGAZIONE PROGRESSIVA / RIPRESA =================== */
+var FLOW_PAGE="config";
+var FLOW_RESUME_TOKEN=0;
+var FLOW_USER_INTERACTED=false;
+function flowAgreementNumber(){return accordoAssigned!==null?Number(accordoAssigned):null;}
+function flowSetupOk(){try{return setupValidation().ok;}catch(e){return false;}}
+function flowPhaseOneComplete(n){
+ if(n===1)return !!state.a1.f1complete;
+ if(n===2)return !!state.a2.f1passed;
+ if(n===3)return !!state.a3.f1complete;
+ if(n===4)return !!state.a4.f1complete;
+ return false;
+}
+function flowPhaseTwoComplete(n){
+ if(n===1)return !!state.a1.f2complete;
+ if(n===2)return !!state.a2.f2complete;
+ if(n===3)return !!state.a3.f2complete;
+ if(n===4)return !!state.a4.f2complete;
+ return false;
+}
+function flowAgreementEndedInF1(n){return n===2 && !!state.a2.f1failed && !state.a2.f1passed;}
+function flowUnlocked(page){
+ if(page==="config")return true;
+ var n=flowAgreementNumber();if(!n||!flowSetupOk())return false;
+ if(page==="f1")return true;
+ if(page==="f2")return flowPhaseOneComplete(n) && !flowAgreementEndedInF1(n);
+ if(page==="f3")return flowPhaseTwoComplete(n);
+ return false;
+}
+function flowRecommendedPage(){
+ var n=flowAgreementNumber();
+ if(!n||!flowSetupOk())return "config";
+ if(flowAgreementEndedInF1(n))return "f1";
+ if(!flowPhaseOneComplete(n))return "f1";
+ if(!flowPhaseTwoComplete(n))return "f2";
+ return "f3";
+}
+function flowPhaseNodes(n,page){
+ var out=[];if(!n)return out;
+ if(n===3&&page==="f1"){
+  var p0=document.querySelector('[data-phase="a3f0"]'),p1=document.querySelector('[data-phase="a3f1"]');if(p0)out.push(p0);if(p1)out.push(p1);return out;
+ }
+ var ph=document.querySelector('[data-phase="a'+n+page+'"]');if(ph)out.push(ph);return out;
+}
+function flowStatusText(){
+ var n=flowAgreementNumber();
+ if(!n)return "Determina prima l’Accordo da giocare.";
+ if(!flowSetupOk())return "Completa la configurazione obbligatoria per sbloccare la Fase I.";
+ if(flowAgreementEndedInF1(n))return "Il Networking si è concluso in Fase I dopo il fallimento dei tentativi previsti.";
+ if(!flowPhaseOneComplete(n))return "Fase I in corso. Completa tutti i passaggi obbligatori per sbloccare la Fase II.";
+ if(!flowPhaseTwoComplete(n))return "Fase I completata. La Fase II è disponibile; completala per sbloccare la Fase III.";
+ return "Fasi I e II completate. Puoi svolgere la Fase III e arrivare all’esito conclusivo.";
+}
+function flowApplyPage(page,doScroll){
+ var w=document.getElementById("accordi-workspace");if(!w)return;
+ if(!flowUnlocked(page))page=flowRecommendedPage();
+ FLOW_PAGE=page;
+ w.classList.toggle("flow-mode-config",page==="config");
+ w.classList.toggle("flow-mode-phase",page!=="config");
+ var phases=w.querySelectorAll(".phase"),i;for(i=0;i<phases.length;i++)phases[i].classList.remove("flow-page-current");
+ if(page!=="config"){
+  var nodes=flowPhaseNodes(flowAgreementNumber(),page);for(i=0;i<nodes.length;i++)nodes[i].classList.add("flow-page-current");
+ }
+ var btns=document.querySelectorAll("[data-flow-page]");for(i=0;i<btns.length;i++){var p=btns[i].getAttribute("data-flow-page");btns[i].disabled=!flowUnlocked(p);btns[i].classList.toggle("locked",!flowUnlocked(p));btns[i].classList.toggle("active",p===page);}
+ var st=document.getElementById("flow-page-status");if(st)st.textContent=flowStatusText();
+ flowUpdateProceedButtons();
+ if(doScroll){var target=page==="config"?document.getElementById("flow-config-zone"):(flowPhaseNodes(flowAgreementNumber(),page)[0]||document.getElementById("flow-page-card"));if(target){setTimeout(function(){try{target.scrollIntoView({behavior:"auto",block:"start"});}catch(e){}},20);}}
+}
+function flowUpdateNavigation(){
+ var card=document.getElementById("flow-page-card");if(card)card.style.display=flowAgreementNumber()!==null?"block":"none";
+ if(FLOW_PAGE!=="config"&&!flowUnlocked(FLOW_PAGE))FLOW_PAGE=flowRecommendedPage();
+ flowApplyPage(FLOW_PAGE,false);
+}
+function flowEnsureProceedButtons(){
+ var specs=[
+  [1,"a1f1","f2","Procedi alla Fase II"],[1,"a1f2","f3","Procedi alla Fase III"],
+  [2,"a2f1","f2","Procedi alla Fase II"],[2,"a2f2","f3","Procedi alla Fase III"],
+  [3,"a3f1","f2","Procedi alla Fase II"],[3,"a3f2","f3","Procedi alla Fase III"],
+  [4,"a4f1","f2","Procedi alla Fase II"],[4,"a4f2","f3","Procedi alla Fase III"]
+ ];
+ specs.forEach(function(sp){var ph=document.querySelector('[data-phase="'+sp[1]+'"]');if(!ph||ph.querySelector('.flow-proceed-wrap[data-flow-for="'+sp[1]+'"]'))return;var wrap=document.createElement("div");wrap.className="flow-proceed-wrap";wrap.setAttribute("data-flow-for",sp[1]);var b=document.createElement("button");b.type="button";b.className="flow-proceed-btn";b.textContent=sp[3];b.setAttribute("data-flow-to",sp[2]);b.setAttribute("data-flow-agreement",String(sp[0]));b.setAttribute("data-session-control","1");b.addEventListener("click",function(){if(!b.disabled)flowApplyPage(sp[2],true);});wrap.appendChild(b);ph.appendChild(wrap);});
+}
+function flowUpdateProceedButtons(){
+ var bs=document.querySelectorAll(".flow-proceed-btn"),n=flowAgreementNumber();for(var i=0;i<bs.length;i++){var b=bs[i],agreement=Number(b.getAttribute("data-flow-agreement")),to=b.getAttribute("data-flow-to");b.style.display=agreement===n?"inline-block":"none";b.disabled=agreement!==n||!flowUnlocked(to);}
+}
+function flowFirstMissingSetupTarget(){
+ if(accordoAssigned===null){var linked=document.getElementById("accordoLinkedToggle");if(linked&&linked.checked)return document.querySelector('.tab-btn:not(.locked)')||linked;return document.getElementById("accordoRollVal")||document.getElementById("flow-config-agreement");}
+ var z=getZona(),uk=document.getElementById("a4ukToggle");if(!z&&!(accordoAssigned===4&&uk&&uk.checked)){var zr=document.querySelector('input[name="zona"]');return zr||uk||document.getElementById("flow-config-zone");}
+ if(diplomatIds.length<1||diplomatIds.length+ndIds.length<2)return document.querySelector('[data-action="addDip"]')||document.getElementById("flow-config-participants");
+ var sets=[[diplomatIds,"dip"],[ndIds,"nd"]];
+ for(var si=0;si<sets.length;si++){var ids=sets[si][0],kind=sets[si][1],fields=requiredFieldsForAgreement(accordoAssigned,kind);for(var ii=0;ii<ids.length;ii++){for(var fi=0;fi<fields.length;fi++){var suffix=fields[fi],id=(kind==="dip"?"dip":"nd")+suffix+"_"+ids[ii],node=document.getElementById(id);if(!node)continue;var val=String(node.value||"").trim();if(val==="")return node;}if(kind==="nd"){var cat=document.getElementById("ndCategoria_"+ids[ii]),aff=document.getElementById("ndCategoriaAffine_"+ids[ii]);if(cat&&cat.value==="Intracciabile"&&aff&&!aff.value)return aff;}}}
+ return document.getElementById("flow-page-card")||document.getElementById("flow-config-guide");
+}
+function flowVisible(node){if(!node)return false;var p=node;while(p&&p!==document.body){var st=window.getComputedStyle?window.getComputedStyle(p):null;if(p.hidden||(st&&(st.display==="none"||st.visibility==="hidden")))return false;p=p.parentElement;}return true;}
+function flowFirstIncompleteIn(nodes){
+ for(var ni=0;ni<nodes.length;ni++){
+  var root=nodes[ni],controls=root.querySelectorAll("input,select,textarea");
+  for(var i=0;i<controls.length;i++){var c=controls[i];if(c.disabled||!flowVisible(c))continue;var typ=(c.type||"").toLowerCase();if(typ==="hidden"||typ==="button"||typ==="submit")continue;if(typ==="checkbox")continue;if(typ==="radio"){var name=c.name;if(name){var checked=root.querySelector('input[type="radio"][name="'+name+'"]:checked');if(!checked)return c;}continue;}if(String(c.value||"").trim()==="")return c;}
+ }
+ return nodes.length?nodes[0]:document.getElementById("flow-page-card");
+}
+function flowResumeTarget(readonly){
+ var page=flowRecommendedPage();flowApplyPage(page,false);
+ if(page==="config")return readonly?(document.getElementById("flow-config-guide")||document.getElementById("flow-config-zone")):flowFirstMissingSetupTarget();
+ var n=flowAgreementNumber(),nodes=flowPhaseNodes(n,page);
+ if(readonly)return nodes.length?nodes[0]:document.getElementById("flow-page-card");
+ if(n===2&&page==="f1"&&state.a2.f1failed&&!state.a2.f1passed){var tog=document.getElementById("a2f1secondToggle");if(tog&&!tog.checked)return tog;}
+ return flowFirstIncompleteIn(nodes);
+}
+function flowScrollToResumeTarget(target){
+ if(!target||FLOW_USER_INTERACTED)return;
+ try{target.scrollIntoView({behavior:"auto",block:"center",inline:"nearest"});}catch(e){try{target.scrollIntoView();}catch(e2){}}
+ if(target.focus&&/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(target.tagName||"")){setTimeout(function(){if(FLOW_USER_INTERACTED)return;try{target.focus();}catch(e){}},25);}
+}
+function scheduleSmartAgreementResume(readonly){
+ var token=++FLOW_RESUME_TOKEN;FLOW_USER_INTERACTED=false;
+ setTimeout(function(){requestAnimationFrame(function(){if(token!==FLOW_RESUME_TOKEN||FLOW_USER_INTERACTED)return;refreshAll();var target=flowResumeTarget(!!readonly);flowScrollToResumeTarget(target);});},180);
+}
+function cancelSmartAgreementResume(){FLOW_USER_INTERACTED=true;FLOW_RESUME_TOKEN++;}
+function flowWireNavigation(){
+ flowEnsureProceedButtons();
+ var nav=document.getElementById("flow-page-nav");if(nav&&!nav.getAttribute("data-wired")){nav.setAttribute("data-wired","1");nav.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-flow-page]"):null;if(!b||b.disabled)return;FLOW_USER_INTERACTED=true;flowApplyPage(b.getAttribute("data-flow-page"),true);});}
+ document.addEventListener("mousedown",function(e){var b=e.target&&e.target.closest?e.target.closest(".dice-cmd"):null;if(b)e.preventDefault();},true);
+ flowUpdateNavigation();
+}
+window.RA_FLOW={resume:scheduleSmartAgreementResume,cancelResume:cancelSmartAgreementResume,update:flowUpdateNavigation,apply:flowApplyPage,recommended:flowRecommendedPage};
 /* =================== TABS =================== */
 var accordoRinunceLeft = 3;
 var accordoAssigned = null;
@@ -4344,7 +4520,9 @@ refreshNDPickers();
 refreshLeaderSelects();
 refreshDipTargetPickers();
 a4RefreshZoneNote();
-if(!refreshSetupStatus()){ return; }
+var setupOk=refreshSetupStatus();
+if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
+if(!setupOk){ return; }
 refreshA1F1();
 refreshA1F2();
 refreshA1F3();
@@ -4358,6 +4536,7 @@ refreshA3F3();
 refreshA4F1();
 refreshA4F2();
 refreshA4F3();
+if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
 }
 /* =================== DEPENDENCY INVALIDATION =================== */
 function clearRollInputsMatching(prefixes){
@@ -4449,6 +4628,7 @@ if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT"){ invalidateDow
 wireAll();
 addDip();
 addNd();
+if(typeof flowWireNavigation==="function"){flowWireNavigation();}
 refreshAll();
 })();
 </script>
@@ -4574,8 +4754,9 @@ function openSessionDoc(id,data){
   CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;SESSION_ACTIONS=Array.isArray(data.actionLog)?data.actionLog.slice():[];SESSION_READONLY=!sessionCanEdit(data);
   if(sq('accordi-session-home'))sq('accordi-session-home').style.display='none';if(workspace())workspace().style.display='block';
   replayActions(SESSION_ACTIONS);
+  if(typeof refreshAll==='function')refreshAll();
   setWorkspaceReadOnly(SESSION_READONLY);updateToolbar();setStatus('save-status',SESSION_READONLY?'Modalità sola lettura.':'Accordo caricato · autosalvataggio attivo',SESSION_READONLY?'':'ok');
-  setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},20);
+  if(window.RA_FLOW&&typeof window.RA_FLOW.resume==='function')window.RA_FLOW.resume(SESSION_READONLY);
 }
 function loadSession(id){setStatus('session-home-msg','Caricamento Accordo…','');return FB.db.collection(SESSION_COLLECTION).doc(id).get().then(function(doc){if(!doc.exists)throw new Error('L’Accordo non esiste più.');openSessionDoc(doc.id,doc.data());setStatus('session-home-msg','','');}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile aprire l’Accordo: '+err.message,'bad');if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';});}
 function loadSessionList(){
@@ -4598,6 +4779,7 @@ function deleteCurrentSession(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SES
 function backToDashboard(){var done=Promise.resolve();if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA))done=saveNow();done.finally(function(){navigateToDashboard();});}
 function setupControls(){
   attachRecorder();
+  var w=workspace();if(w){['pointerdown','keydown','input','change'].forEach(function(ev){w.addEventListener(ev,function(){if(!RESTORING_SESSION&&window.RA_FLOW&&typeof window.RA_FLOW.cancelResume==='function'){window.RA_FLOW.cancelResume();}},true);});}
   sq('btn-new-session').addEventListener(EVT,createSession);sq('new-session-pg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();createSession();}});sq('btn-refresh-sessions').addEventListener(EVT,loadSessionList);sq('btn-back-sessions').addEventListener(EVT,backToDashboard);sq('btn-delete-session').addEventListener(EVT,openDeleteModal);sq('btn-cancel-delete').addEventListener(EVT,closeDeleteModal);sq('delete-session-check').addEventListener('change',function(){sq('btn-confirm-delete').disabled=!sq('delete-session-check').checked;});sq('btn-confirm-delete').addEventListener(EVT,deleteCurrentSession);sq('delete-session-modal').addEventListener(EVT,function(e){if(e.target===sq('delete-session-modal'))closeDeleteModal();});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&CURRENT_SESSION&&!SESSION_READONLY)saveNow();});window.addEventListener('pagehide',function(){if(CURRENT_SESSION&&!SESSION_READONLY)saveNow();});
 }
