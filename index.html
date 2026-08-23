@@ -1078,7 +1078,18 @@ header.masthead .seal i{
 .session-modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 @media(max-width:700px){.session-shell{padding:18px 14px 60px}.session-home-card,.session-toolbar{padding:18px 16px}.session-create-row{grid-template-columns:1fr}.session-item-row{align-items:flex-start;flex-direction:column}.session-item-row .session-btn{width:100%}.session-toolbar-actions{width:100%}.session-toolbar-actions button{flex:1 1 auto}}
 
+
+/* Revisione v10: testata globale sempre visibile anche nell'elenco sessioni */
+.accordi-global-masthead{width:100%;margin:0 0 26px;overflow:visible;}
+.accordi-global-masthead .masthead{overflow:visible;text-align:center;}
+.accordi-global-masthead .seal{display:inline-flex !important;}
+.accordi-global-masthead .title{font-size:clamp(2.35rem,5vw,3.35rem) !important;line-height:1.08;text-align:center;margin:.25em 0 .16em !important;}
+
 </style>
+
+<div class="foglio accordi-global-masthead" style="background:#2B1735"><header class="masthead"><div class="seal"><i class="fa-solid fa-earth-americas"></i></div><div class="eyebrow">Ufficio Affari Diplomatici</div><h1 class="title" style="font-family:magic">Ricerca Accordi</h1>
+<p class="subtitle">Per PG Diplomatici (e Non Diplomatici in soccorso)</p>
+</header></div>
 
 <div id="accordi-session-home" class="session-shell" style="display:none;">
   <div class="session-home-card">
@@ -1087,7 +1098,7 @@ header.masthead .seal i{
     <div class="session-warning"><b>Le sessioni in corso sono personali.</b> Puoi visualizzare quelle degli altri giocatori, ma non modificarle o concluderle. Solo chi ha creato la sessione e il Narratore possono intervenire sui suoi dati.</div>
     <div id="firebase-auth-status" class="session-status">Connessione a Firebase…</div>
     <div class="session-create-row">
-      <div class="field"><label>Nome del PG Diplomatico principale</label><input id="new-session-pg" type="text" placeholder="Es. Coral" data-session-control="1"></div>
+      <div class="field"><label>Nome del PG Diplomatico principale</label><input id="new-session-pg" type="text" placeholder="Es. Percy Weasley" data-session-control="1"></div>
       <button class="session-btn" id="btn-new-session" type="button" data-session-control="1">Nuovo Accordo</button>
     </div>
     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -1113,9 +1124,6 @@ header.masthead .seal i{
   <div id="readonly-banner" class="readonly-banner"><b>Modalità sola lettura.</b> Questa sessione appartiene a un altro giocatore: puoi consultarla, ma non modificarla o concluderla.</div>
   <div id="save-status" class="session-status"></div>
 </div>
-<div class="foglio" style="background:#2B1735"><header class="masthead"><div class="seal"><i class="fa-solid fa-earth-americas"></i></div><h1 class="title" style="font-size:40px; font-family:magic">• Ricerca Accordi •</h1>
-<p class="subtitle">Per PG Diplomatici (e Non Diplomatici in soccorso)</p>
-</header> </div>
 <!-- STEP 1: ZONA -->
 <div class="filecard flow-config-card" id="flow-config-zone">
 <div class="section-label"><span class="step-num" style="margin-right:2px;">1</span>
