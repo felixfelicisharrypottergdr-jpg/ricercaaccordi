@@ -1,3 +1,4 @@
+<!-- Revisione v12: bonus multipli Oggetti/Conoscenze, separazione Parametro/prova, Fatica/usi automatici, validazione numerica; Firebase invariato -->
 <!-- Revisione v11: quote semplificati — niente elenchi ridondanti quando il risultato coincide con il dado o con un bonus diretto -->
 <!-- Revisione v9: standard completo Ricerche — riepilogo iniziale copiabile, difficoltà complessiva sulle 3 Fasi, copia stabile, grammatica dadi, navigazione Configurazione/Riepilogo/Fasi e ripresa intelligente -->
 <!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
@@ -1086,6 +1087,110 @@ header.masthead .seal i{
 .accordi-global-masthead .seal{display:inline-flex !important;}
 .accordi-global-masthead .title{font-size:clamp(2.35rem,5vw,3.35rem) !important;line-height:1.08;text-align:center;margin:.25em 0 .16em !important;}
 
+
+/* ===== BONUS MULTIPLI / CAMPI NUMERICI — Revisione v12 ===== */
+.number-only-hint{
+  display:block;
+  margin-top:5px;
+  color:var(--text-soft);
+  font-size:11px;
+  line-height:1.35;
+}
+.bonus-manager{
+  width:100%;
+  margin:14px 0 2px;
+  padding:14px 16px;
+  border:1px solid rgba(112,66,122,.22);
+  border-radius:9px;
+  background:rgba(112,66,122,.045);
+}
+.bonus-manager-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.bonus-manager-title{
+  font-family:var(--serif);
+  color:var(--seal);
+  font-size:1rem;
+  font-weight:700;
+}
+.bonus-manager-help{
+  width:100%;
+  margin:0 0 8px;
+  color:var(--text-soft);
+  font-size:13px;
+  line-height:1.5;
+}
+.bonus-rows{display:flex;flex-direction:column;gap:10px;}
+.bonus-row{
+  position:relative;
+  padding:13px;
+  border:1px solid #CDBD9F;
+  border-radius:8px;
+  background:#FBF5E8;
+}
+.bonus-row-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(120px,1fr));
+  gap:10px 12px;
+  align-items:end;
+}
+.bonus-row .field label{font-size:12px;margin-bottom:5px;}
+.bonus-row.bonus-invalid{border-color:var(--fail);background:rgba(138,47,47,.05);}
+.bonus-row .field input,.bonus-row .field select{min-height:42px;padding:8px 10px;font-size:14px;}
+.bonus-row-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+.bonus-active{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:var(--seal);
+  font-size:13px;
+  font-weight:700;
+  margin-right:auto;
+}
+.bonus-active input{width:17px;height:17px;min-height:0;}
+.bonus-applied-summary{
+  margin-top:12px;
+  padding:10px 12px;
+  border-left:4px solid var(--seal);
+  border-radius:7px;
+  background:rgba(112,66,122,.07);
+  color:var(--text-dark);
+  font-size:13px;
+  line-height:1.6;
+}
+.bonus-applied-line{margin:3px 0;}
+.final-effects-box{
+  margin-top:14px;
+  padding:12px 14px;
+  border:1px solid rgba(220,200,169,.35);
+  border-left:4px solid var(--brass-light);
+  border-radius:8px;
+  background:rgba(244,233,212,.07);
+  color:var(--parchment-2);
+  font-size:14px;
+  line-height:1.6;
+}
+.final-effects-box b{color:var(--brass-light);}
+.effective-param-note{
+  margin-top:10px;
+  color:var(--text-soft);
+  font-size:12px;
+  line-height:1.5;
+}
+@media(max-width:900px){.bonus-row-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:620px){.bonus-row-grid{grid-template-columns:1fr;}}
+
 </style>
 
 <div class="foglio accordi-global-masthead" style="background:#2B1735"><header class="masthead"><div class="seal"><i class="fa-solid fa-earth-americas"></i></div><h1 class="title" style="font-family:magic">• Ricerca Accordi •</h1>
@@ -1220,9 +1325,7 @@ target="_blank">Apri il Pozionario</a>.</div>
 <div class="ndnote"><b>Oggetti dalla Borsa.</b> In tutte e quattro le Missioni compaiono
 selettori per gli oggetti del prezzario che possono modificare direttamente la prova in corso
 (oltre all'Amuleto della Fortuna, che concede possibilità/facce). La pagina applica il bonus,
-ma <b>non scala automaticamente gli usi dalla Borsa</b>: ricordati di consumare l'uso
-previsto. È presente anche “Altro oggetto applicabile” per eventuali effetti situazionali
-coerenti con il regolamento.</div>
+e ora permette di registrare <b>Fatica, usi disponibili e usi consumati</b>, calcolando automaticamente gli usi residui. È presente anche “Altro oggetto applicabile” per eventuali effetti situazionali coerenti con il regolamento.</div>
 <div class="ndnote"><b>Modificatore da una precedente Coordinazione.</b> Se il precedente Accordo di Coordinazione nella <u>stessa Zona</u> ha prodotto +5 o −5, registralo qui. Nelle prove a soglia modifica la soglia; nei round e nelle prove contrapposte modifica il risultato del Diplomatico, mai quello dell'Avversario o dell'opinione pubblica.
 <div class="assignment-grid">
 <div class="field"><label>Modificatore precedente</label><select id="prevCoordMod"><option value="0">Nessuno (0)</option><option value="5">Successo precedente (+5)</option><option value="-5">Fallimento precedente (−5)</option></select></div>
@@ -1262,7 +1365,7 @@ coerenti con il regolamento.</div>
 <div class="tab-panel active" id="panel-a1">
 <div class="filecard">
 <div class="section-label">01 · Trattativa e Mediazione</div>
-<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti dalla Borsa possono invece modificare i Parametri o la prova quando il loro effetto è realmente applicabile; gli usi degli Oggetti vanno consumati manualmente.</div>
+<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
 <div class="phase" data-phase="a1f1">
 <div class="phase-head"><span class="phase-num">I</span><span
 class="phase-title">Preparazione</span></div>
@@ -1309,9 +1412,7 @@ azzera Accordo 1</button></div>
 <div class="filecard">
 <div class="section-label">02 · Networking e Influenza Sociale</div>
 <div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore.
-Pozioni e Oggetti dalla Borsa possono invece modificare i Parametri o la prova quando il
-loro effetto è realmente applicabile; gli usi degli Oggetti vanno consumati
-manualmente.</div>
+Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
 <div class="phase" data-phase="a2f1">
 <div class="phase-head"><span class="phase-num">I</span><span
 class="phase-title">Attirare l'attenzione</span></div>
@@ -1369,7 +1470,7 @@ azzera Accordo 2</button></div>
 <div class="tab-panel" id="panel-a3">
 <div class="filecard">
 <div class="section-label">03 · Gestione Scandali</div>
-<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti dalla Borsa possono invece modificare i Parametri o la prova quando il loro effetto è realmente applicabile; gli usi degli Oggetti vanno consumati manualmente.</div>
+<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
 <div class="phase" data-phase="a3f0">
 <div class="phase-head"><span class="phase-num">0</span><span
 class="phase-title">Gravità dello scandalo</span></div>
@@ -1443,7 +1544,7 @@ azzera Accordo 3</button></div>
 <div class="ndnote">
 <b>Regole generali.</b> In questo Accordo <b>Conoscenze e Pozioni sono solo di
 colore</b> e non modificano i calcoli. Gli <b>Oggetti dalla Borsa</b> possono invece fornire
-bonus, consumandone manualmente gli utilizzi.
+bonus; il tool distingue bonus ai Parametri e possibilità, e registra automaticamente Fatica, usi consumati e usi residui.
 </div>
 <div class="potion-box"
 style="border-left-color:var(--brass);background:rgba(181,155,120,.14);">
@@ -1524,8 +1625,10 @@ var CLICK = "cli" + "ck";
 function num(id){
 var elm = document.getElementById(id);
 if(!elm){ return 0; }
-var v = parseFloat(elm.value);
-if(isNaN(v)){ return 0; }
+var raw = String(elm.value == null ? "" : elm.value).trim();
+if(!/^-?\d+$/.test(raw)){ return 0; }
+var v = Number(raw);
+if(!Number.isFinite(v)){ return 0; }
 return v;
 }
 function hasVal(id){
@@ -1537,8 +1640,10 @@ return true;
 function validNonNegativeNumber(id){
 var elm = document.getElementById(id);
 if(!elm || elm.value === ""){ return false; }
-var v = Number(elm.value);
-return Number.isFinite(v) && v >= 0;
+var raw = String(elm.value).trim();
+if(!/^\d+$/.test(raw)){ return false; }
+var v = Number(raw);
+return Number.isFinite(v) && v >= 0 && Math.floor(v) === v;
 }
 function validChoice(id){
 var elm = document.getElementById(id);
@@ -1645,8 +1750,10 @@ if(e){ e.value = value; }
 function rollState(id, faces){
 var e = document.getElementById(id);
 if(!e || e.value === ""){ return {status:"empty", value:null}; }
-var v = parseFloat(e.value);
-if(isNaN(v) || Math.floor(v) !== v || v < 1 || v > faces){ return {status:"invalid", value:v}; }
+var raw = String(e.value).trim();
+if(!/^\d+$/.test(raw)){ return {status:"invalid", value:e.value}; }
+var v = Number(raw);
+if(!Number.isFinite(v) || Math.floor(v) !== v || v < 1 || v > faces){ return {status:"invalid", value:v}; }
 return {status:"ok", value:v};
 }
 function rollErrorHTML(faces){
@@ -1688,14 +1795,18 @@ return h;
 }
 function objectBoxHTML(selectId, customId, context, allowFortuna){
 return ''
-+ '<div class="object-box">'
++ '<div class="object-box" data-object-select="' + selectId + '" data-object-custom="' + customId + '" data-object-context="' + context + '">'
 + '<div class="field"><label>Oggetto dalla Borsa</label><select id="' + selectId + '">' +
 objectOptionsHTML(context, allowFortuna) + '</select></div>'
-+ '<div class="field" id="' + customId + '_row" style="display:none;"><label>Bonus dell\'oggetto</label><input type="number" id="' + customId + '" min="0" value="0"></div>'
-+ '<div class="object-help">Il bonus viene calcolato nella prova, ma l\'uso <b>non viene sottratto automaticamente dalla Borsa</b>. “Altro oggetto” va usato solo se il suo effetto OFF è realmente applicabile a questa azione.</div>'
++ '<div class="field" id="' + customId + '_row" style="display:none;"><label>Bonus dell\'oggetto</label><input type="number" id="' + customId + '" min="0" step="1" value="0"></div>'
++ builtInMetaHTML(selectId)
++ '<div class="object-help">L\'effetto selezionato viene applicato ai calcoli. I bonus al <b>Parametro</b> vengono applicati prima di divisioni/conversioni; le <b>possibilità/bonus al tiro</b> vengono aggiunte dopo. Registra qui anche Fatica e usi consumati.</div>'
++ bonusManagerHTML(selectId + "_extra", context, "phase", "Altri bonus da Oggetti/Conoscenze")
 + '</div>';
 }
 function refreshObjectSelectForContext(selectId, customId, context, allowFortuna){
+var manager=document.getElementById(selectId+"_extra_manager");
+if(manager){manager.setAttribute("data-bonus-context",context||"generic");}
 var sel = document.getElementById(selectId);
 if(!sel){ return; }
 var current = sel.value;
@@ -1707,34 +1818,51 @@ if(found){ sel.value = current; } else { sel.value = "none"; }
 var row = document.getElementById(customId + "_row");
 if(row){ row.style.display = sel.value === "custom" ? "block" : "none"; }
 }
-function objectBonus(selectId, customId, dip, context){
+function baseObjectEffect(selectId, customId, dip, context){
 var sel = document.getElementById(selectId);
-if(!sel){ return 0; }
+var out = {param:0,roll:0,label:""};
+if(!sel){ return out; }
+var maxUses = Math.max(0,Math.floor(num(selectId + "_maxuses")));
+var usedUses = Math.max(0,Math.floor(num(selectId + "_used")));
+if(maxUses > 0 && (usedUses < 1 || usedUses > maxUses)){ return out; }
 var v = sel.value;
-var b = 0;
-if(v === "manuale_acume_2" || v === "astronomico_2"){ b = context === "acume" ? 2 : 0; }
-else if(v === "manuale_acume_1" || v === "astronomico_1"){ b = context === "acume" ? 1 :
-0; }
-else if(v === "manuale_volonta_2"){ b = context === "volonta" ? 2 : 0; }
-else if(v === "manuale_volonta_1"){ b = context === "volonta" ? 1 : 0; }
-else if(v === "manuale_empatia_2"){ b = context === "empatia" ? 2 : 0; }
-else if(v === "manuale_empatia_1"){ b = context === "empatia" ? 1 : 0; }
-else if(v === "manuale_percezione_2"){ b = context === "percezione" ? 2 : 0; }
-else if(v === "manuale_percezione_1"){ b = context === "percezione" ? 1 : 0; }
-else if(v === "sblorb_33"){ b = context === "volonta" ? Math.floor((dip ? dip.volonta : 0) * 33
-/ 100) : 0; }
-else if(v === "sblorb_10"){ b = context === "volonta" ? Math.floor((dip ? dip.volonta : 0) * 10
-/ 100) : 0; }
-else if(v === "sblorb_66"){ b = context === "volonta" ? Math.floor((dip ? dip.volonta : 0) * 66
-/ 100) : 0; }
-else if(v.indexOf("fortuna_") === 0){ b = parseInt(v.replace("fortuna_",""),10) || 0; }
+if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
+if(v === "manuale_acume_2" || v === "astronomico_2"){ if(context === "acume"){ out.param = 2; } }
+else if(v === "manuale_acume_1" || v === "astronomico_1"){ if(context === "acume"){ out.param = 1; } }
+else if(v === "manuale_volonta_2"){ if(context === "volonta"){ out.param = 2; } }
+else if(v === "manuale_volonta_1"){ if(context === "volonta"){ out.param = 1; } }
+else if(v === "manuale_empatia_2"){ if(context === "empatia"){ out.param = 2; } }
+else if(v === "manuale_empatia_1"){ if(context === "empatia"){ out.param = 1; } }
+else if(v === "manuale_percezione_2"){ if(context === "percezione"){ out.param = 2; } }
+else if(v === "manuale_percezione_1"){ if(context === "percezione"){ out.param = 1; } }
+else if(v === "sblorb_33"){ if(context === "volonta"){ out.param = Math.floor((dip ? dip.volonta : 0) * 33 / 100); } }
+else if(v === "sblorb_10"){ if(context === "volonta"){ out.param = Math.floor((dip ? dip.volonta : 0) * 10 / 100); } }
+else if(v === "sblorb_66"){ if(context === "volonta"){ out.param = Math.floor((dip ? dip.volonta : 0) * 66 / 100); } }
+else if(v.indexOf("fortuna_") === 0){ out.roll = parseInt(v.replace("fortuna_",""),10) || 0; }
 else if(v === "custom"){
-b = num(customId);
+var b = num(customId);
 if(b < 0){ b = 0; }
+if(context === "generic"){ out.roll = b; }
+else { out.param = b; }
 }
 var row = document.getElementById(customId + "_row");
 if(row){ row.style.display = v === "custom" ? "block" : "none"; }
-return b;
+return out;
+}
+function objectEffectTotals(selectId, customId, dip, context){
+var base = baseObjectEffect(selectId, customId, dip, context);
+var extra = bonusManagerEffect(selectId + "_extra", context);
+return {
+param: base.param + bonusParamFor(extra, context),
+roll: base.roll + extra.roll,
+fatigue: extra.fatigue,
+entries: extra.entries,
+label: base.label
+};
+}
+function objectBonus(selectId, customId, dip, context){
+var e = objectEffectTotals(selectId, customId, dip, context);
+return e.param + e.roll;
 }
 function objectLabel(selectId){
 var sel = document.getElementById(selectId);
@@ -1778,26 +1906,31 @@ return h;
 }
 function socialObjectBoxHTML(prefix, role, allowFortuna, mode){
 var notaFortuna = mode === "f3"
-? "In Fase III l\'Amuleto della Fortuna aumenta le facce del dado Volontà."
-: "Nelle prove a soglia l\'Amuleto della Fortuna aggiunge possibilità alla soglia.";
+? "In Fase III l\'Amuleto della Fortuna aggiunge possibilità <b>dopo</b> la determinazione del dado Volontà."
+: "Nelle prove a soglia l\'Amuleto della Fortuna aggiunge possibilità direttamente alla prova.";
 return ''
-+ '<div class="object-box">'
++ '<div class="object-box" data-social-prefix="' + prefix + '" data-social-mode="' + mode + '">'
 + '<div class="field"><label>Oggetto dalla Borsa</label><select id="' + prefix + '_sel">' +
 socialObjectOptionsHTML(role,allowFortuna) + '</select></div>'
 + '<div class="grid" id="' + prefix + '_custom" style="display:none;">'
 + '<div class="field"><label>Modifica Volontà</label><input type="number" id="' + prefix +
-'_vol" value="0"></div>'
+'_vol" step="1" value="0"></div>'
 + '<div class="field"><label>Modifica Dialettica</label><input type="number" id="' + prefix +
-'_dial" value="0"></div>'
-+ '<div class="field"><label>Bonus fisso alla prova/risultato</label><input type="number" id="' + prefix + '_flat" value="0"></div>'
+'_dial" step="1" value="0"></div>'
++ '<div class="field"><label>Bonus fisso alla prova/risultato</label><input type="number" id="' + prefix + '_flat" step="1" value="0"></div>'
 + '</div>'
-+ '<div class="object-help">Il bonus viene calcolato qui, ma gli usi vanno consumati manualmente dalla Borsa. ' + notaFortuna + ' “Altro oggetto” serve per effetti situazionali non elencati.</div>'
++ builtInMetaHTML(prefix + "_sel")
++ '<div class="object-help">Il bonus viene calcolato qui. ' + notaFortuna + ' Registra anche Fatica e usi consumati.</div>'
++ bonusManagerHTML(prefix + "_extra", mode === "f3" ? "volonta" : "generic", "phase", "Altri bonus da Oggetti/Conoscenze")
 + '</div>';
 }
 function socialObjectEffect(prefix, pg, mode){
 var sel = document.getElementById(prefix + "_sel");
-var out = {vol:0,dial:0,flat:0,label:""};
+var out = {vol:0,dial:0,flat:0,roll:0,label:"",fatigue:0,entries:[]};
 if(!sel){ return out; }
+var maxUses = Math.max(0,Math.floor(num(prefix + "_sel_maxuses")));
+var usedUses = Math.max(0,Math.floor(num(prefix + "_sel_used")));
+if(maxUses > 0 && (usedUses < 1 || usedUses > maxUses)){ return out; }
 var v = sel.value;
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_volonta_2"){ out.vol = 2; }
@@ -1816,9 +1949,7 @@ out.vol = -Math.floor((pg ? pg.volonta : 0) * 20 / 100);
 out.dial = Math.floor((pg ? pg.dialettica : 0) * 20 / 100);
 }
 else if(v.indexOf("fortuna_") === 0){
-var f = parseInt(v.replace("fortuna_",""),10) || 0;
-if(mode === "f3"){ out.vol = f; }
-else { out.flat = f; }
+out.roll = parseInt(v.replace("fortuna_",""),10) || 0;
 }
 else if(v === "custom"){
 out.vol = num(prefix + "_vol");
@@ -1827,11 +1958,328 @@ out.flat = num(prefix + "_flat");
 }
 var custom = document.getElementById(prefix + "_custom");
 if(custom){ custom.style.display = v === "custom" ? "grid" : "none"; }
+var extra = bonusManagerEffect(prefix + "_extra", mode === "f3" ? "volonta" : "generic");
+out.vol += bonusParamFor(extra,"volonta");
+out.dial += bonusParamFor(extra,"dialettica");
+if(mode === "f3"){ out.roll += extra.roll; }
+else { out.flat += extra.roll; }
+out.fatigue += extra.fatigue;
+out.entries = out.entries.concat(extra.entries || []);
 return out;
 }
 function socialThresholdBonus(effect){
 if(!effect){ return 0; }
-return effect.vol + effect.dial + effect.flat;
+return effect.vol + effect.dial + effect.flat + (effect.roll || 0);
+}
+
+/* =================== BONUS MULTIPLI / OGGETTI E CONOSCENZE =================== */
+function bonusPhaseLabel(prefix, scope){
+if(scope === "general"){ return "Generale / scheda personaggio"; }
+var p = String(prefix || "");
+var m = p.match(/a([1-4])f([0-3])/);
+if(m){ return "Accordo " + m[1] + " · Fase " + (m[2] === "0" ? "0" : ["","I","II","III"][parseInt(m[2],10)]); }
+if(p.indexOf("a1obj_") === 0 || p.indexOf("a1ndobj_") === 0){ return "Accordo 1 · Fase III"; }
+return "Fase corrente";
+}
+function bonusTargetOptions(context){
+var c = String(context || "generic");
+var opts = [
+["acume","Acume"],["volonta","Volontà"],["empatia","Empatia"],["dialettica","Dialettica"],
+["percezione","Percezione"],["popolarita","Popolarità"],["sapienze","Tot. Sapienze Magiche"],
+["persuasore","Lv. Persuasore"],["prestigio","Prestigio"],["paramRif","Parametro di riferimento"],
+["sapienzaAffine","Sapienza Magica Affine"],["sapienzeTotali","Totale Sapienze Magiche ND"],
+["prova","Prova / possibilità"]
+];
+var h = "";
+for(var i=0;i<opts.length;i++){
+var selected = (c === opts[i][0] || (c === "generic" && opts[i][0] === "prova")) ? ' selected' : '';
+h += '<option value="' + opts[i][0] + '"' + selected + '>' + opts[i][1] + '</option>';
+}
+return h;
+}
+function bonusManagerHTML(prefix, context, scope, title){
+var phase = bonusPhaseLabel(prefix,scope);
+var help = scope === "general"
+? "Inserisci qui soltanto bonus permanenti/generali ai Parametri. Verranno applicati una sola volta alla scheda del personaggio e poi usati da tutte le Fasi."
+: "Inserisci qui soltanto effetti specifici di questa Fase. I bonus al Parametro entrano prima di divisioni/conversioni; i bonus alla prova/possibilità entrano dopo.";
+return ''
++ '<div class="bonus-manager" id="' + prefix + '_manager" data-bonus-prefix="' + prefix + '" data-bonus-context="' + context + '" data-bonus-scope="' + scope + '" data-next-row="0">'
++ '<div class="bonus-manager-head"><span class="bonus-manager-title">' + (title || "Bonus da Oggetti/Conoscenze") + '</span>'
++ '<button type="button" class="add-btn" id="' + prefix + '_add" data-action="addBonusRow" data-prefix="' + prefix + '">+ Aggiungi bonus</button></div>'
++ '<p class="bonus-manager-help">' + help + '</p>'
++ '<div class="bonus-rows" id="' + prefix + '_rows"></div>'
++ '<div class="bonus-applied-summary" id="' + prefix + '_summary" style="display:none;"></div>'
++ '<input type="hidden" id="' + prefix + '_phaseDefault" value="' + phase.replace(/"/g,'&quot;') + '">'
++ '</div>';
+}
+function bonusRowHTML(prefix, idx, context, scope){
+var phase = bonusPhaseLabel(prefix,scope);
+var defaultKind = scope === "general" ? "parameter" : (context === "generic" ? "roll" : "parameter");
+var defaultUsed = scope === "general" ? 0 : 1;
+var defaultMax = scope === "general" ? 0 : 1;
+return ''
++ '<div class="bonus-row" id="' + prefix + '_row_' + idx + '" data-bonus-row="1" data-bonus-prefix="' + prefix + '">'
++ '<div class="bonus-row-grid">'
++ '<div class="field"><label>Fonte / oggetto / conoscenza</label><input type="text" id="' + prefix + '_source_' + idx + '" placeholder="Es. Magibiografia"></div>'
++ '<div class="field"><label>Valore del bonus</label><input type="number" step="1" id="' + prefix + '_value_' + idx + '" value="0"></div>'
++ '<div class="field"><label>Su cosa agisce</label><select id="' + prefix + '_target_' + idx + '">' + bonusTargetOptions(context) + '</select></div>'
++ '<div class="field"><label>Tipo di bonus</label><select id="' + prefix + '_kind_' + idx + '"'
++ (scope === "general" ? ' disabled' : '') + '><option value="parameter"' + (defaultKind==="parameter"?' selected':'') + '>Bonus al Parametro</option><option value="roll"' + (defaultKind==="roll"?' selected':'') + '>Bonus alla prova / possibilità</option></select></div>'
++ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + prefix + '_condition_' + idx + '" placeholder="Es. 100% Studente"></div>'
++ '<div class="field"><label>Fase</label><input type="text" id="' + prefix + '_phase_' + idx + '" value="' + phase.replace(/"/g,'&quot;') + '" readonly></div>'
++ '<div class="field"><label>Fatica per uso</label><input type="number" min="0" step="1" id="' + prefix + '_fatigue_' + idx + '" value="0"></div>'
++ '<div class="field"><label>Usi disponibili</label><input type="number" min="0" step="1" id="' + prefix + '_maxuses_' + idx + '" value="' + defaultMax + '"></div>'
++ '<div class="field"><label>Usi consumati</label><input type="number" min="0" step="1" id="' + prefix + '_used_' + idx + '" value="' + defaultUsed + '"></div>'
++ '</div>'
++ '<div class="bonus-row-actions"><label class="bonus-active"><input type="checkbox" id="' + prefix + '_active_' + idx + '" checked> Applica ai calcoli (condizione soddisfatta)</label>'
++ '<button type="button" class="remove-btn" id="' + prefix + '_remove_' + idx + '" data-action="removeBonusRow" data-prefix="' + prefix + '" data-row="' + idx + '">elimina</button></div>'
++ '</div>';
+}
+function addBonusRow(prefix){
+var manager = document.getElementById(prefix + "_manager");
+var rows = document.getElementById(prefix + "_rows");
+if(!manager || !rows){ return; }
+var idx = parseInt(manager.getAttribute("data-next-row") || "0",10);
+if(!Number.isFinite(idx) || idx < 0){ idx = 0; }
+manager.setAttribute("data-next-row", String(idx + 1));
+var context = manager.getAttribute("data-bonus-context") || "generic";
+var scope = manager.getAttribute("data-bonus-scope") || "phase";
+rows.insertAdjacentHTML("beforeend", bonusRowHTML(prefix,idx,context,scope));
+decorateNumericFields(rows);
+invalidateDownstreamForTarget({id:prefix});
+refreshAll();
+}
+function removeBonusRow(prefix, idx){
+var row = document.getElementById(prefix + "_row_" + idx);
+if(row && row.parentNode){ row.parentNode.removeChild(row); }
+invalidateDownstreamForTarget({id:prefix});
+refreshAll();
+}
+function bonusManagerEffect(prefix, context){
+var manager = document.getElementById(prefix + "_manager");
+var out = {params:{},roll:0,fatigue:0,entries:[],invalid:false};
+if(!manager){ return out; }
+var rows = manager.querySelectorAll('[data-bonus-row="1"]');
+for(var i=0;i<rows.length;i++){
+var row = rows[i], rid = row.id.replace(prefix + "_row_","");
+var active = document.getElementById(prefix + "_active_" + rid);
+var source = text(prefix + "_source_" + rid).trim();
+if(!active || !active.checked || !source){ row.classList.remove("bonus-invalid"); continue; }
+var valueNode = document.getElementById(prefix + "_value_" + rid);
+var rawValue = valueNode ? String(valueNode.value || "").trim() : "";
+var value = /^-?\d+$/.test(rawValue) ? Number(rawValue) : NaN;
+var fatigue = Math.max(0,Math.floor(num(prefix + "_fatigue_" + rid)));
+var maxUses = Math.max(0,Math.floor(num(prefix + "_maxuses_" + rid)));
+var used = Math.max(0,Math.floor(num(prefix + "_used_" + rid)));
+var invalid = !Number.isFinite(value) || Math.floor(value) !== value || (maxUses > 0 && used > maxUses);
+row.classList.toggle("bonus-invalid",invalid);
+if(invalid){ out.invalid = true; continue; }
+if(maxUses > 0 && used < 1){ continue; }
+var kindNode = document.getElementById(prefix + "_kind_" + rid);
+var kind = kindNode ? kindNode.value : "parameter";
+var target = text(prefix + "_target_" + rid) || context || "prova";
+if(kind === "roll" || target === "prova"){ out.roll += value; }
+else { out.params[target] = (out.params[target] || 0) + value; }
+out.fatigue += fatigue * used;
+out.entries.push({
+source:source,
+condition:text(prefix + "_condition_" + rid).trim(),
+value:value,
+kind:(kind === "roll" || target === "prova") ? "roll" : "parameter",
+target:target,
+phase:text(prefix + "_phase_" + rid) || bonusPhaseLabel(prefix,manager.getAttribute("data-bonus-scope")),
+fatigue:fatigue,
+maxUses:maxUses,
+used:used,
+remaining:maxUses > 0 ? Math.max(0,maxUses-used) : null
+});
+}
+return out;
+}
+function bonusParamFor(effect,target){
+if(!effect || !effect.params){ return 0; }
+return Number(effect.params[target] || 0);
+}
+function generalParamBonus(prefix,target){
+return bonusParamFor(bonusManagerEffect(prefix,target),target);
+}
+function bonusTargetLabel(target){
+var map={acume:"Acume",volonta:"Volontà",empatia:"Empatia",dialettica:"Dialettica",percezione:"Percezione",popolarita:"Popolarità",sapienze:"Tot. Sapienze Magiche",persuasore:"Persuasore",prestigio:"Prestigio",paramRif:"Parametro di riferimento",sapienzaAffine:"Sapienza Magica Affine",sapienzeTotali:"Totale Sapienze Magiche ND",prova:"Prova / possibilità"};
+return map[target] || target || "Parametro";
+}
+function bonusEntryLine(e){
+var sign = e.value >= 0 ? "+" : "";
+var effectText = e.valueText ? e.valueText : (sign + e.value + (e.kind === "roll" ? " POSSIBILITÀ/PROVA" : " " + bonusTargetLabel(e.target).toUpperCase()));
+var s = '<b>' + summaryEscape(e.source).toUpperCase() + '</b>';
+if(e.condition){ s += ' · ' + summaryEscape(e.condition).toUpperCase(); }
+s += ' → <b>' + effectText + '</b> · ' + summaryEscape(e.phase);
+if(e.fatigue){ s += ' · <b>-' + (e.fatigue * e.used) + ' FATICA</b>'; }
+if(e.maxUses > 0){ s += ' · ' + e.used + '/' + e.maxUses + ' USI → <b>' + e.remaining + ' RIMASTI</b>'; }
+return s;
+}
+function renderOneBonusManager(prefix){
+var manager = document.getElementById(prefix + "_manager");
+var box = document.getElementById(prefix + "_summary");
+if(!manager || !box){ return; }
+var eff = bonusManagerEffect(prefix,manager.getAttribute("data-bonus-context") || "generic");
+if(!eff.entries.length && !eff.invalid){ box.style.display="none"; box.innerHTML=""; return; }
+var h = [];
+for(var i=0;i<eff.entries.length;i++){ h.push('<div class="bonus-applied-line">' + bonusEntryLine(eff.entries[i]) + '</div>'); }
+if(eff.invalid){ h.push('<div class="roll-error">Un bonus non viene applicato: controlla valore e usi consumati (non possono superare gli usi disponibili).</div>'); }
+if(eff.fatigue){ h.push('<div class="bonus-applied-line"><b>Fatica totale di questi effetti: ' + eff.fatigue + '</b></div>'); }
+box.innerHTML = h.join("");
+box.style.display="block";
+}
+function builtInMetaHTML(selectId){
+return ''
++ '<div class="grid" id="' + selectId + '_meta" style="display:none;width:100%;margin-top:4px;">'
++ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + selectId + '_condition" placeholder="Es. 100% Studente"></div>'
++ '<div class="field"><label>Fatica per uso</label><input type="number" min="0" step="1" id="' + selectId + '_fatigue" value="0"></div>'
++ '<div class="field"><label>Usi disponibili</label><input type="number" min="0" step="1" id="' + selectId + '_maxuses" value="0"></div>'
++ '<div class="field"><label>Usi consumati</label><input type="number" min="0" step="1" id="' + selectId + '_used" value="0"></div>'
++ '</div>'
++ '<div class="bonus-applied-summary" id="' + selectId + '_builtinSummary" style="display:none;"></div>';
+}
+function syncBuiltInObjectMeta(selectId, forceDefaults){
+var sel=document.getElementById(selectId),meta=document.getElementById(selectId+"_meta");
+if(!sel || !meta){ return; }
+var active=sel.value && sel.value!=="none";
+meta.style.display=active?"grid":"none";
+if(!active){ return; }
+if(forceDefaults){
+var label=sel.selectedIndex>=0?sel.options[sel.selectedIndex].text:"";
+var consumable=/1 uso/i.test(label);
+var max=document.getElementById(selectId+"_maxuses"),used=document.getElementById(selectId+"_used");
+if(max){ max.value=consumable?"1":"0"; }
+if(used){ used.value=consumable?"1":"0"; }
+}
+}
+function renderBuiltInObjectSummary(selectId){
+var sel=document.getElementById(selectId),box=document.getElementById(selectId+"_builtinSummary");
+if(!sel||!box||!sel.value||sel.value==="none"||sel.selectedIndex<0){if(box){box.style.display="none";box.innerHTML="";}return;}
+var max=Math.max(0,Math.floor(num(selectId+"_maxuses"))),used=Math.max(0,Math.floor(num(selectId+"_used")));
+if(max>0&&used>max){box.style.display="block";box.innerHTML='<span class="roll-error">Effetto non applicato: gli usi consumati superano quelli disponibili.</span>';return;}
+if(max>0&&used<1){box.style.display="block";box.innerHTML='<span class="muted">Oggetto registrato ma non applicato: 0 usi consumati.</span>';return;}
+var cond=text(selectId+"_condition").trim(),fat=Math.max(0,Math.floor(num(selectId+"_fatigue")));
+var phase=bonusPhaseLabel(selectId,"phase");
+var line='<b>'+summaryEscape(sel.options[sel.selectedIndex].text).toUpperCase()+'</b>';
+if(cond){line+=' · '+summaryEscape(cond).toUpperCase();}
+line+=' · '+summaryEscape(phase);
+if(fat&&used){line+=' · <b>-'+(fat*used)+' FATICA</b>';}
+if(max>0){line+=' · '+used+'/'+max+' USI → <b>'+Math.max(0,max-used)+' RIMASTI</b>';}
+box.innerHTML=line;box.style.display="block";
+}
+function builtInObjectEntry(selectId, effect, context){
+var sel=document.getElementById(selectId);
+if(!sel || !sel.value || sel.value==="none" || sel.selectedIndex<0){ return null; }
+var used=Math.max(0,Math.floor(num(selectId+"_used"))),max=Math.max(0,Math.floor(num(selectId+"_maxuses")));
+if(max>0 && used>max){ return {invalid:true,source:sel.options[sel.selectedIndex].text}; }
+if(max>0 && used<1){ return null; }
+var paramValue=effect && Number(effect.param||0),rollValue=effect && Number(effect.roll||0);
+var value=rollValue || paramValue || 0,kind=rollValue?"roll":"parameter";
+return {source:sel.options[sel.selectedIndex].text,condition:text(selectId+"_condition").trim(),value:value,valueText:value===0?"EFFETTO PREDEFINITO":null,kind:kind,target:kind==="roll"?"prova":context,phase:bonusPhaseLabel(selectId,"phase"),fatigue:Math.max(0,Math.floor(num(selectId+"_fatigue"))),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null};
+}
+function allBonusManagers(){
+return document.querySelectorAll(".bonus-manager[data-bonus-prefix]");
+}
+function refreshBonusSummaries(){
+var managers=allBonusManagers();
+for(var i=0;i<managers.length;i++){ renderOneBonusManager(managers[i].getAttribute("data-bonus-prefix")); }
+var objects=document.querySelectorAll(".object-box[data-object-select]");
+for(i=0;i<objects.length;i++){ var os=objects[i].getAttribute("data-object-select"); syncBuiltInObjectMeta(os,false); renderBuiltInObjectSummary(os); }
+var socials=document.querySelectorAll(".object-box[data-social-prefix]");
+for(i=0;i<socials.length;i++){ var ss= socials[i].getAttribute("data-social-prefix")+"_sel"; syncBuiltInObjectMeta(ss,false); renderBuiltInObjectSummary(ss); }
+}
+function collectCurrentAgreementEffects(){
+var n=flowAgreementNumber(),entries=[],fatigue=0;
+var managers=allBonusManagers();
+for(var i=0;i<managers.length;i++){
+var prefix=managers[i].getAttribute("data-bonus-prefix")||"";
+var scope=managers[i].getAttribute("data-bonus-scope")||"phase";
+if(scope!=="general" && n && prefix.indexOf("a"+n)!==0){ continue; }
+var eff=bonusManagerEffect(prefix,managers[i].getAttribute("data-bonus-context")||"generic");
+entries=entries.concat(eff.entries||[]);fatigue+=eff.fatigue||0;
+}
+var objects=document.querySelectorAll(".object-box[data-object-select]");
+for(i=0;i<objects.length;i++){
+var sid=objects[i].getAttribute("data-object-select"),context=objects[i].getAttribute("data-object-context")||"generic";
+if(n && sid.indexOf("a"+n)!==0){continue;}
+var base=baseObjectEffect(sid,objects[i].getAttribute("data-object-custom"),null,context);
+var e=builtInObjectEntry(sid,base,context);
+if(e&&!e.invalid){entries.push(e);fatigue+=e.fatigue*e.used;}
+}
+var socials=document.querySelectorAll(".object-box[data-social-prefix]");
+for(i=0;i<socials.length;i++){
+var sp=socials[i].getAttribute("data-social-prefix"),sid2=sp+"_sel";
+if(n && sp.indexOf("a"+n)!==0){continue;}
+var sel=document.getElementById(sid2);
+if(sel&&sel.value&&sel.value!=="none"&&sel.selectedIndex>=0){
+var used=Math.max(0,Math.floor(num(sid2+"_used"))),max=Math.max(0,Math.floor(num(sid2+"_maxuses")));
+if(!(max>0&&used>max) && !(max>0&&used<1)){
+var src=sel.options[sel.selectedIndex].text;
+var entry={source:src,condition:text(sid2+"_condition").trim(),value:0,valueText:"EFFETTO PREDEFINITO",kind:"parameter",target:"prova",phase:bonusPhaseLabel(sp,"phase"),fatigue:Math.max(0,Math.floor(num(sid2+"_fatigue"))),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null};
+entries.push(entry);fatigue+=entry.fatigue*entry.used;
+}
+}
+}
+return {entries:entries,fatigue:fatigue};
+}
+function renderFinalEffectsSummary(){
+var n=flowAgreementNumber();
+if(!n){ return; }
+var boxId=n===1?"a1f3final":n===2?"a2f3final":n===3?"a3f3final":"a4f3aggregate";
+var host=document.getElementById(boxId);
+if(!host){ return; }
+var old=document.getElementById("final-effects-summary");
+if(old&&old.parentNode){old.parentNode.removeChild(old);}
+var data=collectCurrentAgreementEffects();
+if(!data.entries.length){ return; }
+var h='<div class="final-effects-box" id="final-effects-summary"><b>Oggetti/Conoscenze usati</b>';
+for(var i=0;i<data.entries.length;i++){h+='<div class="bonus-applied-line">'+bonusEntryLine(data.entries[i])+'</div>';}
+if(data.fatigue){h+='<div class="bonus-applied-line"><b>Fatica totale consumata dagli effetti: '+data.fatigue+'</b></div>';}
+h+='</div>';
+host.insertAdjacentHTML("beforeend",h);
+}
+function decorateNumericFields(root){
+root=root||document;
+var inputs=root.querySelectorAll?root.querySelectorAll('input[type="number"]'):[];
+for(var i=0;i<inputs.length;i++){
+var inp=inputs[i];
+inp.setAttribute("inputmode","numeric");
+if(!inp.getAttribute("step")){inp.setAttribute("step","1");}
+var field=inp.closest?inp.closest(".field"):null;
+if(field&&!field.querySelector(".number-only-hint")){
+var note=document.createElement("span");note.className="number-only-hint";note.textContent="Inserire solo numeri";field.appendChild(note);
+}
+}
+}
+function resetBuiltInMeta(selectId){
+var ids=[selectId+"_condition",selectId+"_fatigue",selectId+"_maxuses",selectId+"_used"];
+for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e){e.value=i===0?"":"0";}}
+var box=document.getElementById(selectId+"_builtinSummary");if(box){box.style.display="none";box.innerHTML="";}
+}
+function resetAgreementBonusMetadata(n){
+var panel=document.getElementById("panel-a"+n);
+if(!panel){return;}
+var managers=panel.querySelectorAll('.bonus-manager[data-bonus-scope="phase"]');
+for(var i=0;i<managers.length;i++){
+var prefix=managers[i].getAttribute("data-bonus-prefix"),rows=document.getElementById(prefix+"_rows"),sum=document.getElementById(prefix+"_summary");
+if(rows){rows.innerHTML="";}managers[i].setAttribute("data-next-row","0");if(sum){sum.style.display="none";sum.innerHTML="";}
+}
+var objects=panel.querySelectorAll(".object-box[data-object-select]");
+for(i=0;i<objects.length;i++){resetBuiltInMeta(objects[i].getAttribute("data-object-select"));}
+var socials=panel.querySelectorAll(".object-box[data-social-prefix]");
+for(i=0;i<socials.length;i++){resetBuiltInMeta(socials[i].getAttribute("data-social-prefix")+"_sel");}
+}
+function numericKeyGuard(e){
+var t=e.target;
+if(!t||t.tagName!=="INPUT"||t.type!=="number"){return;}
+if(e.ctrlKey||e.metaKey||e.altKey){return;}
+if(e.key==="e"||e.key==="E"||e.key==="+"){e.preventDefault();return;}
+var min=t.getAttribute("min"),id=t.id||"";
+var allowNegative = /_value_\d+$/.test(id) || /_(vol|dial|flat|acume|volonta|popolarita)$/.test(id);
+if(e.key==="-"&&((min!==null&&Number(min)>=0)||(t.closest&&t.closest(".roll-entry"))||!allowNegative)){e.preventDefault();return;}
+if((e.key==="."||e.key===",")&&String(t.getAttribute("step")||"1")==="1"){e.preventDefault();}
 }
 function mapVal(map, key){
 if(!map){ return 0; }
@@ -1958,20 +2406,35 @@ id + '" min="0" placeholder="Inserisci valore"></div>'
 '"><option value="">— scegli il rango —</option><option value="0">Apprendista Diplomatico</option><option value="10">Diplomatico</option><option value="15">Consigliere</option><option value="20">Cancelliere</option></select></div>'
 + ' <div class="field"><label>Prestigio attuale</label><input type="number" id="dipPrestigio_' + id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' </div>'
++ bonusManagerHTML("dipGeneral_" + id,"acume","general","Bonus generali del personaggio")
++ '<div class="effective-param-note">I bonus generali ai Parametri vengono applicati una sola volta qui e sono già compresi nei valori effettivi usati dalle Fasi.</div>'
 + '</div>';
 }
 function getDip(id){
+var base = {
+acume:num("dipAcume_" + id),
+volonta:num("dipVolonta_" + id),
+empatia:num("dipEmpatia_" + id),
+dialettica:num("dipDialettica_" + id),
+percezione:num("dipPercezione_" + id),
+popolarita:num("dipPopolarita_" + id),
+sapienze:num("dipSapienze_" + id),
+persuasore:num("dipPersuasore_" + id),
+rango:num("dipRango_" + id),
+prestigio:num("dipPrestigio_" + id)
+};
 return {
-acume: num("dipAcume_" + id),
-volonta: num("dipVolonta_" + id),
-empatia: num("dipEmpatia_" + id),
-dialettica: num("dipDialettica_" + id),
-percezione: num("dipPercezione_" + id),
-popolarita: num("dipPopolarita_" + id),
-sapienze: num("dipSapienze_" + id),
-persuasore: num("dipPersuasore_" + id),
-rango: num("dipRango_" + id),
-prestigio: num("dipPrestigio_" + id)
+acume:base.acume+generalParamBonus("dipGeneral_"+id,"acume"),
+volonta:base.volonta+generalParamBonus("dipGeneral_"+id,"volonta"),
+empatia:base.empatia+generalParamBonus("dipGeneral_"+id,"empatia"),
+dialettica:base.dialettica+generalParamBonus("dipGeneral_"+id,"dialettica"),
+percezione:base.percezione+generalParamBonus("dipGeneral_"+id,"percezione"),
+popolarita:base.popolarita+generalParamBonus("dipGeneral_"+id,"popolarita"),
+sapienze:base.sapienze+generalParamBonus("dipGeneral_"+id,"sapienze"),
+persuasore:base.persuasore+generalParamBonus("dipGeneral_"+id,"persuasore"),
+rango:base.rango,
+prestigio:base.prestigio+generalParamBonus("dipGeneral_"+id,"prestigio"),
+_base:base
 };
 }
 function addDip(){
@@ -2120,24 +2583,37 @@ id + '" min="0" placeholder="Inserisci valore"></div>'
 + ' </div>'
 + ' <div class="field nd-affine-row" id="ndAffineRow_' + id + '"><label>Se Intracciabile: Categoria affine (Parametro più alto in scheda)</label><select id="ndCategoriaAffine_' + id +
 '"><option value="">— scegli la Categoria affine —</option><option>Acumen</option><option>Animus</option><option>Ars</option><option>Numen</option><option>Sensus</option><option>Voluntas</option></select></div>'
++ bonusManagerHTML("ndGeneral_" + id,"acume","general","Bonus generali del personaggio")
++ '<div class="effective-param-note">I bonus generali ai Parametri vengono applicati una sola volta qui e sono già compresi nei valori effettivi usati dalle Fasi.</div>'
 + '</div>';
 }
 function getNd(id){
 var raw = text("ndCategoria_" + id).replace(/^\s+|\s+$/g,"");
 var resolved = raw;
 if(raw === "Intracciabile"){ resolved = text("ndCategoriaAffine_" + id).replace(/^\s+|\s+$/g,""); }
+var base={
+acume:num("ndAcume_" + id),
+volonta:num("ndVolonta_" + id),
+empatia:num("ndEmpatia_" + id),
+dialettica:num("ndDialettica_" + id),
+popolarita:num("ndPopolarita_" + id),
+sapienzaAffine:num("ndSapienzaAffine_" + id),
+sapienzeTotali:num("ndSapienzeTotali_" + id),
+paramRif:num("ndParamRif_" + id)
+};
 return {
 categoriaRaw: raw,
 categoria: resolved.toLowerCase(),
 label: raw ? (raw === "Intracciabile" ? ("Intracciabile — " + (resolved || "affinità da scegliere")) : raw) : "Categoria da scegliere",
-acume: num("ndAcume_" + id),
-volonta: num("ndVolonta_" + id),
-empatia: num("ndEmpatia_" + id),
-dialettica: num("ndDialettica_" + id),
-popolarita: num("ndPopolarita_" + id),
-sapienzaAffine: num("ndSapienzaAffine_" + id),
-sapienzeTotali: num("ndSapienzeTotali_" + id),
-paramRif: num("ndParamRif_" + id)
+acume:base.acume+generalParamBonus("ndGeneral_"+id,"acume"),
+volonta:base.volonta+generalParamBonus("ndGeneral_"+id,"volonta"),
+empatia:base.empatia+generalParamBonus("ndGeneral_"+id,"empatia"),
+dialettica:base.dialettica+generalParamBonus("ndGeneral_"+id,"dialettica"),
+popolarita:base.popolarita+generalParamBonus("ndGeneral_"+id,"popolarita"),
+sapienzaAffine:base.sapienzaAffine+generalParamBonus("ndGeneral_"+id,"sapienzaAffine"),
+sapienzeTotali:base.sapienzeTotali+generalParamBonus("ndGeneral_"+id,"sapienzeTotali"),
+paramRif:base.paramRif+generalParamBonus("ndGeneral_"+id,"paramRif"),
+_base:base
 };
 }
 function addNd(){
@@ -2686,14 +3162,14 @@ var ndPotionDial = ndPotionTarget === "dialettica" ? ndPotion : 0;
 var ndObj = socialObjectEffect("a2f2ndobj_" + id,nd,"threshold");
 var ndVol = nd.volonta + ndPotionVol + ndObj.vol;
 var ndDial = nd.dialettica + ndPotionDial + ndObj.dial;
-bonusNd = ndDial + floorDiv(ndVol,2) + ndObj.flat;
-setHTML("a2f2ndformula_" + id,"Bonus ND = Dialettica " + ndDial + " + Volontà " + ndVol
-+ "/2" + (ndObj.flat?(" + " + ndObj.flat + " oggetto"):"") + " = <b>+" + bonusNd + "</b>");
+bonusNd = ndDial + floorDiv(ndVol,2) + ndObj.flat + (ndObj.roll || 0);
+setHTML("a2f2ndformula_" + id,"Bonus ND = Dialettica " + ndDial + " + Volontà effettiva " + ndVol
++ "/2" + (ndObj.flat?(" + " + ndObj.flat + " bonus prova"):"") + (ndObj.roll?(" + " + ndObj.roll + " possibilità dopo /2"):"") + " = <b>+" + bonusNd + "</b>");
 } else {
 if(ndWrap){ ndWrap.style.display = "none"; }
 }
 var prev = prevCoordForZone(getZona());
-var soglia = dip.volonta + potionVol + obj.vol + dip.dialettica + potionDial + obj.dial + dip.rango + obj.flat +
+var soglia = dip.volonta + potionVol + obj.vol + dip.dialettica + potionDial + obj.dial + dip.rango + obj.flat + (obj.roll || 0) +
 bonusNd - malus + prev;
 if(soglia < 0){ soglia = 0; }
 var parts = [
@@ -2705,6 +3181,7 @@ var parts = [
 {op:"+",value:obj.dial,label:"Oggetto→Dialettica"},
 {op:"+",value:dip.rango,label:"Bonus Prestigio"},
 {op:"+",value:obj.flat,label:"Oggetto fisso"},
+{op:"+",value:(obj.roll||0),label:"Possibilità post-conversione"},
 {op:"+",value:bonusNd,label:"Bonus ND"},
 {op:"-",value:malus,label:"Malus Zona"}
 ];
@@ -2915,11 +3392,10 @@ var bonusNd = 0;
 if(pickedNd !== "none"){
 var nd = getNd(pickedNd);
 var ndPotion = potionBonus("a3f2ndpotion_" + id);
-var ndObj = objectBonus("a3f2ndobj_" + id, "a3f2ndobjCustom_" + id, nd, "acume");
-var ndAcume = nd.acume + ndPotion + ndObj;
-bonusNd = floorDiv(ndAcume,2);
-setHTML("a3f2ndnote_" + id, "<b>Bonus ND:</b> Acume " + nd.acume + (ndPotion?(" +"
-+ ndPotion + " Pozione"):"") + (ndObj?(" +" + ndObj + " Oggetto"):"") + " = " + ndAcume + "; /2 = <b>+" + bonusNd + "</b>.");
+var ndObjEff = objectEffectTotals("a3f2ndobj_" + id, "a3f2ndobjCustom_" + id, nd, "acume");
+var ndAcume = nd.acume + ndPotion + ndObjEff.param;
+bonusNd = floorDiv(ndAcume,2) + ndObjEff.roll;
+setHTML("a3f2ndnote_" + id, "<b>Bonus ND:</b> Acume effettivo " + ndAcume + " /2" + (ndObjEff.roll?(" +" + ndObjEff.roll + " possibilità dopo /2"):"") + " = <b>+" + bonusNd + "</b>.");
 } else {
 setHTML("a3f2ndnote_" + id, "Nessun non Diplomatico selezionato: Bonus ND +0.");
 }
@@ -3009,38 +3485,39 @@ return h;
 }
 function a4CoordObjectBoxHTML(prefix, mode){
 return ''
-+ '<div class="object-box">'
++ '<div class="object-box" data-social-prefix="' + prefix + '" data-social-mode="' + mode + '">'
 + '<div class="field"><label>Oggetto dalla Borsa</label><select id="' + prefix + '_sel">' +
 a4CoordObjectOptionsHTML(mode) + '</select></div>'
 + '<div class="grid" id="' + prefix + '_custom" style="display:none;">'
 + '<div class="field"><label>Modifica Acume</label><input type="number" id="' + prefix +
-'_acume" value="0"></div>'
+'_acume" step="1" value="0"></div>'
 + '<div class="field"><label>Modifica Volontà</label><input type="number" id="' + prefix +
-'_volonta" value="0"></div>'
+'_volonta" step="1" value="0"></div>'
 + '<div class="field"><label>Modifica Popolarità</label><input type="number" id="' + prefix +
-'_popolarita" value="0"></div>'
+'_popolarita" step="1" value="0"></div>'
 + '<div class="field"><label>Bonus fisso alla soglia</label><input type="number" id="' +
-prefix + '_flat" value="0"></div>'
+prefix + '_flat" step="1" value="0"></div>'
 + '</div>'
-+ '<div class="object-help">Gli utilizzi dell\'oggetto vanno consumati manualmente dalla Borsa. L\'Amuleto della Fortuna aggiunge possibilità alla soglia; “Altro oggetto” va usato soltanto se l\'effetto OFF è realmente applicabile.</div>'
++ builtInMetaHTML(prefix + "_sel")
++ '<div class="object-help">I bonus ai Parametri vengono applicati prima dei calcoli; le possibilità alla soglia vengono aggiunte dopo. Fatica e usi sono tracciati qui.</div>'
++ bonusManagerHTML(prefix + "_extra","generic","phase","Altri bonus da Oggetti/Conoscenze")
 + '</div>';
 }
 function a4CoordObjectEffect(prefix, pg, mode){
-var out = {acume:0,volonta:0,popolarita:0,flat:0,label:""};
+var out = {acume:0,volonta:0,popolarita:0,flat:0,label:"",fatigue:0,entries:[]};
 var sel = document.getElementById(prefix + "_sel");
 if(!sel){ return out; }
-var v = sel.value;
+var maxUses=Math.max(0,Math.floor(num(prefix+"_sel_maxuses"))),usedUses=Math.max(0,Math.floor(num(prefix+"_sel_used")));
+var usable=!(maxUses>0 && (usedUses<1 || usedUses>maxUses));
+var v = usable ? sel.value : "none";
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_acume_2" || v === "astronomico_2"){ out.acume = 2; }
 else if(v === "manuale_acume_1" || v === "astronomico_1"){ out.acume = 1; }
 else if(v === "manuale_volonta_2" && mode === "f1"){ out.volonta = 2; }
 else if(v === "manuale_volonta_1" && mode === "f1"){ out.volonta = 1; }
-else if(v === "sblorb_33" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) *
-33 / 100); }
-else if(v === "sblorb_10" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) *
-10 / 100); }
-else if(v === "sblorb_66" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) *
-66 / 100); }
+else if(v === "sblorb_33" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) * 33 / 100); }
+else if(v === "sblorb_10" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) * 10 / 100); }
+else if(v === "sblorb_66" && mode === "f1"){ out.volonta = Math.floor((pg ? pg.volonta : 0) * 66 / 100); }
 else if(v.indexOf("fortuna_") === 0){ out.flat = parseInt(v.replace("fortuna_",""),10) || 0; }
 else if(v === "custom"){
 out.acume = num(prefix + "_acume");
@@ -3049,7 +3526,14 @@ out.popolarita = num(prefix + "_popolarita");
 out.flat = num(prefix + "_flat");
 }
 var custom = document.getElementById(prefix + "_custom");
-if(custom){ custom.style.display = v === "custom" ? "grid" : "none"; }
+if(custom){ custom.style.display = sel.value === "custom" ? "grid" : "none"; }
+var extra=bonusManagerEffect(prefix+"_extra","generic");
+out.acume += bonusParamFor(extra,"acume");
+out.volonta += bonusParamFor(extra,"volonta");
+out.popolarita += bonusParamFor(extra,"popolarita");
+out.flat += extra.roll;
+out.fatigue=extra.fatigue;
+out.entries=extra.entries||[];
 return out;
 }
 function a4NdSupportBoxHTML(prefix, phase, slot){
@@ -3083,18 +3567,20 @@ var nd = getNd(picked);
 var stat = text(prefix + "_stat");
 var context = stat;
 refreshObjectSelectForContext(prefix + "_obj", prefix + "_objCustom", context, false);
-var obj = objectBonus(prefix + "_obj", prefix + "_objCustom", nd, context);
+var objEff = objectEffectTotals(prefix + "_obj", prefix + "_objCustom", nd, context);
 var base = 0;
 var statLabel = "";
 if(stat === "volonta"){ base = nd.volonta; statLabel = "Volontà"; }
 else if(stat === "popolarita"){ base = nd.popolarita; statLabel = "Popolarità"; }
 else { base = nd.acume; statLabel = "Acume"; }
-var modificato = base + obj;
-var bonus = floorDiv(modificato,2);
+var modificato = base + objEff.param;
+var bonus = floorDiv(modificato,2) + objEff.roll;
 var ogg = objectLabel(prefix + "_obj");
-var msg = "<b>" + nd.label + "</b>: " + statLabel + " " + base;
-if(obj !== 0){ msg = msg + " + Oggetto " + obj; }
-msg = msg + " = " + modificato + "; metà = <b>+" + bonus + "</b>";
+var msg = "<b>" + nd.label + "</b>: " + statLabel + " effettivo " + modificato;
+if(objEff.param !== 0){ msg = msg + " (bonus Parametro " + (objEff.param>=0?"+":"") + objEff.param + ")"; }
+msg = msg + "; metà = " + floorDiv(modificato,2);
+if(objEff.roll){ msg += " +" + objEff.roll + " possibilità dopo /2"; }
+msg += " → <b>+" + bonus + "</b>";
 if(ogg){ msg = msg + "<br><span class='hint'>Oggetto: " + ogg + "</span>"; }
 setHTML(prefix + "_calc", msg);
 return {bonus:bonus, ndId:String(picked), label:nd.label, categoria:nd.categoria};
@@ -3698,11 +4184,11 @@ function a1ComputeRound(did,idx){
 if(!state.a1.f2complete){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,'<span class="muted">Completa prima la Fase II di tutti i Diplomatici.</span>');return;}
 var info=a1ApproachInfo(did,idx),dip=info.dip,context=info.approach==="logica"?"acume":(info.approach==="pressione"?"volonta":"empatia");
 var objHolder=document.getElementById("a1objbox_"+did+"_"+idx); if(objHolder&&objHolder.getAttribute("data-built")!=="1"){objHolder.innerHTML=objectBoxHTML("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context);objHolder.setAttribute("data-built","1");}
-refreshObjectSelectForContext("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context); var potion=text("a1f3potionparam_"+did)===info.approach?potionBonus("a1f3potion_"+did):0; var obj=objectBonus("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,dip,context); var dipSides=info.param+potion+obj; if(dipSides<1){dipSides=1;}
+refreshObjectSelectForContext("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context); var potion=text("a1f3potionparam_"+did)===info.approach?potionBonus("a1f3potion_"+did):0; var objEff=objectEffectTotals("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,dip,context); var effectiveParam=info.param+potion+objEff.param; var dipSides=effectiveParam+objEff.roll; if(dipSides<1){dipSides=1;}
 var pickedNd=text("a1f3ndpick_"+did), bonusNd=0, ndDetail=""; var ndContext=context, ndParamLabel=info.label;
 var ndObjHolder=document.getElementById("a1ndobjbox_"+did+"_"+idx); if(ndObjHolder&&ndObjHolder.getAttribute("data-built")!=="1"){ndObjHolder.innerHTML=objectBoxHTML("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,ndContext);ndObjHolder.setAttribute("data-built","1");}
 refreshObjectSelectForContext("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,ndContext);
-if(pickedNd!=="none"){var nd=getNd(pickedNd); var ndBase=context==="volonta"?nd.volonta:(context==="empatia"?nd.empatia:nd.acume); var ndPotion=potionBonus("a1ndpotion_"+did+"_"+idx); var ndObj=objectBonus("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,nd,ndContext); var ndModified=ndBase+ndPotion+ndObj; bonusNd=floorDiv(ndModified,3); ndDetail=ndParamLabel+" "+ndBase+(ndPotion?(" +"+ndPotion+" Pozione"):"")+(ndObj?(" +"+ndObj+" Oggetto"):"")+" = "+ndModified+"; /3"; setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND = "+ndDetail+" = <b>+"+bonusNd+"</b>");} else {setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND: <b>+0</b> — nessun non Diplomatico selezionato.");}
+if(pickedNd!=="none"){var nd=getNd(pickedNd); var ndBase=context==="volonta"?nd.volonta:(context==="empatia"?nd.empatia:nd.acume); var ndPotion=potionBonus("a1ndpotion_"+did+"_"+idx); var ndObjEff=objectEffectTotals("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,nd,ndContext); var ndModified=ndBase+ndPotion+ndObjEff.param; bonusNd=floorDiv(ndModified,3)+ndObjEff.roll; ndDetail=ndParamLabel+" effettivo "+ndModified+"; /3 = "+floorDiv(ndModified,3)+(ndObjEff.roll?(" +"+ndObjEff.roll+" possibilità"):""); setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND = "+ndDetail+" = <b>+"+bonusNd+"</b>");} else {setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND: <b>+0</b> — nessun non Diplomatico selezionato.");}
 var bonusF2=mapVal(state.a1.bonusF3round,did), prev=prevCoordForZone(getZona()), pos=diplomatIds.indexOf(did)+1;
 setDiceCmd("a1roundcmd_"+did+"_"+idx,"Diplomatico "+pos+" — tira 1d"+dipSides+" ("+info.label+")","1d"+dipSides,"Trattativa Round "+idx+" - Diplomatico "+pos); setDiceCmd("a1roundavvcmd_"+did+"_"+idx,"Avversario — tira 1d"+info.avvSides,"1d"+info.avvSides,"Trattativa Round "+idx+" - Avversario contro Diplomatico "+pos);
 var a1Flat=bonusF2+bonusNd+prev;
@@ -3818,7 +4304,8 @@ var potionTarget = text("a2f3potionTarget_" + id);
 var potionVol = potionTarget === "dialettica" ? 0 : potion;
 var potionDial = potionTarget === "dialettica" ? potion : 0;
 var obj = socialObjectEffect("a2f3obj_" + id,dip,"f3");
-var volForDie = dip.volonta + potionVol + obj.vol;
+var volEffective = dip.volonta + potionVol + obj.vol;
+var volForDie = volEffective + (obj.roll || 0);
 if(volForDie < 1){ volForDie = 1; }
 var dialFinal = dip.dialettica + potionDial + obj.dial;
 var bonusF2 = mapVal(state.a2.bonusF3,id);
@@ -3835,8 +4322,9 @@ volForDie,"Networking Fase III - Diplomatico " + pos);
 setDiceCmd("a2f3avvcmd_" + id,"Avversario — tira 1d" + avvDado + " (" + zonaLabel(z) +
 ")","1d" + avvDado,"Networking Fase III - Avversario contro Diplomatico " + pos);
 var formula = "Diplomatico = 1d" + volForDie + " Volontà";
-if(potionVol){ formula += " (" + dip.volonta + " +" + potionVol + " Pozione"; if(obj.vol){ formula += " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto"; } formula += ")"; }
-else if(obj.vol){ formula += " (" + dip.volonta + " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto)"; }
+if(potionVol){ formula += " (Parametro effettivo " + volEffective + ": " + dip.volonta + " +" + potionVol + " Pozione"; if(obj.vol){ formula += " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto"; } formula += ")"; }
+else if(obj.vol){ formula += " (Parametro effettivo " + volEffective + ": " + dip.volonta + " " + (obj.vol>=0?"+":"") + obj.vol + " Oggetto)"; }
+if(obj.roll){ formula += " [poi +" + obj.roll + " possibilità → 1d" + volForDie + "]"; }
 formula += " + Dialettica(" + dialFinal + ")" + (potionDial ? " [Pozione +" + potionDial + "]" : "") + " + Prestigio attuale/2(" + floorDiv(dip.prestigio,2) + ") " +
 (bonusF2>=0?"+ ":"- ") + Math.abs(bonusF2) + " esito Fase II";
 if(flatObj){ formula += " " + (flatObj>=0?"+ ":"- ") + Math.abs(flatObj) + " Oggetto"; }
@@ -3950,18 +4438,19 @@ var potionTarget = text("a3f3potionTarget_" + id);
 var potionVol = potionTarget === "dialettica" ? 0 : pozione;
 var potionDial = potionTarget === "dialettica" ? pozione : 0;
 var obj = socialObjectEffect("a3f3obj_" + id, dip, "f3");
-var volForDie = dip.volonta + potionVol + obj.vol;
+var volEffective = dip.volonta + potionVol + obj.vol;
+var volForDie = volEffective + (obj.roll || 0);
 if(volForDie < 1){ volForDie = 1; }
 var pickedNd = text("a3f3ndpick_" + id);
 var bonusNd = 0;
 if(pickedNd !== "none"){
 var nd = getNd(pickedNd);
 var ndPotion = potionBonus("a3f3ndpotion_" + id);
-var ndObj = objectBonus("a3f3ndobj_" + id, "a3f3ndobjCustom_" + id, nd, "volonta");
-var ndVol = nd.volonta + ndPotion + ndObj;
+var ndObjEff = objectEffectTotals("a3f3ndobj_" + id, "a3f3ndobjCustom_" + id, nd, "volonta");
+var ndVol = nd.volonta + ndPotion + ndObjEff.param;
 if(ndVol < 0){ ndVol = 0; }
-bonusNd = floorDiv(ndVol,2);
-setHTML("a3f3ndnote_" + id, "<b>Bonus ND:</b> Volontà " + nd.volonta + (ndPotion?(" +" + ndPotion + " Pozione"):"") + (ndObj?(" +" + ndObj + " Oggetto"):"") + " = " + ndVol + "; /2 = <b>+" + bonusNd + "</b>.");
+bonusNd = floorDiv(ndVol,2) + ndObjEff.roll;
+setHTML("a3f3ndnote_" + id, "<b>Bonus ND:</b> Volontà effettiva " + ndVol + " /2" + (ndObjEff.roll?(" +" + ndObjEff.roll + " possibilità dopo /2"):"") + " = <b>+" + bonusNd + "</b>.");
 } else {
 setHTML("a3f3ndnote_" + id, "Nessun non Diplomatico selezionato: Bonus ND +0.");
 }
@@ -3974,8 +4463,9 @@ volForDie, "Scandali Fase III - Diplomatico " + pos);
 setDiceCmd("a3f3pubcmd_" + id, "Opinione pubblica — tira 1d" + pubSides + " (" +
 gravitaLabel(state.a3.gravita) + ")", "1d" + pubSides, "Scandali Fase III - Opinione pubblica - Diplomatico " + pos);
 var formula = "Diplomatico = 1d" + volForDie + " Volontà";
-if(potionVol){ formula += " (+" + potionVol + " Pozione)"; }
+if(potionVol){ formula += " (Parametro effettivo " + volEffective + ": +" + potionVol + " Pozione)"; }
 if(obj.vol){ formula += " (" + (obj.vol>=0?"+":"") + obj.vol + " Volontà da Oggetto)"; }
+if(obj.roll){ formula += " [poi +" + obj.roll + " possibilità → 1d" + volForDie + "]"; }
 formula += " + Dialettica " + dial + (potionDial ? " (Pozione +" + potionDial + ")" : "") + " + Persuasore " + dip.persuasore;
 formula += " " + ((bonusF1 + bonusF2)>=0?"+":"") + (bonusF1 + bonusF2) + " esiti Fasi I/II";
 if(bonusNd){ formula += " +" + bonusNd + " ND"; }
@@ -4038,6 +4528,7 @@ if(e){ e.value = ""; }
 }
 function resetA1(){
 clearSignaturePrefix("a1");
+resetAgreementBonusMetadata(1);
 state.a1 = { bonusF2:{}, bonusF3round:{}, f1complete:false, f2complete:false };
 var j = 0;
 while(j < diplomatIds.length){
@@ -4071,6 +4562,7 @@ refreshAll();
 }
 function resetA2(){
 clearSignaturePrefix("a2");
+resetAgreementBonusMetadata(2);
 state.a2 = { bonusF3:{}, f1passed:false, f1failed:false, f2complete:false };
 var toggle = document.getElementById("a2f1secondToggle");
 if(toggle){ toggle.checked = false; }
@@ -4127,6 +4619,7 @@ refreshAll();
 }
 function resetA3(){
 clearSignaturePrefix("a3");
+resetAgreementBonusMetadata(3);
 a3f1LastNdKey = {};
 a3ScandalLastGravita = null;
 var gz = gravitaFromZona();
@@ -4171,6 +4664,7 @@ refreshAll();
 }
 function resetA4(){
 clearSignaturePrefix("a4");
+resetAgreementBonusMetadata(4);
 a4f2LastSupportKey = {};
 a4f2LastSensusSignature = {};
 state.a4 = { bonusF2:{}, bonusF3:{}, f1complete:false, f2complete:false };
@@ -4493,9 +4987,11 @@ refreshLeaderSelects();
 refreshDipTargetPickers();
 a4RefreshZoneNote();
 var setupOk=refreshSetupStatus();
+decorateNumericFields(document);
+refreshBonusSummaries();
 if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
 if(typeof window.RA_APPLY_READONLY_LOCKS==="function"){window.RA_APPLY_READONLY_LOCKS();}
-if(!setupOk){ return; }
+if(!setupOk){ renderFinalEffectsSummary(); return; }
 refreshA1F1();
 refreshA1F2();
 refreshA1F3();
@@ -4510,6 +5006,9 @@ refreshA4F1();
 refreshA4F2();
 refreshA4F3();
 if(typeof renderAccordInitialSummary==="function"){renderAccordInitialSummary();}
+refreshBonusSummaries();
+renderFinalEffectsSummary();
+decorateNumericFields(document);
 if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
 if(typeof window.RA_APPLY_READONLY_LOCKS==="function"){window.RA_APPLY_READONLY_LOCKS();}
 }
@@ -4520,7 +5019,8 @@ var i=0;
 while(i<inputs.length){
 var id=inputs[i].id||"", p=0, match=false;
 while(p<prefixes.length){if(id.indexOf(prefixes[p])===0){match=true;break;}p=p+1;}
-if(match && /val/i.test(id)){inputs[i].value="";}
+var isBonusValue = /_value_\d+$/.test(id);
+if(match && /val/i.test(id) && !isBonusValue){inputs[i].value="";}
 i=i+1;
 }
 }
@@ -4531,8 +5031,10 @@ rollSignatures={};
 function invalidateDownstreamForTarget(target){
 if(!target){return;}
 var id=target.id||"";
+/* Metadati descrittivi non modificano alcuna formula e non devono cancellare tiri validi. */
+if(id.indexOf("_condition_")!==-1 || /_condition$/.test(id) || id.indexOf("_fatigue_")!==-1 || /_fatigue$/.test(id) || id.indexOf("_phase_")!==-1 || /_phase$/.test(id)){ return; }
 /* Modificatori globali o dati delle schede alterano tutte le formule. */
-if(target.name==="zona" || id==="prevCoordMod" || id==="prevCoordZone" || id.indexOf("dipAcume_")===0 || id.indexOf("dipVolonta_")===0 || id.indexOf("dipEmpatia_")===0 || id.indexOf("dipDialettica_")===0 || id.indexOf("dipPercezione_")===0 || id.indexOf("dipPopolarita_")===0 || id.indexOf("dipSapienze_")===0 || id.indexOf("dipPersuasore_")===0 || id.indexOf("dipRango_")===0 || id.indexOf("dipPrestigio_")===0 || id.indexOf("ndCategoria_")===0 || id.indexOf("ndCategoriaAffine_")===0 || id.indexOf("ndParamRif_")===0 || id.indexOf("ndSapienzaAffine_")===0 || id.indexOf("ndSapienzeTotali_")===0 || id.indexOf("ndAcume_")===0 || id.indexOf("ndVolonta_")===0 || id.indexOf("ndEmpatia_")===0 || id.indexOf("ndDialettica_")===0 || id.indexOf("ndPopolarita_")===0){
+if(target.name==="zona" || id==="prevCoordMod" || id==="prevCoordZone" || id.indexOf("dipAcume_")===0 || id.indexOf("dipVolonta_")===0 || id.indexOf("dipEmpatia_")===0 || id.indexOf("dipDialettica_")===0 || id.indexOf("dipPercezione_")===0 || id.indexOf("dipPopolarita_")===0 || id.indexOf("dipSapienze_")===0 || id.indexOf("dipPersuasore_")===0 || id.indexOf("dipRango_")===0 || id.indexOf("dipPrestigio_")===0 || id.indexOf("ndCategoria_")===0 || id.indexOf("ndCategoriaAffine_")===0 || id.indexOf("ndParamRif_")===0 || id.indexOf("ndSapienzaAffine_")===0 || id.indexOf("ndSapienzeTotali_")===0 || id.indexOf("ndAcume_")===0 || id.indexOf("ndVolonta_")===0 || id.indexOf("ndEmpatia_")===0 || id.indexOf("ndDialettica_")===0 || id.indexOf("ndPopolarita_")===0 || id.indexOf("dipGeneral_")===0 || id.indexOf("ndGeneral_")===0){
 invalidateAllAgreementRolls(); return;
 }
 /* Gravità dello scandalo cambia l'intero Accordo 3. */
@@ -4574,6 +5076,8 @@ if(action === "resetA3"){ resetA3(); return; }
 if(action === "resetA4"){ resetA4(); return; }
 if(action === "addDip"){ addDip(); return; }
 if(action === "addNd"){ addNd(); return; }
+if(action === "addBonusRow"){ addBonusRow(t.getAttribute("data-prefix")); return; }
+if(action === "removeBonusRow"){ removeBonusRow(t.getAttribute("data-prefix"),parseInt(t.getAttribute("data-row"),10)); return; }
 if(action === "removeDip"){ removeDip(parseInt(t.getAttribute("data-id"),10)); return; }
 if(action === "removeNd"){ removeNd(parseInt(t.getAttribute("data-id"),10)); return; }
 if(action === "rinunciaAccordo"){ rinunciaAccordo(); return; }
@@ -4584,6 +5088,7 @@ var badge = t.closest(".dice-cmd");
 if(badge){evt.preventDefault();var dice = badge.getAttribute("data-dice");if(dice){var out = forumDiceForBadge(badge);doCopy(out);flashCopied(badge);}return;}
 }
 });
+document.addEventListener("keydown", numericKeyGuard, true);
 document.addEventListener("input", function(e){
 if(!e.target){ return; }
 if(!e.target.tagName){ return; }
@@ -4592,6 +5097,15 @@ if(e.target.tagName === "INPUT"){ invalidateDownstreamForTarget(e.target); refre
 document.addEventListener("change", function(e){
 if(!e.target){ return; }
 if(!e.target.tagName){ return; }
+if(e.target.tagName === "SELECT"){
+var ob=e.target.closest?e.target.closest(".object-box"):null;
+if(ob){
+var builtin=ob.getAttribute("data-object-select");
+var social=ob.getAttribute("data-social-prefix");
+if(builtin===e.target.id){syncBuiltInObjectMeta(e.target.id,true);}
+if(social && (social+"_sel")===e.target.id){syncBuiltInObjectMeta(e.target.id,true);}
+}
+}
 if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT"){ invalidateDownstreamForTarget(e.target); refreshAll(); }
 });
 }
