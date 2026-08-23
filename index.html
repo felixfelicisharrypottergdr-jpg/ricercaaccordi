@@ -1158,6 +1158,7 @@ e scegli manualmente la linguetta.</p>
 <div class="field"><label>Risultato 1d4</label><input type="number" id="accordoRollVal" min="1" max="4"></div>
 <div class="field"><label>Rinunce ancora disponibili</label><div class="readout" id="accordoRinunce">3</div></div>
 <div class="field"><label>Accordo collegato</label><label class="toggle-row" style="margin:0;"><input type="checkbox" id="accordoLinkedToggle"> Nuova role collegata: scelta diretta, senza 1d4</label></div>
+<div class="field" id="accordoLinkedConfirmWrap" style="display:none;"><label>Prerequisito dell’Accordo collegato</label><label class="toggle-row" style="margin:0;"><input type="checkbox" id="accordoLinkedSuccessConfirm"> Confermo che l’Accordo precedente è stato completato con successo in Fase III</label></div>
 </div>
 <div class="roll-entry" style="margin-top:12px;"><button class="reset-link" id="accordoRinunciaBtn" data-action="rinunciaAccordo" type="button">Rinuncia all'Accordo assegnato</button></div>
 <div class="assignment-status" id="accordoAssignmentStatus">Inserisci il risultato del 1d4 per determinare l'Accordo.</div>
@@ -2070,7 +2071,11 @@ function setupValidation(){
 var errors=[];
 var total=diplomatIds.length+ndIds.length;
 if(diplomatIds.length<1 || total<2){ errors.push("servono almeno 2 PG e almeno 1 Diplomatico"); }
-if(accordoAssigned===null){ errors.push(document.getElementById("accordoLinkedToggle").checked ? "scegli l’Accordo collegato" : "determina l’Accordo con 1d4"); }
+var linkedToggle=document.getElementById("accordoLinkedToggle");
+var linkedConfirm=document.getElementById("accordoLinkedSuccessConfirm");
+var linkedPrerequisiteOk=!(linkedToggle && linkedToggle.checked) || !!(linkedConfirm && linkedConfirm.checked);
+if(!linkedPrerequisiteOk){ errors.push("conferma che l’Accordo precedente sia stato completato con successo in Fase III"); }
+if(accordoAssigned===null && linkedPrerequisiteOk){ errors.push(linkedToggle && linkedToggle.checked ? "scegli l’Accordo collegato" : "determina l’Accordo con 1d4"); }
 var zone=getZona();
 var uk=document.getElementById("a4ukToggle");
 var zoneOk=!!zone || (accordoAssigned===4 && uk && uk.checked);
@@ -2378,7 +2383,7 @@ voluntas: "<b>Da narrare:</b> il PG Voluntas intercetta segnali di inganno o man
 };
 var noteA2F3 = {
 none: "",
-attivo: "<b>Da narrare:</b> il non Diplomatico interviene direttamente nel dialogo — un'informazione rivelata al momento giusto, un gesto di fiducia, un intervento diretto a sostegno del Diplomatico.<br><br><b>Effetto OFF Game:</b> +5 al risultato del Diplomatico.",
+attivo: "<b>Da narrare:</b> il non Diplomatico lavora sul contorno della trattativa per rafforzare la posizione del Diplomatico — fornisce informazioni utili, ne sostiene la credibilità, crea l'occasione giusta o favorisce il contatto senza intervenire direttamente nel dialogo.<br><br><b>Effetto OFF Game:</b> +5 al risultato del Diplomatico.",
 protettivo: "<b>Da narrare:</b> il non Diplomatico lavora sul contorno — gestisce logistica, diversivi o tensioni — per indebolire la posizione dell'Avversario senza intervenire nel dialogo diretto.<br><br><b>Effetto OFF Game:</b> &#8722;5 al risultato dell'Avversario."
 };
 var noteA3F1 = {
@@ -3859,7 +3864,6 @@ results[id] = undefined;
 } else {
 var dipTotal = dr.value + dialFinal + floorDiv(dip.prestigio,2) + bonusF2 + dipBonus + flatObj + prev;
 var avvTotal = ar.value - avvMalus;
-if(avvTotal < 0){ avvTotal = 0; }
 var success = dipTotal > avvTotal;
 results[id] = success;
 completed = completed + 1;
@@ -4327,7 +4331,7 @@ function flowApplyPage(page,doScroll){var w=document.getElementById("accordi-wor
 function flowUpdateNavigation(){flowSyncSummaryAgreement();var card=document.getElementById("flow-page-card");if(card)card.style.display=flowAgreementNumber()!==null?"block":"none";if(FLOW_PAGE!=="config"&&!flowUnlocked(FLOW_PAGE))FLOW_PAGE=flowRecommendedPage();flowApplyPage(FLOW_PAGE,false);}
 function flowEnsureProceedButtons(){var specs=[[1,"a1f1","f2","Procedi alla Fase II"],[1,"a1f2","f3","Procedi alla Fase III"],[2,"a2f1","f2","Procedi alla Fase II"],[2,"a2f2","f3","Procedi alla Fase III"],[3,"a3f1","f2","Procedi alla Fase II"],[3,"a3f2","f3","Procedi alla Fase III"],[4,"a4f1","f2","Procedi alla Fase II"],[4,"a4f2","f3","Procedi alla Fase III"]];specs.forEach(function(sp){var ph=document.querySelector('[data-phase="'+sp[1]+'"]');if(!ph||ph.querySelector('.flow-proceed-wrap[data-flow-for="'+sp[1]+'"]'))return;var wrap=document.createElement("div");wrap.className="flow-proceed-wrap";wrap.setAttribute("data-flow-for",sp[1]);var b=document.createElement("button");b.type="button";b.className="flow-proceed-btn";b.textContent=sp[3];b.setAttribute("data-flow-to",sp[2]);b.setAttribute("data-flow-agreement",String(sp[0]));b.setAttribute("data-session-control","1");b.addEventListener("click",function(){if(!b.disabled)flowApplyPage(sp[2],true);});wrap.appendChild(b);ph.appendChild(wrap);});}
 function flowUpdateProceedButtons(){var bs=document.querySelectorAll(".flow-proceed-btn"),n=flowAgreementNumber();for(var i=0;i<bs.length;i++){var b=bs[i],agreement=Number(b.getAttribute("data-flow-agreement")),to=b.getAttribute("data-flow-to");b.style.display=agreement===n?"inline-block":"none";b.disabled=agreement!==n||!flowUnlocked(to);}}
-function flowFirstMissingSetupTarget(){if(accordoAssigned===null){var linked=document.getElementById("accordoLinkedToggle");if(linked&&linked.checked)return document.querySelector('.tab-btn:not(.locked)')||linked;return document.getElementById("accordoRollVal")||document.getElementById("flow-config-agreement");}var z=getZona(),uk=document.getElementById("a4ukToggle");if(!z&&!(accordoAssigned===4&&uk&&uk.checked)){var zr=document.querySelector('input[name="zona"]');return zr||uk||document.getElementById("flow-config-zone");}if(diplomatIds.length<1||diplomatIds.length+ndIds.length<2)return document.querySelector('[data-action="addDip"]')||document.getElementById("flow-config-participants");var sets=[[diplomatIds,"dip"],[ndIds,"nd"]];for(var si=0;si<sets.length;si++){var ids=sets[si][0],kind=sets[si][1],fields=requiredFieldsForAgreement(accordoAssigned,kind);for(var ii=0;ii<ids.length;ii++){for(var fi=0;fi<fields.length;fi++){var suffix=fields[fi],id=(kind==="dip"?"dip":"nd")+suffix+"_"+ids[ii],node=document.getElementById(id);if(!node)continue;if(String(node.value||"").trim()==="")return node;}if(kind==="nd"){var cat=document.getElementById("ndCategoria_"+ids[ii]),aff=document.getElementById("ndCategoriaAffine_"+ids[ii]);if(cat&&cat.value==="Intracciabile"&&aff&&!aff.value)return aff;}}}return document.getElementById("flow-page-card")||document.getElementById("flow-config-guide");}
+function flowFirstMissingSetupTarget(){if(accordoAssigned===null){var linked=document.getElementById("accordoLinkedToggle");if(linked&&linked.checked){var linkedConfirm=document.getElementById("accordoLinkedSuccessConfirm");if(linkedConfirm&&!linkedConfirm.checked)return linkedConfirm;return document.querySelector('.tab-btn:not(.locked)')||linked;}return document.getElementById("accordoRollVal")||document.getElementById("flow-config-agreement");}var z=getZona(),uk=document.getElementById("a4ukToggle");if(!z&&!(accordoAssigned===4&&uk&&uk.checked)){var zr=document.querySelector('input[name="zona"]');return zr||uk||document.getElementById("flow-config-zone");}if(diplomatIds.length<1||diplomatIds.length+ndIds.length<2)return document.querySelector('[data-action="addDip"]')||document.getElementById("flow-config-participants");var sets=[[diplomatIds,"dip"],[ndIds,"nd"]];for(var si=0;si<sets.length;si++){var ids=sets[si][0],kind=sets[si][1],fields=requiredFieldsForAgreement(accordoAssigned,kind);for(var ii=0;ii<ids.length;ii++){for(var fi=0;fi<fields.length;fi++){var suffix=fields[fi],id=(kind==="dip"?"dip":"nd")+suffix+"_"+ids[ii],node=document.getElementById(id);if(!node)continue;if(String(node.value||"").trim()==="")return node;}if(kind==="nd"){var cat=document.getElementById("ndCategoria_"+ids[ii]),aff=document.getElementById("ndCategoriaAffine_"+ids[ii]);if(cat&&cat.value==="Intracciabile"&&aff&&!aff.value)return aff;}}}return document.getElementById("flow-page-card")||document.getElementById("flow-config-guide");}
 function flowVisible(node){if(!node)return false;var p=node;while(p&&p!==document.body){var st=window.getComputedStyle?window.getComputedStyle(p):null;if(p.hidden||(st&&(st.display==="none"||st.visibility==="hidden")))return false;p=p.parentElement;}return true;}
 function flowFirstIncompleteIn(nodes){for(var ni=0;ni<nodes.length;ni++){var root=nodes[ni],controls=root.querySelectorAll("input,select,textarea");for(var i=0;i<controls.length;i++){var c=controls[i];if(c.disabled||!flowVisible(c))continue;var typ=(c.type||"").toLowerCase();if(typ==="hidden"||typ==="button"||typ==="submit"||typ==="checkbox")continue;if(typ==="radio"){var name=c.name;if(name){var checked=root.querySelector('input[type="radio"][name="'+name+'"]:checked');if(!checked)return c;}continue;}if(String(c.value||"").trim()==="")return c;}}return nodes.length?nodes[0]:document.getElementById("flow-page-card");}
 function flowResumeTarget(readonly){var page=flowRecommendedPage();flowApplyPage(page,false);if(page==="config")return readonly?(document.getElementById("flow-config-guide")||document.getElementById("flow-config-zone")):flowFirstMissingSetupTarget();if(page==="summary")return document.getElementById("accordi-initial-summary-card");var n=flowAgreementNumber(),nodes=flowPhaseNodes(n,page);if(readonly)return nodes.length?nodes[0]:document.getElementById("flow-page-card");if(n===2&&page==="f1"&&state.a2.f1failed&&!state.a2.f1passed){var tog=document.getElementById("a2f1secondToggle");if(tog&&!tog.checked)return tog;}return flowFirstIncompleteIn(nodes);}
@@ -4335,11 +4339,12 @@ function flowScrollToResumeTarget(target){if(!target||FLOW_USER_INTERACTED)retur
 function scheduleSmartAgreementResume(readonly){var token=++FLOW_RESUME_TOKEN;FLOW_USER_INTERACTED=false;setTimeout(function(){requestAnimationFrame(function(){if(token!==FLOW_RESUME_TOKEN||FLOW_USER_INTERACTED)return;refreshAll();var target=flowResumeTarget(!!readonly);flowScrollToResumeTarget(target);});},180);}
 function cancelSmartAgreementResume(){FLOW_USER_INTERACTED=true;FLOW_RESUME_TOKEN++;}
 function flowWireNavigation(){flowEnsureProceedButtons();var nav=document.getElementById("flow-page-nav");if(nav&&!nav.getAttribute("data-wired")){nav.setAttribute("data-wired","1");nav.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-flow-page]"):null;if(!b||b.disabled)return;FLOW_USER_INTERACTED=true;flowApplyPage(b.getAttribute("data-flow-page"),true);});}document.addEventListener("mousedown",function(e){var b=e.target&&e.target.closest?e.target.closest(".dice-cmd,.accord-summary-copy-btn"):null;if(b)e.preventDefault();},true);flowUpdateNavigation();}
-window.RA_FLOW={resume:scheduleSmartAgreementResume,cancelResume:cancelSmartAgreementResume,update:flowUpdateNavigation,apply:flowApplyPage,recommended:flowRecommendedPage};
+window.RA_FLOW={resume:scheduleSmartAgreementResume,cancelResume:cancelSmartAgreementResume,update:flowUpdateNavigation,apply:flowApplyPage,recommended:flowRecommendedPage,agreement:flowAgreementNumber};
 /* =================== TABS =================== */
 var accordoRinunceLeft = 3;
 var accordoAssigned = null;
 var linkedModeLast = false;
+var linkedConfirmLast = false;
 function agreementNameFromNumber(v){
 if(v === 1){ return "Trattativa e Mediazione"; }
 if(v === 2){ return "Networking e Influenza Sociale"; }
@@ -4349,25 +4354,47 @@ return "";
 }
 function agreementTabFromNumber(v){ return "a" + v; }
 function refreshAgreementAssignment(){
-var linked = document.getElementById("accordoLinkedToggle").checked;
+var linkedToggle = document.getElementById("accordoLinkedToggle");
+var linked = !!(linkedToggle && linkedToggle.checked);
+var confirmWrap = document.getElementById("accordoLinkedConfirmWrap");
+var confirm = document.getElementById("accordoLinkedSuccessConfirm");
+var linkedConfirmed = !!(confirm && confirm.checked);
 var roll = rollState("accordoRollVal",4);
 var tabs = document.querySelectorAll(".tab-btn");
 var status = document.getElementById("accordoAssignmentStatus");
 var btn = document.getElementById("accordoRinunciaBtn");
 setHTML("accordoRinunce", String(accordoRinunceLeft));
+if(confirmWrap){ confirmWrap.style.display = linked ? "block" : "none"; }
 if(linked !== linkedModeLast){
 linkedModeLast = linked;
+linkedConfirmLast = false;
 accordoAssigned = null;
 clearInput("accordoRollVal");
+if(confirm){ confirm.checked = false; linkedConfirmed = false; }
 invalidateAllAgreementRolls();
 var pp=document.querySelectorAll(".tab-panel"), px=0;
 while(px<pp.length){ pp[px].classList.remove("active"); px=px+1; }
 }
 if(linked){
 document.getElementById("accordoRollVal").disabled = true;
+if(linkedConfirmed !== linkedConfirmLast){
+if(!linkedConfirmed){
+accordoAssigned = null;
+invalidateAllAgreementRolls();
+var pc=document.querySelectorAll(".tab-panel"), pxi=0;
+while(pxi<pc.length){ pc[pxi].classList.remove("active"); pxi=pxi+1; }
+}
+linkedConfirmLast = linkedConfirmed;
+}
+if(!linkedConfirmed){
+var lc=0; while(lc<tabs.length){ tabs[lc].classList.add("locked"); tabs[lc].classList.remove("active"); tabs[lc].disabled=true; lc=lc+1; }
+if(status){ status.innerHTML = "<b>Accordo collegato:</b> conferma prima che l’Accordo precedente sia stato completato con successo in <b>Fase III</b>. Solo dopo potrai scegliere direttamente la linguetta senza tirare 1d4."; }
+if(btn){ btn.disabled=true; btn.style.opacity=".45"; btn.innerHTML="Rinuncia non usata negli Accordi collegati"; }
+return;
+}
 if(accordoAssigned === null){
 var i=0; while(i<tabs.length){ tabs[i].classList.remove("locked","active"); tabs[i].disabled=false; i=i+1; }
-if(status){ status.innerHTML = "<b>Nuova role collegata:</b> scegli una sola linguetta. Il tiro 1d4 non è richiesto; dopo la scelta le altre verranno bloccate."; }
+if(status){ status.innerHTML = "<b>Prerequisito confermato:</b> scegli una sola linguetta per il nuovo Accordo collegato. Il tiro 1d4 non è richiesto; dopo la scelta le altre verranno bloccate."; }
 } else {
 var targetLinked = agreementTabFromNumber(accordoAssigned);
 var il=0; while(il<tabs.length){
@@ -4380,6 +4407,8 @@ if(status){ status.innerHTML = "<b>Accordo collegato scelto:</b> " + agreementNa
 if(btn){ btn.disabled=true; btn.style.opacity=".45"; btn.innerHTML="Rinuncia non usata negli Accordi collegati"; }
 return;
 }
+linkedConfirmLast = false;
+if(confirm){ confirm.checked = false; }
 document.getElementById("accordoRollVal").disabled = false;
 if(roll.status === "invalid"){
 accordoAssigned = null;
@@ -4431,6 +4460,8 @@ refreshAll();
 function switchTab(name, internal){
 var linked = document.getElementById("accordoLinkedToggle") ? document.getElementById("accordoLinkedToggle").checked : true;
 if(!internal && linked){
+var linkedConfirm=document.getElementById("accordoLinkedSuccessConfirm");
+if(!(linkedConfirm && linkedConfirm.checked)){ refreshAll(); return; }
 if(accordoAssigned === null){
 var n = agreementNumberFromTab(name);
 if(n !== null){ accordoAssigned = n; refreshAll(); return; }
@@ -4463,6 +4494,7 @@ refreshDipTargetPickers();
 a4RefreshZoneNote();
 var setupOk=refreshSetupStatus();
 if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
+if(typeof window.RA_APPLY_READONLY_LOCKS==="function"){window.RA_APPLY_READONLY_LOCKS();}
 if(!setupOk){ return; }
 refreshA1F1();
 refreshA1F2();
@@ -4479,6 +4511,7 @@ refreshA4F2();
 refreshA4F3();
 if(typeof renderAccordInitialSummary==="function"){renderAccordInitialSummary();}
 if(typeof flowUpdateNavigation==="function"){flowUpdateNavigation();}
+if(typeof window.RA_APPLY_READONLY_LOCKS==="function"){window.RA_APPLY_READONLY_LOCKS();}
 }
 /* =================== DEPENDENCY INVALIDATION =================== */
 function clearRollInputsMatching(prefixes){
@@ -4587,8 +4620,8 @@ var FIREBASE_CONFIG={
 var SESSION_COLLECTION='ricerca_accordi';
 var NARRATOR_UID='TFgqfVrFLjW5SwqRFXmEi8tDhtM2';
 var FB={app:null,auth:null,db:null,user:null};
-var CURRENT_SESSION=null,CURRENT_SESSION_DATA=null,SESSION_READONLY=false;
-var SESSION_ACTIONS=[],RESTORING_SESSION=false,SAVE_TIMER=null,SAVE_IN_FLIGHT=false,PENDING_SAVE=false;
+var CURRENT_SESSION=null,CURRENT_SESSION_DATA=null,SESSION_READONLY=false,SESSION_DELETING=false;
+var SESSION_ACTIONS=[],RESTORING_SESSION=false,SAVE_TIMER=null,SAVE_IN_FLIGHT=false,PENDING_SAVE=false,LAST_SAVE_OK=true,CREATING_SESSION=false;
 
 function sq(id){return document.getElementById(id);}
 function workspace(){return sq('accordi-workspace');}
@@ -4600,17 +4633,8 @@ function navigateToSession(id){window.location.hash='session='+encodeURIComponen
 function navigateToDashboard(){if(window.location.hash){try{history.replaceState(null,'',window.location.pathname+window.location.search);}catch(e){window.location.hash='';}}window.location.reload();}
 function agreementName(n){return n===1?'Trattativa e Mediazione':n===2?'Networking e Influenza Sociale':n===3?'Gestione Scandali':n===4?'Coordinazione Interministeriale':'';}
 function selectedAgreement(){
-  var linked=sq('accordoLinkedToggle');
-  var roll=sq('accordoRollVal');
-  if(linked&&linked.checked){
-    var a=document.querySelector('.tab-btn.active');
-    if(a){var m=String(a.getAttribute('data-tab')||'').match(/^a([1-4])$/);if(m)return Number(m[1]);}
-  }
-  if(roll&&roll.value!==''){
-    var v=Number(roll.value);if(isFinite(v)&&Math.floor(v)===v&&v>=1&&v<=4)return v;
-  }
-  if(CURRENT_SESSION_DATA&&CURRENT_SESSION_DATA.accordoId){var c=Number(CURRENT_SESSION_DATA.accordoId);if(c>=1&&c<=4)return c;}
-  return null;
+  var live=(window.RA_FLOW&&typeof window.RA_FLOW.agreement==='function')?Number(window.RA_FLOW.agreement()):NaN;
+  return isFinite(live)&&Math.floor(live)===live&&live>=1&&live<=4?live:null;
 }
 function primaryPgName(){return (CURRENT_SESSION_DATA&&(CURRENT_SESSION_DATA.pgName||CURRENT_SESSION_DATA.initialPgName))||'PG';}
 function activeLabel(){var n=selectedAgreement();return primaryPgName()+' — '+(n?agreementName(n):'Accordo da determinare');}
@@ -4653,7 +4677,7 @@ function actionFromEvent(e){
 }
 function sameLoc(a,b){return JSON.stringify(a||null)===JSON.stringify(b||null);}
 function recordAction(e){
-  if(RESTORING_SESSION||SESSION_READONLY||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;
+  if(RESTORING_SESSION||SESSION_READONLY||SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;
   var a=actionFromEvent(e);if(!a||!a.loc)return;
   var last=SESSION_ACTIONS.length?SESSION_ACTIONS[SESSION_ACTIONS.length-1]:null;
   if((a.type==='input'||a.type==='change')&&last&&(last.type==='input'||last.type==='change')&&sameLoc(a.loc,last.loc))SESSION_ACTIONS[SESSION_ACTIONS.length-1]=a;
@@ -4661,34 +4685,51 @@ function recordAction(e){
   scheduleSave();
 }
 function attachRecorder(){var w=workspace();if(!w||w.getAttribute('data-session-recorder')==='1')return;w.setAttribute('data-session-recorder','1');['input','change','click'].forEach(function(ev){w.addEventListener(ev,recordAction,true);});}
+function prepareLegacyLinkedActions(actions,data){
+  var out=Array.isArray(actions)?actions.slice():[];
+  var linkedIndex=-1,linkedChecked=false,hasConfirm=false;
+  for(var i=0;i<out.length;i++){
+    var a=out[i],id=a&&a.loc&&a.loc.id?a.loc.id:'';
+    if(id==='accordoLinkedToggle'&&(a.type==='input'||a.type==='change')){linkedIndex=i;linkedChecked=!!a.checked;}
+    if(id==='accordoLinkedSuccessConfirm'&&(a.type==='input'||a.type==='change'))hasConfirm=true;
+  }
+  var savedAgreement=data&&Number(data.accordoId);
+  var hasSavedLinkedAgreement=linkedChecked&&savedAgreement>=1&&savedAgreement<=4;
+  if(hasSavedLinkedAgreement&&!hasConfirm&&linkedIndex>=0){
+    out.splice(linkedIndex+1,0,{type:'change',loc:{id:'accordoLinkedSuccessConfirm'},value:'on',checked:true});
+  }
+  return out;
+}
 function replayActions(actions){
   RESTORING_SESSION=true;
   try{(actions||[]).forEach(function(a){var t=resolveTarget(a);if(!t){console.warn('Ricerca Accordi: azione di ripristino non trovata',a);return;}if(a.type==='click'){if(!t.disabled&&typeof t.click==='function')t.click();}else{if('value' in t)t.value=a.value==null?'':String(a.value);if('checked' in t)t.checked=!!a.checked;t.dispatchEvent(new Event(a.type,{bubbles:true}));}});}finally{RESTORING_SESSION=false;}
 }
+function applyWorkspaceReadOnlyLocks(){
+  if(!SESSION_READONLY)return;var w=workspace();if(!w)return;
+  Array.prototype.forEach.call(w.querySelectorAll('input,select,textarea,button'),function(n){
+    if(n.getAttribute('data-session-control')==='1'||(n.closest&&n.closest('[data-session-control="1"]')))return;
+    n.disabled=true;
+  });
+}
+window.RA_APPLY_READONLY_LOCKS=applyWorkspaceReadOnlyLocks;
 function setWorkspaceReadOnly(ro){
-  SESSION_READONLY=!!ro;var w=workspace();if(!w)return;
-  if(SESSION_READONLY){
-    Array.prototype.forEach.call(w.querySelectorAll('input,select,textarea,button'),function(n){
-      if(n.getAttribute('data-session-control')==='1'||(n.closest&&n.closest('[data-session-control="1"]')))return;
-      if(n.classList&&n.classList.contains('tab-btn')){n.disabled=false;return;}
-      n.disabled=true;
-    });
-  }
+  SESSION_READONLY=!!ro;window.RA_SESSION_READONLY=SESSION_READONLY;var w=workspace();if(!w)return;
+  if(SESSION_READONLY)applyWorkspaceReadOnlyLocks();
   updateToolbar();
 }
 function payload(){
   var a=selectedAgreement();
   return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:SESSION_ACTIONS};
 }
-function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(saveNow,850);}
+function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(function(){SAVE_TIMER=null;saveNow();},850);}
 function saveNow(){
-  if(!CURRENT_SESSION||SESSION_READONLY||!sessionCanEdit(CURRENT_SESSION_DATA))return Promise.resolve();
-  if(SAVE_IN_FLIGHT){PENDING_SAVE=true;return Promise.resolve();}
+  if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return Promise.resolve(true);
+  if(SAVE_IN_FLIGHT){PENDING_SAVE=true;return Promise.resolve(null);}
   SAVE_IN_FLIGHT=true;PENDING_SAVE=false;var p=payload();
-  return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();}).catch(function(err){console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
+  return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){LAST_SAVE_OK=true;Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});CURRENT_SESSION_DATA.updatedAt=firebase.firestore.Timestamp.now();setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();return true;}).catch(function(err){LAST_SAVE_OK=false;console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');return false;}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
 }
 function openSessionDoc(id,data){
-  CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;window.RA_SESSION_PRIMARY_NAME=String(data.pgName||data.initialPgName||"").trim();SESSION_ACTIONS=Array.isArray(data.actionLog)?data.actionLog.slice():[];SESSION_READONLY=!sessionCanEdit(data);
+  CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;window.RA_SESSION_PRIMARY_NAME=String(data.pgName||data.initialPgName||"").trim();SESSION_ACTIONS=prepareLegacyLinkedActions(data.actionLog,data);SESSION_READONLY=!sessionCanEdit(data);
   if(sq('accordi-session-home'))sq('accordi-session-home').style.display='none';if(workspace())workspace().style.display='block';
   replayActions(SESSION_ACTIONS);
   if(typeof refreshAll==='function')refreshAll();
@@ -4704,16 +4745,23 @@ function loadSessionList(){
     rows.forEach(function(r){var d=r.data,mine=d.ownerUid===FB.user.uid,narr=FB.user.uid===NARRATOR_UID;var box=document.createElement('div');box.className='session-item';var row=document.createElement('div');row.className='session-item-row';var left=document.createElement('div');var ti=document.createElement('div');ti.className='session-title';ti.textContent=(d.pgName||'PG')+' — '+(d.tipoAccordo||'Accordo da determinare');left.appendChild(ti);var meta=document.createElement('div');meta.className='session-meta';var dt=formatTs(d.updatedAt);meta.textContent=dt?'Aggiornata '+dt:'';left.appendChild(meta);var own=document.createElement('span');own.className='session-owner'+(mine?' mine':'');own.textContent=mine?'Tuo Accordo':(narr?'Gestibile dal Narratore':'Altro giocatore');left.appendChild(own);var b=document.createElement('button');b.type='button';b.className='session-btn'+((mine||narr)?'':' ghost');b.setAttribute('data-session-control','1');b.textContent=(mine||narr)?'Riprendi':'Visualizza';b.addEventListener(EVT,function(){navigateToSession(r.id);});row.appendChild(left);row.appendChild(b);box.appendChild(row);host.appendChild(box);});
   }).catch(function(err){console.error(err);host.innerHTML='<div class="session-status bad">Non riesco a leggere gli Accordi in corso: '+String(err.message||err)+'</div>';});
 }
+function setCreateSessionBusy(busy){
+  CREATING_SESSION=!!busy;var inp=sq('new-session-pg'),btn=sq('btn-new-session');
+  if(inp)inp.disabled=CREATING_SESSION;
+  if(btn){btn.disabled=CREATING_SESSION;btn.textContent=CREATING_SESSION?'Creazione…':'Nuovo Accordo';}
+}
 function createSession(){
+  if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
-  setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:[]};
-  FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');});
+  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:[]};
+  FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setCreateSessionBusy(false);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');if(inp)inp.focus();});
 }
 function positionDeleteModalAtCurrentView(ev){var m=sq('delete-session-modal');if(!m)return;var box=m.querySelector('.session-modal-card');if(!box)return;var anchorY=null;if(ev&&Number.isFinite(ev.clientY)){anchorY=ev.clientY;}if(anchorY===null){var trigger=sq('btn-delete-session');if(trigger){var tr=trigger.getBoundingClientRect();anchorY=tr.top+(tr.height/2);}}if(anchorY===null){anchorY=Math.max(24,Math.min(window.innerHeight/2,window.innerHeight-24));}var mh=m.getBoundingClientRect().height||window.innerHeight||document.documentElement.clientHeight||600;var bh=box.offsetHeight||0;var top=anchorY-(bh/2);var minTop=18;var maxTop=Math.max(minTop,mh-bh-18);top=Math.max(minTop,Math.min(maxTop,top));box.style.position='absolute';box.style.left='50%';box.style.top=Math.round(top)+'px';box.style.transform='translateX(-50%)';box.style.margin='0';}
-function openDeleteModal(ev){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';var m=sq('delete-session-modal');m.classList.add('open');m.setAttribute('aria-hidden','false');requestAnimationFrame(function(){positionDeleteModalAtCurrentView(ev);});}
-function closeDeleteModal(){var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');var box=m.querySelector('.session-modal-card');if(box){box.style.position='';box.style.left='';box.style.top='';box.style.transform='';box.style.margin='';}}
-function deleteCurrentSession(){if(!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';FB.db.collection(SESSION_COLLECTION).doc(id).delete().then(function(){CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){console.error(err);sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;});}
-function backToDashboard(){var done=Promise.resolve();if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA))done=saveNow();done.finally(function(){navigateToDashboard();});}
+function openDeleteModal(ev){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';var m=sq('delete-session-modal');m.classList.add('open');m.setAttribute('aria-hidden','false');requestAnimationFrame(function(){positionDeleteModalAtCurrentView(ev);});}
+function closeDeleteModal(){if(SESSION_DELETING)return;var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');var box=m.querySelector('.session-modal-card');if(box){box.style.position='';box.style.left='';box.style.top='';box.style.transform='';box.style.margin='';}}
+function deleteCurrentSession(){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;SESSION_DELETING=true;if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}PENDING_SAVE=false;sq('btn-confirm-delete').disabled=true;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';waitForSaveDrain().then(function(){return FB.db.collection(SESSION_COLLECTION).doc(id).delete();}).then(function(){CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];SESSION_DELETING=false;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){SESSION_DELETING=false;console.error(err);if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;scheduleSave();});}
+function waitForSaveDrain(){return new Promise(function(resolve){function check(){if(!SAVE_IN_FLIGHT&&!PENDING_SAVE&&!SAVE_TIMER){resolve();return;}setTimeout(check,40);}check();});}
+function backToDashboard(){if(SESSION_DELETING)return;if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA)){if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}saveNow();waitForSaveDrain().then(function(){if(LAST_SAVE_OK){navigateToDashboard();return;}setStatus('save-status','Ultimo salvataggio non riuscito: sei rimasto nella sessione. Riprova quando la connessione è disponibile.','bad');});return;}navigateToDashboard();}
 function setupControls(){
   attachRecorder();
   var w=workspace();if(w){['pointerdown','keydown','input','change'].forEach(function(ev){w.addEventListener(ev,function(){if(!RESTORING_SESSION&&window.RA_FLOW&&typeof window.RA_FLOW.cancelResume==='function'){window.RA_FLOW.cancelResume();}},true);});}
