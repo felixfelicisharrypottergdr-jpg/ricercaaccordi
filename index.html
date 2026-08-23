@@ -1,4 +1,7 @@
-<!-- Revisione v12: bonus multipli Oggetti/Conoscenze, separazione Parametro/prova, Fatica/usi automatici, validazione numerica; Firebase invariato -->
+<!-- Revisione v16: usi consumati automaticamente solo su prove risolte; ripristino coerente su invalidazione; controlli finali Numen/Sensus e prove multiple -->
+<!-- Revisione v15: audit conclusivo riepiloghi/validità; effetti sociali e percentuali mostrano il valore reale; effetti esclusi se il tiro è fuori range; Firebase invariato -->
+<!-- Revisione v14: audit profondo bonus/usi e invalidazione dipendenze; Pozioni e bonus generali nel riepilogo; Amuleto ND Fase III corretto; malus avversario dinamico; Firebase invariato -->
+<!-- Revisione v13: controllo regolamento completo; rimossa risorsa estranea, Conoscenze solo di colore, bonus di Fase coerenti col contesto e col momento di applicazione; Firebase invariato -->
 <!-- Revisione v11: quote semplificati — niente elenchi ridondanti quando il risultato coincide con il dado o con un bonus diretto -->
 <!-- Revisione v9: standard completo Ricerche — riepilogo iniziale copiabile, difficoltà complessiva sulle 3 Fasi, copia stabile, grammatica dadi, navigazione Configurazione/Riepilogo/Fasi e ripresa intelligente -->
 <!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
@@ -1238,7 +1241,7 @@ Zona di provenienza della controparte</div>
 data-name="Scelta Zona">1d3</span> sul forum (1 Verde · 2 Giallo · 3 Rosso) e seleziona
 qui il colore corrispondente. <b>Nessuna Zona viene assunta automaticamente.</b> Conta la provenienza della controparte, non il luogo fisico
 dell'incontro. <b>Eccezione:</b> nella Coordinazione Interministeriale ambientata in Gran
-Bretagna puoi scegliere direttamente l'apposita opzione: per quella Missione la Zona sarà
+Bretagna puoi scegliere direttamente l'apposita opzione: per quell’Accordo la Zona sarà
 Verde.</p>
 <div class="zone-picker">
 <label class="zone-opt"><input type="radio" name="zona" value="verde"><span
@@ -1322,10 +1325,10 @@ Parametro: <b>Standard +1</b>, <b>Oltre Ogni Previsione +3</b>, <b>Eccezionale +
 Il bonus viene applicato solo al PG che beve la Pozione e soltanto al Parametro coinvolto
 nella prova. <a href="https://felixfelicisharrypottergdr.forumfree.it/?t=80408073#pozionario"
 target="_blank">Apri il Pozionario</a>.</div>
-<div class="ndnote"><b>Oggetti dalla Borsa.</b> In tutte e quattro le Missioni compaiono
+<div class="ndnote"><b>Oggetti dalla Borsa.</b> In tutti e quattro gli Accordi compaiono
 selettori per gli oggetti del prezzario che possono modificare direttamente la prova in corso
 (oltre all'Amuleto della Fortuna, che concede possibilità/facce). La pagina applica il bonus,
-e ora permette di registrare <b>Fatica, usi disponibili e usi consumati</b>, calcolando automaticamente gli usi residui. È presente anche “Altro oggetto applicabile” per eventuali effetti situazionali coerenti con il regolamento.</div>
+e permette di registrare <b>usi disponibili e usi consumati</b>, calcolando automaticamente gli usi residui. È presente anche “Altro oggetto applicabile” per eventuali effetti situazionali coerenti con il regolamento.</div>
 <div class="ndnote"><b>Modificatore da una precedente Coordinazione.</b> Se il precedente Accordo di Coordinazione nella <u>stessa Zona</u> ha prodotto +5 o −5, registralo qui. Nelle prove a soglia modifica la soglia; nei round e nelle prove contrapposte modifica il risultato del Diplomatico, mai quello dell'Avversario o dell'opinione pubblica.
 <div class="assignment-grid">
 <div class="field"><label>Modificatore precedente</label><select id="prevCoordMod"><option value="0">Nessuno (0)</option><option value="5">Successo precedente (+5)</option><option value="-5">Fallimento precedente (−5)</option></select></div>
@@ -1365,7 +1368,7 @@ e ora permette di registrare <b>Fatica, usi disponibili e usi consumati</b>, cal
 <div class="tab-panel active" id="panel-a1">
 <div class="filecard">
 <div class="section-label">01 · Trattativa e Mediazione</div>
-<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
+<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore e non vanno inserite come bonus meccanici. Pozioni e Oggetti possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; i bonus diretti alla soglia o al risultato vengono applicati dopo.</div>
 <div class="phase" data-phase="a1f1">
 <div class="phase-head"><span class="phase-num">I</span><span
 class="phase-title">Preparazione</span></div>
@@ -1411,8 +1414,8 @@ azzera Accordo 1</button></div>
 <div class="tab-panel" id="panel-a2">
 <div class="filecard">
 <div class="section-label">02 · Networking e Influenza Sociale</div>
-<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore.
-Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
+<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore e non vanno inserite come bonus meccanici.
+Pozioni e Oggetti possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; i bonus diretti alla soglia o al risultato vengono applicati dopo.</div>
 <div class="phase" data-phase="a2f1">
 <div class="phase-head"><span class="phase-num">I</span><span
 class="phase-title">Attirare l'attenzione</span></div>
@@ -1470,7 +1473,7 @@ azzera Accordo 2</button></div>
 <div class="tab-panel" id="panel-a3">
 <div class="filecard">
 <div class="section-label">03 · Gestione Scandali</div>
-<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore. Pozioni e Oggetti/Conoscenze possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; le possibilità extra dopo. Fatica e usi vengono tracciati nel tool.</div>
+<div class="ndnote"><b>Regole generali.</b> Le Conoscenze sono soltanto di colore e non vanno inserite come bonus meccanici. Pozioni e Oggetti possono modificare i Parametri o la prova quando il loro effetto è realmente applicabile. I bonus al Parametro sono applicati prima di divisioni/conversioni; i bonus diretti alla soglia o al risultato vengono applicati dopo.</div>
 <div class="phase" data-phase="a3f0">
 <div class="phase-head"><span class="phase-num">0</span><span
 class="phase-title">Gravità dello scandalo</span></div>
@@ -1544,7 +1547,7 @@ azzera Accordo 3</button></div>
 <div class="ndnote">
 <b>Regole generali.</b> In questo Accordo <b>Conoscenze e Pozioni sono solo di
 colore</b> e non modificano i calcoli. Gli <b>Oggetti dalla Borsa</b> possono invece fornire
-bonus; il tool distingue bonus ai Parametri e possibilità, e registra automaticamente Fatica, usi consumati e usi residui.
+bonus; il tool distingue i bonus ai Parametri dai bonus diretti alla soglia e tiene separati gli eventuali utilizzi dell’oggetto.
 </div>
 <div class="potion-box"
 style="border-left-color:var(--brass);background:rgba(181,155,120,.14);">
@@ -1554,7 +1557,7 @@ style="border-left-color:var(--brass);background:rgba(181,155,120,.14);">
 Accordo ambientato in Gran Bretagna / Ministero della Magia inglese
 </label>
 </div>
-<div class="potion-help" id="a4zoneNote">Se selezionato, per questa Missione la Zona
+<div class="potion-help" id="a4zoneNote">Se selezionato, per questo Accordo la Zona
 viene considerata automaticamente <b>Verde</b>, indipendentemente dalla Zona generale
 scelta sopra.</div>
 </div>
@@ -1800,13 +1803,14 @@ return ''
 objectOptionsHTML(context, allowFortuna) + '</select></div>'
 + '<div class="field" id="' + customId + '_row" style="display:none;"><label>Bonus dell\'oggetto</label><input type="number" id="' + customId + '" min="0" step="1" value="0"></div>'
 + builtInMetaHTML(selectId)
-+ '<div class="object-help">L\'effetto selezionato viene applicato ai calcoli. I bonus al <b>Parametro</b> vengono applicati prima di divisioni/conversioni; le <b>possibilità/bonus al tiro</b> vengono aggiunte dopo. Registra qui anche Fatica e usi consumati.</div>'
-+ bonusManagerHTML(selectId + "_extra", context, "phase", "Altri bonus da Oggetti/Conoscenze")
++ '<div class="object-help">L\'effetto selezionato viene applicato ai calcoli. I bonus al <b>Parametro</b> vengono applicati prima di divisioni/conversioni; i <b>bonus diretti alla soglia o al risultato</b> vengono aggiunti dopo. L’Amuleto della Fortuna, dove previsto, modifica invece le possibilità/facce del dado. Indica gli usi disponibili: gli usi consumati vengono aggiornati automaticamente quando la prova associata viene realmente risolta.</div>'
++ bonusManagerHTML(selectId + "_extra", context, "phase", "Altri bonus da Oggetti")
 + '</div>';
 }
 function refreshObjectSelectForContext(selectId, customId, context, allowFortuna){
-var manager=document.getElementById(selectId+"_extra_manager");
-if(manager){manager.setAttribute("data-bonus-context",context||"generic");}
+refreshBonusManagerTargets(selectId+"_extra",context||"generic");
+var holder=document.querySelector('.object-box[data-object-select="'+selectId.replace(/"/g,'\"')+'"]');
+if(holder){holder.setAttribute("data-object-context",context||"generic");}
 var sel = document.getElementById(selectId);
 if(!sel){ return; }
 var current = sel.value;
@@ -1822,9 +1826,11 @@ function baseObjectEffect(selectId, customId, dip, context){
 var sel = document.getElementById(selectId);
 var out = {param:0,roll:0,label:""};
 if(!sel){ return out; }
-var maxUses = Math.max(0,Math.floor(num(selectId + "_maxuses")));
-var usedUses = Math.max(0,Math.floor(num(selectId + "_used")));
-if(maxUses > 0 && (usedUses < 1 || usedUses > maxUses)){ return out; }
+var maxState=usageCountState(selectId + "_maxuses"),usedState=usageCountState(selectId + "_used");
+var maxUses=maxState.value,usedUses=usedState.value;
+var hereNode=document.getElementById(selectId+"_consumedHere"),consumedHere=!!(hereNode&&hereNode.value==="1");
+if(!maxState.valid||!usedState.valid||(maxUses > 0 && usedUses > maxUses)){ return out; }
+if(maxUses>0 && usedUses>=maxUses && !consumedHere){ return out; }
 var v = sel.value;
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_acume_2" || v === "astronomico_2"){ if(context === "acume"){ out.param = 2; } }
@@ -1855,7 +1861,8 @@ var extra = bonusManagerEffect(selectId + "_extra", context);
 return {
 param: base.param + bonusParamFor(extra, context),
 roll: base.roll + extra.roll,
-fatigue: extra.fatigue,
+baseRoll: base.roll,
+extraRoll: extra.roll,
 entries: extra.entries,
 label: base.label
 };
@@ -1906,7 +1913,7 @@ return h;
 }
 function socialObjectBoxHTML(prefix, role, allowFortuna, mode){
 var notaFortuna = mode === "f3"
-? "In Fase III l\'Amuleto della Fortuna aggiunge possibilità <b>dopo</b> la determinazione del dado Volontà."
+? "In Fase III l\'Amuleto della Fortuna aumenta le possibilità/facce del dado determinato dalla Volontà; non è un bonus al risultato."
 : "Nelle prove a soglia l\'Amuleto della Fortuna aggiunge possibilità direttamente alla prova.";
 return ''
 + '<div class="object-box" data-social-prefix="' + prefix + '" data-social-mode="' + mode + '">'
@@ -1920,17 +1927,19 @@ socialObjectOptionsHTML(role,allowFortuna) + '</select></div>'
 + '<div class="field"><label>Bonus fisso alla prova/risultato</label><input type="number" id="' + prefix + '_flat" step="1" value="0"></div>'
 + '</div>'
 + builtInMetaHTML(prefix + "_sel")
-+ '<div class="object-help">Il bonus viene calcolato qui. ' + notaFortuna + ' Registra anche Fatica e usi consumati.</div>'
-+ bonusManagerHTML(prefix + "_extra", mode === "f3" ? "volonta" : "generic", "phase", "Altri bonus da Oggetti/Conoscenze")
++ '<div class="object-help">Il bonus viene calcolato qui. ' + notaFortuna + ' Indica gli usi disponibili: gli usi consumati vengono aggiornati automaticamente quando la prova associata viene realmente risolta.</div>'
++ bonusManagerHTML(prefix + "_extra", mode === "f3" ? "volonta" : "generic", "phase", "Altri bonus da Oggetti")
 + '</div>';
 }
 function socialObjectEffect(prefix, pg, mode){
 var sel = document.getElementById(prefix + "_sel");
-var out = {vol:0,dial:0,flat:0,roll:0,label:"",fatigue:0,entries:[]};
+var out = {vol:0,dial:0,flat:0,roll:0,extraRoll:0,opponent:0,label:"",entries:[]};
 if(!sel){ return out; }
-var maxUses = Math.max(0,Math.floor(num(prefix + "_sel_maxuses")));
-var usedUses = Math.max(0,Math.floor(num(prefix + "_sel_used")));
-if(maxUses > 0 && (usedUses < 1 || usedUses > maxUses)){ return out; }
+var maxState=usageCountState(prefix + "_sel_maxuses"),usedState=usageCountState(prefix + "_sel_used");
+var maxUses=maxState.value,usedUses=usedState.value;
+var hereNode=document.getElementById(prefix+"_sel_consumedHere"),consumedHere=!!(hereNode&&hereNode.value==="1");
+if(!maxState.valid||!usedState.valid||(maxUses > 0 && usedUses > maxUses)){ return out; }
+if(maxUses>0 && usedUses>=maxUses && !consumedHere){ return out; }
 var v = sel.value;
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_volonta_2"){ out.vol = 2; }
@@ -1958,12 +1967,13 @@ out.flat = num(prefix + "_flat");
 }
 var custom = document.getElementById(prefix + "_custom");
 if(custom){ custom.style.display = v === "custom" ? "grid" : "none"; }
+refreshBonusManagerTargets(prefix+"_extra",mode === "f3" ? "volonta" : "generic");
 var extra = bonusManagerEffect(prefix + "_extra", mode === "f3" ? "volonta" : "generic");
 out.vol += bonusParamFor(extra,"volonta");
 out.dial += bonusParamFor(extra,"dialettica");
-if(mode === "f3"){ out.roll += extra.roll; }
+if(mode === "f3"){ out.extraRoll += extra.roll; }
 else { out.flat += extra.roll; }
-out.fatigue += extra.fatigue;
+out.opponent += extra.opponent || 0;
 out.entries = out.entries.concat(extra.entries || []);
 return out;
 }
@@ -1972,7 +1982,7 @@ if(!effect){ return 0; }
 return effect.vol + effect.dial + effect.flat + (effect.roll || 0);
 }
 
-/* =================== BONUS MULTIPLI / OGGETTI E CONOSCENZE =================== */
+/* =================== BONUS MULTIPLI / OGGETTI =================== */
 function bonusPhaseLabel(prefix, scope){
 if(scope === "general"){ return "Generale / scheda personaggio"; }
 var p = String(prefix || "");
@@ -1981,15 +1991,29 @@ if(m){ return "Accordo " + m[1] + " · Fase " + (m[2] === "0" ? "0" : ["","I","I
 if(p.indexOf("a1obj_") === 0 || p.indexOf("a1ndobj_") === 0){ return "Accordo 1 · Fase III"; }
 return "Fase corrente";
 }
-function bonusTargetOptions(context){
+function bonusTargetOptions(context, scope, prefix){
 var c = String(context || "generic");
-var opts = [
-["acume","Acume"],["volonta","Volontà"],["empatia","Empatia"],["dialettica","Dialettica"],
-["percezione","Percezione"],["popolarita","Popolarità"],["sapienze","Tot. Sapienze Magiche"],
-["persuasore","Lv. Persuasore"],["prestigio","Prestigio"],["paramRif","Parametro di riferimento"],
-["sapienzaAffine","Sapienza Magica Affine"],["sapienzeTotali","Totale Sapienze Magiche ND"],
-["prova","Prova / possibilità"]
-];
+var p = String(prefix || "");
+var opts = [];
+if(scope === "general"){
+if(p.indexOf("dipGeneral_") === 0){
+opts = [["acume","Acume"],["volonta","Volontà"],["empatia","Empatia"],["dialettica","Dialettica"],["percezione","Percezione"],["popolarita","Popolarità"],["sapienze","Tot. Sapienze Magiche"],["persuasore","Lv. Persuasore"],["prestigio","Prestigio"]];
+} else {
+opts = [["acume","Acume"],["volonta","Volontà"],["empatia","Empatia"],["dialettica","Dialettica"],["popolarita","Popolarità"],["paramRif","Parametro di riferimento"],["sapienzaAffine","Sapienza Magica Affine"],["sapienzeTotali","Totale Sapienze Magiche ND"]];
+}
+} else if(p.indexOf("a2f1obj") === 0 || p.indexOf("a2f2obj_") === 0 || p.indexOf("a2f2ndobj_") === 0){
+opts = [["volonta","Volontà"],["dialettica","Dialettica"],["prova","Soglia della prova"]];
+} else if(p.indexOf("a2f3obj_") === 0){
+opts = [["volonta","Volontà"],["dialettica","Dialettica"],["prova","Risultato del tiro"],["avversario","Risultato dell’Avversario (usa un valore negativo per un malus)"]];
+} else if(p.indexOf("a3f3obj_") === 0){
+opts = [["volonta","Volontà"],["dialettica","Dialettica"],["prova","Risultato del tiro"]];
+} else if(p.indexOf("a4f1obj_") === 0){
+opts = [["acume","Acume"],["volonta","Volontà"],["popolarita","Popolarità"],["prova","Soglia della prova"]];
+} else if(c !== "generic"){
+opts = [[c,bonusTargetLabel(c)],["prova",bonusDirectLabel(p)]];
+} else {
+opts = [["prova",bonusDirectLabel(p)]];
+}
 var h = "";
 for(var i=0;i<opts.length;i++){
 var selected = (c === opts[i][0] || (c === "generic" && opts[i][0] === "prova")) ? ' selected' : '';
@@ -1997,14 +2021,38 @@ h += '<option value="' + opts[i][0] + '"' + selected + '>' + opts[i][1] + '</opt
 }
 return h;
 }
+function refreshBonusManagerTargets(prefix, context){
+var manager=document.getElementById(prefix+"_manager");
+if(!manager){return;}
+manager.setAttribute("data-bonus-context",context||"generic");
+var scope=manager.getAttribute("data-bonus-scope")||"phase";
+var rows=manager.querySelectorAll('[data-bonus-row="1"]');
+for(var i=0;i<rows.length;i++){
+var rid=rows[i].id.replace(prefix+"_row_","");
+var sel=document.getElementById(prefix+"_target_"+rid);
+if(!sel){continue;}
+var old=sel.value;
+sel.innerHTML=bonusTargetOptions(context,scope,prefix);
+var found=false;
+for(var j=0;j<sel.options.length;j++){if(sel.options[j].value===old){found=true;break;}}
+if(found){sel.value=old;}
+}
+}
+function bonusDirectLabel(prefix){
+var p=String(prefix||"");
+if(p.indexOf("a1obj_")===0 || p.indexOf("a1ndobj_")===0 || p.indexOf("a2f3obj_")===0 || p.indexOf("a3f3obj_")===0 || p.indexOf("a3f3ndobj_")===0){
+return "Risultato del tiro";
+}
+return "Soglia della prova";
+}
 function bonusManagerHTML(prefix, context, scope, title){
 var phase = bonusPhaseLabel(prefix,scope);
 var help = scope === "general"
-? "Inserisci qui soltanto bonus permanenti/generali ai Parametri. Verranno applicati una sola volta alla scheda del personaggio e poi usati da tutte le Fasi."
-: "Inserisci qui soltanto effetti specifici di questa Fase. I bonus al Parametro entrano prima di divisioni/conversioni; i bonus alla prova/possibilità entrano dopo.";
+? "Inserisci qui soltanto bonus permanenti/generali ai Parametri. Verranno applicati una sola volta alla scheda del personaggio e poi usati automaticamente dalle formule che impiegano quel Parametro."
+: "Inserisci qui soltanto effetti specifici di questa Fase provenienti da Oggetti o altri effetti realmente ammessi. Le Conoscenze restano solo di colore. I bonus al Parametro entrano prima di divisioni/conversioni; i bonus diretti entrano dopo.";
 return ''
 + '<div class="bonus-manager" id="' + prefix + '_manager" data-bonus-prefix="' + prefix + '" data-bonus-context="' + context + '" data-bonus-scope="' + scope + '" data-next-row="0">'
-+ '<div class="bonus-manager-head"><span class="bonus-manager-title">' + (title || "Bonus da Oggetti/Conoscenze") + '</span>'
++ '<div class="bonus-manager-head"><span class="bonus-manager-title">' + (title || "Bonus da Oggetti") + '</span>'
 + '<button type="button" class="add-btn" id="' + prefix + '_add" data-action="addBonusRow" data-prefix="' + prefix + '">+ Aggiungi bonus</button></div>'
 + '<p class="bonus-manager-help">' + help + '</p>'
 + '<div class="bonus-rows" id="' + prefix + '_rows"></div>'
@@ -2014,22 +2062,30 @@ return ''
 }
 function bonusRowHTML(prefix, idx, context, scope){
 var phase = bonusPhaseLabel(prefix,scope);
+var targetsHTML=bonusTargetOptions(context,scope,prefix);
+var parameterAllowed=scope==="general" || targetsHTML.indexOf('value="prova"')<0 || targetsHTML.indexOf('value="'+context+'"')>=0 || targetsHTML.match(/value="(acume|volonta|empatia|dialettica|percezione|popolarita|sapienze|persuasore|prestigio|paramRif|sapienzaAffine|sapienzeTotali)"/);
+var onlyDirect=scope!=="general" && !parameterAllowed;
 var defaultKind = scope === "general" ? "parameter" : (context === "generic" ? "roll" : "parameter");
-var defaultUsed = scope === "general" ? 0 : 1;
+if(onlyDirect){defaultKind="roll";}
+var defaultUsed = 0;
 var defaultMax = scope === "general" ? 0 : 1;
+var kindHTML = scope === "general"
+? '<option value="parameter" selected>Bonus al Parametro</option>'
+: (onlyDirect
+? '<option value="roll" selected>Bonus diretto alla prova</option>'
+: '<option value="parameter"' + (defaultKind==="parameter"?' selected':'') + '>Bonus al Parametro</option><option value="roll"' + (defaultKind==="roll"?' selected':'') + '>Bonus diretto: ' + bonusDirectLabel(prefix) + '</option>');
 return ''
 + '<div class="bonus-row" id="' + prefix + '_row_' + idx + '" data-bonus-row="1" data-bonus-prefix="' + prefix + '">'
 + '<div class="bonus-row-grid">'
-+ '<div class="field"><label>Fonte / oggetto / conoscenza</label><input type="text" id="' + prefix + '_source_' + idx + '" placeholder="Es. Magibiografia"></div>'
++ '<div class="field"><label>Fonte / oggetto</label><input type="text" id="' + prefix + '_source_' + idx + '" placeholder="Es. Oggetto del Prezzario"></div>'
 + '<div class="field"><label>Valore del bonus</label><input type="number" step="1" id="' + prefix + '_value_' + idx + '" value="0"></div>'
-+ '<div class="field"><label>Su cosa agisce</label><select id="' + prefix + '_target_' + idx + '">' + bonusTargetOptions(context) + '</select></div>'
-+ '<div class="field"><label>Tipo di bonus</label><select id="' + prefix + '_kind_' + idx + '"'
-+ (scope === "general" ? ' disabled' : '') + '><option value="parameter"' + (defaultKind==="parameter"?' selected':'') + '>Bonus al Parametro</option><option value="roll"' + (defaultKind==="roll"?' selected':'') + '>Bonus alla prova / possibilità</option></select></div>'
-+ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + prefix + '_condition_' + idx + '" placeholder="Es. 100% Studente"></div>'
++ '<div class="field"><label>Su cosa agisce</label><select id="' + prefix + '_target_' + idx + '">' + targetsHTML + '</select></div>'
++ '<div class="field"><label>Tipo di bonus</label><select id="' + prefix + '_kind_' + idx + '"' + ((scope==="general"||onlyDirect)?' disabled':'') + '>' + kindHTML + '</select></div>'
++ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + prefix + '_condition_' + idx + '" placeholder="Es. condizione prevista dal Prezzario"></div>'
 + '<div class="field"><label>Fase</label><input type="text" id="' + prefix + '_phase_' + idx + '" value="' + phase.replace(/"/g,'&quot;') + '" readonly></div>'
-+ '<div class="field"><label>Fatica per uso</label><input type="number" min="0" step="1" id="' + prefix + '_fatigue_' + idx + '" value="0"></div>'
-+ '<div class="field"><label>Usi disponibili</label><input type="number" min="0" step="1" id="' + prefix + '_maxuses_' + idx + '" value="' + defaultMax + '"></div>'
++ '<div class="field"><label>Usi disponibili <span class="muted">(0 = senza limite)</span></label><input type="number" min="0" step="1" id="' + prefix + '_maxuses_' + idx + '" value="' + defaultMax + '"></div>'
 + '<div class="field"><label>Usi consumati</label><input type="number" min="0" step="1" id="' + prefix + '_used_' + idx + '" value="' + defaultUsed + '"></div>'
++ '<input type="hidden" id="' + prefix + '_consumedHere_' + idx + '" value="0">'
 + '</div>'
 + '<div class="bonus-row-actions"><label class="bonus-active"><input type="checkbox" id="' + prefix + '_active_' + idx + '" checked> Applica ai calcoli (condizione soddisfatta)</label>'
 + '<button type="button" class="remove-btn" id="' + prefix + '_remove_' + idx + '" data-action="removeBonusRow" data-prefix="' + prefix + '" data-row="' + idx + '">elimina</button></div>'
@@ -2046,49 +2102,72 @@ var context = manager.getAttribute("data-bonus-context") || "generic";
 var scope = manager.getAttribute("data-bonus-scope") || "phase";
 rows.insertAdjacentHTML("beforeend", bonusRowHTML(prefix,idx,context,scope));
 decorateNumericFields(rows);
-invalidateDownstreamForTarget({id:prefix});
 refreshAll();
 }
+function bonusRowCurrentlyAffects(prefix,idx){
+var row=document.getElementById(prefix+"_row_"+idx);
+if(!row){return false;}
+var active=document.getElementById(prefix+"_active_"+idx);
+var value=document.getElementById(prefix+"_value_"+idx);
+var raw=value?String(value.value||"").trim():"";
+if(!active||!active.checked||!/^\-?\d+$/.test(raw)||Number(raw)===0){return false;}
+var maxS=usageCountState(prefix+"_maxuses_"+idx),usedS=usageCountState(prefix+"_used_"+idx);
+var here=document.getElementById(prefix+"_consumedHere_"+idx),consumedHere=!!(here&&here.value==="1");
+if(!maxS.valid||!usedS.valid||(maxS.value>0&&usedS.value>maxS.value)){return false;}
+if(maxS.value>0&&usedS.value>=maxS.value&&!consumedHere){return false;}
+return true;
+}
 function removeBonusRow(prefix, idx){
+var affects=bonusRowCurrentlyAffects(prefix,idx);
 var row = document.getElementById(prefix + "_row_" + idx);
 if(row && row.parentNode){ row.parentNode.removeChild(row); }
-invalidateDownstreamForTarget({id:prefix});
+if(affects){invalidateDownstreamForTarget({id:prefix});}
 refreshAll();
+}
+function usageCountState(id){
+var e=document.getElementById(id);
+if(!e){return {valid:true,value:0};}
+var raw=String(e.value==null?"":e.value).trim();
+if(raw===""){return {valid:true,value:0};}
+if(!/^\d+$/.test(raw)){return {valid:false,value:0};}
+var v=Number(raw);
+if(!Number.isFinite(v)||Math.floor(v)!==v||v<0){return {valid:false,value:0};}
+return {valid:true,value:v};
 }
 function bonusManagerEffect(prefix, context){
 var manager = document.getElementById(prefix + "_manager");
-var out = {params:{},roll:0,fatigue:0,entries:[],invalid:false};
+var out = {params:{},roll:0,opponent:0,entries:[],invalid:false};
 if(!manager){ return out; }
 var rows = manager.querySelectorAll('[data-bonus-row="1"]');
 for(var i=0;i<rows.length;i++){
 var row = rows[i], rid = row.id.replace(prefix + "_row_","");
 var active = document.getElementById(prefix + "_active_" + rid);
-var source = text(prefix + "_source_" + rid).trim();
-if(!active || !active.checked || !source){ row.classList.remove("bonus-invalid"); continue; }
+var source = text(prefix + "_source_" + rid).trim() || "Effetto senza nome";
+if(!active || !active.checked){ row.classList.remove("bonus-invalid"); continue; }
 var valueNode = document.getElementById(prefix + "_value_" + rid);
 var rawValue = valueNode ? String(valueNode.value || "").trim() : "";
 var value = /^-?\d+$/.test(rawValue) ? Number(rawValue) : NaN;
-var fatigue = Math.max(0,Math.floor(num(prefix + "_fatigue_" + rid)));
-var maxUses = Math.max(0,Math.floor(num(prefix + "_maxuses_" + rid)));
-var used = Math.max(0,Math.floor(num(prefix + "_used_" + rid)));
-var invalid = !Number.isFinite(value) || Math.floor(value) !== value || (maxUses > 0 && used > maxUses);
+var maxState=usageCountState(prefix + "_maxuses_" + rid), usedState=usageCountState(prefix + "_used_" + rid);
+var maxUses=maxState.value, used=usedState.value;
+var hereNode=document.getElementById(prefix+"_consumedHere_"+rid),consumedHere=!!(hereNode&&hereNode.value==="1");
+var invalid = !Number.isFinite(value) || Math.floor(value) !== value || !maxState.valid || !usedState.valid || (maxUses > 0 && used > maxUses);
 row.classList.toggle("bonus-invalid",invalid);
 if(invalid){ out.invalid = true; continue; }
-if(maxUses > 0 && used < 1){ continue; }
+if(value===0){ continue; }
+if(maxUses>0 && used>=maxUses && !consumedHere){ continue; }
 var kindNode = document.getElementById(prefix + "_kind_" + rid);
 var kind = kindNode ? kindNode.value : "parameter";
 var target = text(prefix + "_target_" + rid) || context || "prova";
-if(kind === "roll" || target === "prova"){ out.roll += value; }
+if(target === "avversario"){kind="roll";if(kindNode){kindNode.value="roll";}out.opponent += value;}
+else if(kind === "roll" || target === "prova"){ out.roll += value; }
 else { out.params[target] = (out.params[target] || 0) + value; }
-out.fatigue += fatigue * used;
 out.entries.push({
 source:source,
 condition:text(prefix + "_condition_" + rid).trim(),
 value:value,
-kind:(kind === "roll" || target === "prova") ? "roll" : "parameter",
+kind:target === "avversario" ? "opponent" : ((kind === "roll" || target === "prova") ? "roll" : "parameter"),
 target:target,
 phase:text(prefix + "_phase_" + rid) || bonusPhaseLabel(prefix,manager.getAttribute("data-bonus-scope")),
-fatigue:fatigue,
 maxUses:maxUses,
 used:used,
 remaining:maxUses > 0 ? Math.max(0,maxUses-used) : null
@@ -2104,16 +2183,15 @@ function generalParamBonus(prefix,target){
 return bonusParamFor(bonusManagerEffect(prefix,target),target);
 }
 function bonusTargetLabel(target){
-var map={acume:"Acume",volonta:"Volontà",empatia:"Empatia",dialettica:"Dialettica",percezione:"Percezione",popolarita:"Popolarità",sapienze:"Tot. Sapienze Magiche",persuasore:"Persuasore",prestigio:"Prestigio",paramRif:"Parametro di riferimento",sapienzaAffine:"Sapienza Magica Affine",sapienzeTotali:"Totale Sapienze Magiche ND",prova:"Prova / possibilità"};
+var map={acume:"Acume",volonta:"Volontà",empatia:"Empatia",dialettica:"Dialettica",percezione:"Percezione",popolarita:"Popolarità",sapienze:"Tot. Sapienze Magiche",persuasore:"Persuasore",prestigio:"Prestigio",paramRif:"Parametro di riferimento",sapienzaAffine:"Sapienza Magica Affine",sapienzeTotali:"Totale Sapienze Magiche ND",prova:"Prova / possibilità",avversario:"Risultato dell’Avversario"};
 return map[target] || target || "Parametro";
 }
 function bonusEntryLine(e){
 var sign = e.value >= 0 ? "+" : "";
-var effectText = e.valueText ? e.valueText : (sign + e.value + (e.kind === "roll" ? " POSSIBILITÀ/PROVA" : " " + bonusTargetLabel(e.target).toUpperCase()));
+var effectText = e.valueText ? e.valueText : (sign + e.value + (e.kind === "roll" ? " " + bonusDirectLabel(e.prefix || "").toUpperCase() : " " + bonusTargetLabel(e.target).toUpperCase()));
 var s = '<b>' + summaryEscape(e.source).toUpperCase() + '</b>';
 if(e.condition){ s += ' · ' + summaryEscape(e.condition).toUpperCase(); }
 s += ' → <b>' + effectText + '</b> · ' + summaryEscape(e.phase);
-if(e.fatigue){ s += ' · <b>-' + (e.fatigue * e.used) + ' FATICA</b>'; }
 if(e.maxUses > 0){ s += ' · ' + e.used + '/' + e.maxUses + ' USI → <b>' + e.remaining + ' RIMASTI</b>'; }
 return s;
 }
@@ -2124,19 +2202,18 @@ if(!manager || !box){ return; }
 var eff = bonusManagerEffect(prefix,manager.getAttribute("data-bonus-context") || "generic");
 if(!eff.entries.length && !eff.invalid){ box.style.display="none"; box.innerHTML=""; return; }
 var h = [];
-for(var i=0;i<eff.entries.length;i++){ h.push('<div class="bonus-applied-line">' + bonusEntryLine(eff.entries[i]) + '</div>'); }
+for(var i=0;i<eff.entries.length;i++){ eff.entries[i].prefix=prefix; h.push('<div class="bonus-applied-line">' + bonusEntryLine(eff.entries[i]) + '</div>'); }
 if(eff.invalid){ h.push('<div class="roll-error">Un bonus non viene applicato: controlla valore e usi consumati (non possono superare gli usi disponibili).</div>'); }
-if(eff.fatigue){ h.push('<div class="bonus-applied-line"><b>Fatica totale di questi effetti: ' + eff.fatigue + '</b></div>'); }
 box.innerHTML = h.join("");
 box.style.display="block";
 }
 function builtInMetaHTML(selectId){
 return ''
 + '<div class="grid" id="' + selectId + '_meta" style="display:none;width:100%;margin-top:4px;">'
-+ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + selectId + '_condition" placeholder="Es. 100% Studente"></div>'
-+ '<div class="field"><label>Fatica per uso</label><input type="number" min="0" step="1" id="' + selectId + '_fatigue" value="0"></div>'
-+ '<div class="field"><label>Usi disponibili</label><input type="number" min="0" step="1" id="' + selectId + '_maxuses" value="0"></div>'
++ '<div class="field"><label>Condizione / efficacia</label><input type="text" id="' + selectId + '_condition" placeholder="Es. condizione prevista dal Prezzario"></div>'
++ '<div class="field"><label>Usi disponibili <span class="muted">(0 = senza limite)</span></label><input type="number" min="0" step="1" id="' + selectId + '_maxuses" value="0"></div>'
 + '<div class="field"><label>Usi consumati</label><input type="number" min="0" step="1" id="' + selectId + '_used" value="0"></div>'
++ '<input type="hidden" id="' + selectId + '_consumedHere" value="0">'
 + '</div>'
 + '<div class="bonus-applied-summary" id="' + selectId + '_builtinSummary" style="display:none;"></div>';
 }
@@ -2151,33 +2228,37 @@ var label=sel.selectedIndex>=0?sel.options[sel.selectedIndex].text:"";
 var consumable=/1 uso/i.test(label);
 var max=document.getElementById(selectId+"_maxuses"),used=document.getElementById(selectId+"_used");
 if(max){ max.value=consumable?"1":"0"; }
-if(used){ used.value=consumable?"1":"0"; }
+if(used){ used.value="0"; }
+var here=document.getElementById(selectId+"_consumedHere"); if(here){ here.value="0"; }
 }
 }
 function renderBuiltInObjectSummary(selectId){
 var sel=document.getElementById(selectId),box=document.getElementById(selectId+"_builtinSummary");
 if(!sel||!box||!sel.value||sel.value==="none"||sel.selectedIndex<0){if(box){box.style.display="none";box.innerHTML="";}return;}
-var max=Math.max(0,Math.floor(num(selectId+"_maxuses"))),used=Math.max(0,Math.floor(num(selectId+"_used")));
-if(max>0&&used>max){box.style.display="block";box.innerHTML='<span class="roll-error">Effetto non applicato: gli usi consumati superano quelli disponibili.</span>';return;}
-if(max>0&&used<1){box.style.display="block";box.innerHTML='<span class="muted">Oggetto registrato ma non applicato: 0 usi consumati.</span>';return;}
-var cond=text(selectId+"_condition").trim(),fat=Math.max(0,Math.floor(num(selectId+"_fatigue")));
+var maxS=usageCountState(selectId+"_maxuses"),usedS=usageCountState(selectId+"_used");
+var max=maxS.value,used=usedS.value;
+if(!maxS.valid||!usedS.valid||(max>0&&used>max)){box.style.display="block";box.innerHTML='<span class="roll-error">Effetto non applicato: inserisci usi interi validi e non superare gli usi disponibili.</span>';return;}
+if(max>0&&used<1){box.style.display="none";box.innerHTML='';return;}
+var cond=text(selectId+"_condition").trim();
 var phase=bonusPhaseLabel(selectId,"phase");
 var line='<b>'+summaryEscape(sel.options[sel.selectedIndex].text).toUpperCase()+'</b>';
 if(cond){line+=' · '+summaryEscape(cond).toUpperCase();}
 line+=' · '+summaryEscape(phase);
-if(fat&&used){line+=' · <b>-'+(fat*used)+' FATICA</b>';}
 if(max>0){line+=' · '+used+'/'+max+' USI → <b>'+Math.max(0,max-used)+' RIMASTI</b>';}
 box.innerHTML=line;box.style.display="block";
 }
 function builtInObjectEntry(selectId, effect, context){
 var sel=document.getElementById(selectId);
 if(!sel || !sel.value || sel.value==="none" || sel.selectedIndex<0){ return null; }
-var used=Math.max(0,Math.floor(num(selectId+"_used"))),max=Math.max(0,Math.floor(num(selectId+"_maxuses")));
-if(max>0 && used>max){ return {invalid:true,source:sel.options[sel.selectedIndex].text}; }
+var usedS=usageCountState(selectId+"_used"),maxS=usageCountState(selectId+"_maxuses");
+var used=usedS.value,max=maxS.value;
+if(!usedS.valid||!maxS.valid||(max>0 && used>max)){ return {invalid:true,source:sel.options[sel.selectedIndex].text}; }
 if(max>0 && used<1){ return null; }
 var paramValue=effect && Number(effect.param||0),rollValue=effect && Number(effect.roll||0);
 var value=rollValue || paramValue || 0,kind=rollValue?"roll":"parameter";
-return {source:sel.options[sel.selectedIndex].text,condition:text(selectId+"_condition").trim(),value:value,valueText:value===0?"EFFETTO PREDEFINITO":null,kind:kind,target:kind==="roll"?"prova":context,phase:bonusPhaseLabel(selectId,"phase"),fatigue:Math.max(0,Math.floor(num(selectId+"_fatigue"))),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null};
+var valueText=value===0?"EFFETTO PREDEFINITO":null;
+if(rollValue && sel.value.indexOf("fortuna_")===0){valueText=(rollValue>=0?"+":"")+rollValue+" POSSIBILITÀ/FACCE";}
+return {source:sel.options[sel.selectedIndex].text,condition:text(selectId+"_condition").trim(),value:value,valueText:valueText,kind:kind,target:kind==="roll"?"prova":context,phase:bonusPhaseLabel(selectId,"phase"),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null,prefix:selectId};
 }
 function allBonusManagers(){
 return document.querySelectorAll(".bonus-manager[data-bonus-prefix]");
@@ -2190,39 +2271,304 @@ for(i=0;i<objects.length;i++){ var os=objects[i].getAttribute("data-object-selec
 var socials=document.querySelectorAll(".object-box[data-social-prefix]");
 for(i=0;i<socials.length;i++){ var ss= socials[i].getAttribute("data-social-prefix")+"_sel"; syncBuiltInObjectMeta(ss,false); renderBuiltInObjectSummary(ss); }
 }
+function effectWasUsed(prefix){
+var p=String(prefix||"").replace(/_extra$/,"");
+function picked(id){var e=document.getElementById(id);return !!(e&&e.value&&e.value!=="none");}
+function fixed(id,faces){return rollState(id,faces).status==="ok";}
+function byCmd(id,cmd){return validRollByCmd(id,cmd);}
+var m;
+if((m=p.match(/^a1f1supportObj_(.+)$/))){return picked("a1f1ndpick_"+m[1])&&fixed("a1f1supportVal_"+m[1],35);}
+if((m=p.match(/^a1f1obj_(.+)$/))){return fixed("a1f1val_"+m[1],100);}
+if((m=p.match(/^a1f2obj_(.+)$/))){return fixed("a1f2val_"+m[1],70);}
+if((m=p.match(/^a1obj_(.+)_(\d+)$/))){return byCmd("a1roundval_"+m[1]+"_"+m[2],"a1roundcmd_"+m[1]+"_"+m[2]);}
+if((m=p.match(/^a1ndobj_(.+)_(\d+)$/))){return picked("a1f3ndpick_"+m[1])&&byCmd("a1roundval_"+m[1]+"_"+m[2],"a1roundcmd_"+m[1]+"_"+m[2]);}
+if((m=p.match(/^a2f1obj_2_(.+)$/))){return fixed("a2f1val_2_"+m[1],40);}
+if((m=p.match(/^a2f1obj_(.+)$/))){return fixed("a2f1val_"+m[1],40);}
+if((m=p.match(/^a2f2obj_(.+)$/))){return fixed("a2f2val_"+m[1],70);}
+if((m=p.match(/^a2f2ndobj_(.+)$/))){return picked("a2f2ndpick_"+m[1])&&fixed("a2f2val_"+m[1],70);}
+if((m=p.match(/^a2f3obj_(.+)$/))){return byCmd("a2f3dipval_"+m[1],"a2f3dipcmd_"+m[1]);}
+if((m=p.match(/^a3f1obj_(.+)$/))){return fixed("a3f1val_"+m[1],50);}
+if((m=p.match(/^a3f2obj_(.+)$/))){return fixed("a3f2val_"+m[1],40);}
+if((m=p.match(/^a3f2ndobj_(.+)$/))){return picked("a3f2ndpick_"+m[1])&&fixed("a3f2val_"+m[1],40);}
+if((m=p.match(/^a3f3obj_(.+)$/))){return byCmd("a3f3dipval_"+m[1],"a3f3dipcmd_"+m[1]);}
+if((m=p.match(/^a3f3ndobj_(.+)$/))){return picked("a3f3ndpick_"+m[1])&&byCmd("a3f3dipval_"+m[1],"a3f3dipcmd_"+m[1]);}
+if((m=p.match(/^a4f1obj_(.+)$/))){return fixed("a4f1val_"+m[1],80);}
+if((m=p.match(/^a4f1nd_(.+)_obj$/))){return picked("a4f1nd_"+m[1]+"_pick")&&fixed("a4f1val_"+m[1],80);}
+if((m=p.match(/^a4f2obj_(.+)$/))){return fixed("a4f2val_"+m[1],35);}
+if((m=p.match(/^a4f3obj_(.+)$/))){return fixed("a4f3val_"+m[1],100);}
+if((m=p.match(/^a4f3nd_(.+)_(1|2)_obj$/))){return picked("a4f3nd_"+m[1]+"_"+m[2]+"_pick")&&fixed("a4f3val_"+m[1],100);}
+return true;
+}
+function potionPhaseLabel(id){
+var p=String(id||"");
+var m=p.match(/a([1-4])f([0-3])/);
+if(m){return "Accordo "+m[1]+" · Fase "+(m[2]==="0"?"0":["","I","II","III"][parseInt(m[2],10)]);}
+if(p.indexOf("a1f3potion_")===0||p.indexOf("a1ndpotion_")===0){return "Accordo 1 · Fase III";}
+return "Fase corrente";
+}
+function validRollByCmd(inputId,cmdId){
+var inp=document.getElementById(inputId),cmd=document.getElementById(cmdId);
+if(!inp||!cmd){return false;}
+var raw=String(inp.value||"").trim();
+if(!/^\d+$/.test(raw)){return false;}
+var v=Number(raw),dice=String(cmd.getAttribute("data-dice")||cmd.textContent||"");
+var m=dice.match(/1d(\d+)/i),faces=m?Number(m[1]):0;
+return Number.isFinite(v)&&Math.floor(v)===v&&v>=1&&faces>=1&&v<=faces;
+}
+function a1RoundApproach(did,r){
+var radios=document.getElementsByName("a1approach_"+did+"_"+r);
+for(var i=0;i<radios.length;i++){if(radios[i].checked){return radios[i].value;}}
+return "logica";
+}
+function potionApplicationInfo(id){
+var m;
+function good(id2,faces){return rollState(id2,faces).status==="ok";}
+function picked(id2){var e=document.getElementById(id2);return !!(e&&e.value&&e.value!=="none");}
+if((m=id.match(/^a1f1supportPotion_(.+)$/))){return {used:picked("a1f1ndpick_"+m[1])&&good("a1f1supportVal_"+m[1],35),target:"Parametro di riferimento ND"};}
+if((m=id.match(/^a1f1potion_(.+)$/))){return {used:good("a1f1val_"+m[1],100),target:"Acume"};}
+if((m=id.match(/^a1f3potion_(.+)$/))){
+var wanted=text("a1f3potionparam_"+m[1])||"logica";
+return {used:[1,2,3].some(function(r){return a1RoundApproach(m[1],r)===wanted&&validRollByCmd("a1roundval_"+m[1]+"_"+r,"a1roundcmd_"+m[1]+"_"+r);}),target:wanted==="pressione"?"Volontà":(wanted==="empatia"?"Empatia":"Acume")};
+}
+if((m=id.match(/^a1ndpotion_(.+)_(\d+)$/))){return {used:picked("a1f3ndpick_"+m[1])&&validRollByCmd("a1roundval_"+m[1]+"_"+m[2],"a1roundcmd_"+m[1]+"_"+m[2]),target:a1RoundApproach(m[1],Number(m[2]))==="pressione"?"Volontà ND":(a1RoundApproach(m[1],Number(m[2]))==="empatia"?"Empatia ND":"Acume ND")};}
+if((m=id.match(/^a2f1potion(_2)?_(.+)$/))){var suf=m[1]||"";return {used:good("a2f1val"+suf+"_"+m[2],40),target:text("a2f1potionTarget"+suf+"_"+m[2])==="dialettica"?"Dialettica":"Volontà"};}
+if((m=id.match(/^a2f2potion_(.+)$/))){return {used:good("a2f2val_"+m[1],70),target:text("a2f2potionTarget_"+m[1])==="dialettica"?"Dialettica":"Volontà"};}
+if((m=id.match(/^a2f2ndpotion_(.+)$/))){return {used:picked("a2f2ndpick_"+m[1])&&good("a2f2val_"+m[1],70),target:text("a2f2ndpotionTarget_"+m[1])==="dialettica"?"Dialettica ND":"Volontà ND"};}
+if((m=id.match(/^a2f3potion_(.+)$/))){return {used:validRollByCmd("a2f3dipval_"+m[1],"a2f3dipcmd_"+m[1]),target:text("a2f3potionTarget_"+m[1])==="dialettica"?"Dialettica":"Volontà"};}
+if((m=id.match(/^a3f1potion_(.+)$/))){return {used:good("a3f1val_"+m[1],50),target:text("a3f1param_"+m[1])==="percezione"?"Percezione":"Acume"};}
+if((m=id.match(/^a3f2potion_(.+)$/))){return {used:good("a3f2val_"+m[1],40),target:"Acume"};}
+if((m=id.match(/^a3f2ndpotion_(.+)$/))){return {used:picked("a3f2ndpick_"+m[1])&&good("a3f2val_"+m[1],40),target:"Acume ND"};}
+if((m=id.match(/^a3f3potion_(.+)$/))){return {used:validRollByCmd("a3f3dipval_"+m[1],"a3f3dipcmd_"+m[1]),target:text("a3f3potionTarget_"+m[1])==="dialettica"?"Dialettica":"Volontà"};}
+if((m=id.match(/^a3f3ndpotion_(.+)$/))){return {used:picked("a3f3ndpick_"+m[1])&&validRollByCmd("a3f3dipval_"+m[1],"a3f3dipcmd_"+m[1]),target:"Volontà ND"};}
+return {used:false,target:"Parametro"};
+}
+function collectPotionEntries(n){
+var out=[],sels=document.querySelectorAll('select[id*="potion"],select[id*="Potion"]');
+for(var i=0;i<sels.length;i++){
+var s=sels[i],id=s.id||"";
+if(n&&id.indexOf("a"+n)!==0){continue;}
+var b=potionBonus(id);if(!b){continue;}
+var info=potionApplicationInfo(id);if(!info.used){continue;}
+var label=s.selectedIndex>=0?s.options[s.selectedIndex].text:("Pozione +"+b);
+out.push({source:label,value:b,kind:"parameter",target:info.target,phase:potionPhaseLabel(id),maxUses:0,used:0,remaining:null,prefix:id});
+}
+return out;
+}
+function generalEffectWasUsed(prefix,target,n){
+var m=String(prefix||"").match(/^(dip|nd)General_(.+)$/);if(!m||!n){return false;}
+var kind=m[1],id=m[2];
+function goodFixed(input,faces){return rollState(input,faces).status==="ok";}
+function selected(selId,who){var e=document.getElementById(selId);return !!(e&&String(e.value)===String(who));}
+if(kind==="dip"){
+if(n===1){
+if(target==="acume"&&goodFixed("a1f1val_"+id,100)){return true;}
+if((target==="sapienze"||target==="persuasore")&&goodFixed("a1f2val_"+id,70)){return true;}
+if(target==="sapienze"&&goodFixed("a1f1val_"+id,100)){return true;}
+var amap={acume:"logica",volonta:"pressione",empatia:"empatia"},ap=amap[target];if(ap){for(var r=1;r<=3;r++){if(a1RoundApproach(id,r)===ap&&validRollByCmd("a1roundval_"+id+"_"+r,"a1roundcmd_"+id+"_"+r)){return true;}}}
+return false;
+}
+if(n===2){
+if(target==="volonta"||target==="dialettica"){
+if(goodFixed("a2f1val_"+id,40)||goodFixed("a2f1val_2_"+id,40)||goodFixed("a2f2val_"+id,70)||validRollByCmd("a2f3dipval_"+id,"a2f3dipcmd_"+id)){return true;}
+}
+if(target==="prestigio"&&validRollByCmd("a2f3dipval_"+id,"a2f3dipcmd_"+id)){return true;}
+return false;
+}
+if(n===3){
+if(target==="acume"&&((text("a3f1param_"+id)!=="percezione"&&goodFixed("a3f1val_"+id,50))||goodFixed("a3f2val_"+id,40))){return true;}
+if(target==="percezione"&&text("a3f1param_"+id)==="percezione"&&goodFixed("a3f1val_"+id,50)){return true;}
+if((target==="popolarita"||target==="persuasore")&&goodFixed("a3f1val_"+id,50)){return true;}
+if((target==="volonta"||target==="dialettica"||target==="persuasore")&&validRollByCmd("a3f3dipval_"+id,"a3f3dipcmd_"+id)){return true;}
+return false;
+}
+if(n===4){
+if(target==="acume"&&(goodFixed("a4f1val_"+id,80)||goodFixed("a4f2val_"+id,35)||goodFixed("a4f3val_"+id,100))){return true;}
+if((target==="volonta"||target==="popolarita")&&goodFixed("a4f1val_"+id,80)){return true;}
+if(target==="sapienze"&&goodFixed("a4f3val_"+id,100)){return true;}
+return false;
+}
+}else{
+if(n===1){
+if(target==="paramRif"||target==="sapienzaAffine"){for(var di=0;di<diplomatIds.length;di++){var did=diplomatIds[di];if(selected("a1f1ndpick_"+did,id)&&goodFixed("a1f1supportVal_"+did,35)){return true;}}}
+if(target==="sapienzeTotali"){for(di=0;di<diplomatIds.length;di++){did=diplomatIds[di];if(selected("a1f2ndpick_"+did,id)&&goodFixed("a1f2val_"+did,70)){return true;}}}
+var amap2={acume:"logica",volonta:"pressione",empatia:"empatia"},ap2=amap2[target];if(ap2){for(di=0;di<diplomatIds.length;di++){did=diplomatIds[di];if(!selected("a1f3ndpick_"+did,id)){continue;}for(var rr=1;rr<=3;rr++){if(a1RoundApproach(did,rr)===ap2&&validRollByCmd("a1roundval_"+did+"_"+rr,"a1roundcmd_"+did+"_"+rr)){return true;}}}}
+return false;
+}
+if(n===2){if(target==="volonta"||target==="dialettica"){for(var d2=0;d2<diplomatIds.length;d2++){var did2=diplomatIds[d2];if(selected("a2f2ndpick_"+did2,id)&&goodFixed("a2f2val_"+did2,70)){return true;}}}return false;}
+if(n===3){
+if(target==="acume"){for(var d3=0;d3<diplomatIds.length;d3++){var did3=diplomatIds[d3];if(selected("a3f2ndpick_"+did3,id)&&goodFixed("a3f2val_"+did3,40)){return true;}}}
+if(target==="volonta"){for(d3=0;d3<diplomatIds.length;d3++){did3=diplomatIds[d3];if(selected("a3f3ndpick_"+did3,id)&&validRollByCmd("a3f3dipval_"+did3,"a3f3dipcmd_"+did3)){return true;}}}
+return false;
+}
+if(n===4){
+for(var d4=0;d4<diplomatIds.length;d4++){var did4=diplomatIds[d4];
+if(selected("a4f1nd_"+did4+"_pick",id)&&text("a4f1nd_"+did4+"_stat")===target&&goodFixed("a4f1val_"+did4,80)){return true;}
+for(var sl=1;sl<=2;sl++){if(selected("a4f3nd_"+did4+"_"+sl+"_pick",id)&&text("a4f3nd_"+did4+"_"+sl+"_stat")===target&&goodFixed("a4f3val_"+did4,100)){return true;}}
+}
+return false;
+}
+}
+return false;
+}
+function objectEffectOwner(selectId){
+var id=String(selectId||""),m,pick;
+if((m=id.match(/^a1f1supportObj_(.+)$/))){pick=text("a1f1ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a1ndobj_(.+)_\d+$/))){pick=text("a1f3ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a2f2ndobj_(.+)$/))){pick=text("a2f2ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a3f2ndobj_(.+)$/))){pick=text("a3f2ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a3f3ndobj_(.+)$/))){pick=text("a3f3ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a4f1nd_(.+)_obj$/))){pick=text("a4f1nd_"+m[1]+"_pick");return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a4f3nd_(.+)_(1|2)_obj$/))){pick=text("a4f3nd_"+m[1]+"_"+m[2]+"_pick");return pick&&pick!=="none"?getNd(pick):null;}
+if((m=id.match(/^a1obj_(.+)_\d+$/))){return getDip(m[1]);}
+if((m=id.match(/^a(?:1f1|1f2|2f1obj|2f1obj_2|2f2|3f1|3f2|4f1|4f2|4f3)obj?_?(.+)$/))){/* fallback handled below */}
+var dm=id.match(/^a[1-4]f[1-3](?:obj|obj_2)?_(.+)$/);if(dm){return getDip(dm[1]);}
+return null;
+}
+function socialObjectOwner(prefix){
+var p=String(prefix||""),m,pick;
+if((m=p.match(/^a2f2ndobj_(.+)$/))){pick=text("a2f2ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+m=p.match(/^a[23]f[123]obj(?:_2)?_(.+)$/);return m?getDip(m[1]):null;
+}
+function socialBuiltInEntry(prefix,pg,mode){
+var sel=document.getElementById(prefix+"_sel");
+if(!sel||!sel.value||sel.value==="none"||sel.selectedIndex<0){return null;}
+var usedS=usageCountState(prefix+"_sel_used"),maxS=usageCountState(prefix+"_sel_maxuses"),used=usedS.value,max=maxS.value;
+if(!usedS.valid||!maxS.valid||(max>0&&used>max)){return {invalid:true,source:sel.options[sel.selectedIndex].text};}
+if(max>0&&used<1){return null;}
+var v=sel.value,vol=0,dial=0,flat=0,roll=0;
+if(v==="manuale_volonta_2"){vol=2;}
+else if(v==="manuale_volonta_1"){vol=1;}
+else if(v==="biografie_2"||v==="abiti_2"){dial=2;}
+else if(v==="biografie_1"||v==="abiti_1"){dial=1;}
+else if(v==="completo_dip_4"||v==="completo_giornalista_4"||v==="completo_difensore_4"){dial=4;}
+else if(v==="completo_dip_2"||v==="completo_giornalista_2"||v==="completo_difensore_2"){dial=2;}
+else if(v==="sblorb_33"){vol=Math.floor((pg?pg.volonta:0)*33/100);}
+else if(v==="sblorb_10"){vol=Math.floor((pg?pg.volonta:0)*10/100);}
+else if(v==="sblorb_66"){vol=Math.floor((pg?pg.volonta:0)*66/100);}
+else if(v==="sonetti"){vol=-Math.floor((pg?pg.volonta:0)*20/100);dial=Math.floor((pg?pg.dialettica:0)*20/100);}
+else if(v.indexOf("fortuna_")===0){roll=parseInt(v.replace("fortuna_",""),10)||0;}
+else if(v==="custom"){vol=num(prefix+"_vol");dial=num(prefix+"_dial");flat=num(prefix+"_flat");}
+var bits=[];
+if(vol){bits.push((vol>=0?"+":"")+vol+" VOLONTÀ");}
+if(dial){bits.push((dial>=0?"+":"")+dial+" DIALETTICA");}
+if(flat){bits.push((flat>=0?"+":"")+flat+" "+(mode==="f3"?"RISULTATO":"SOGLIA"));}
+if(roll){bits.push((roll>=0?"+":"")+roll+(mode==="f3"?" POSSIBILITÀ/FACCE":" ALLA SOGLIA"));}
+if(!bits.length){return null;}
+return {source:sel.options[sel.selectedIndex].text,condition:text(prefix+"_sel_condition").trim(),value:0,valueText:bits.join(" · "),kind:"parameter",target:"prova",phase:bonusPhaseLabel(prefix,"phase"),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null,prefix:prefix};
+}
+
+function configuredBuiltInObjectEffect(selectId){
+var box=document.querySelector('.object-box[data-object-select="'+String(selectId).replace(/"/g,'\\"')+'"]');
+var sel=document.getElementById(selectId);
+if(!box||!sel||!sel.value||sel.value==="none"){return false;}
+var context=box.getAttribute("data-object-context")||"generic";
+var owner=objectEffectOwner(selectId);
+var raw={param:0,roll:0};
+var v=sel.value;
+if(v==="custom"){
+var customId=box.getAttribute("data-object-custom");
+var b=num(customId);if(b<0){b=0;}if(context==="generic"){raw.roll=b;}else{raw.param=b;}
+}else{
+var tempMax=document.getElementById(selectId+"_maxuses"),tempUsed=document.getElementById(selectId+"_used"),tempHere=document.getElementById(selectId+"_consumedHere");
+var om=tempMax?tempMax.value:null,ou=tempUsed?tempUsed.value:null,oh=tempHere?tempHere.value:null;
+if(tempMax){tempMax.value="0";}if(tempUsed){tempUsed.value="0";}if(tempHere){tempHere.value="0";}
+raw=baseObjectEffect(selectId,box.getAttribute("data-object-custom"),owner,context);
+if(tempMax){tempMax.value=om;}if(tempUsed){tempUsed.value=ou;}if(tempHere){tempHere.value=oh;}
+}
+return !!(Number(raw.param||0)||Number(raw.roll||0));
+}
+function configuredSocialObjectEffect(prefix){
+var box=document.querySelector('.object-box[data-social-prefix="'+String(prefix).replace(/"/g,'\\"')+'"]');
+var sel=document.getElementById(prefix+"_sel");
+if(!box||!sel||!sel.value||sel.value==="none"){return false;}
+var pg=socialObjectOwner(prefix),mode=box.getAttribute("data-social-mode")||"threshold";
+var max=document.getElementById(prefix+"_sel_maxuses"),used=document.getElementById(prefix+"_sel_used"),here=document.getElementById(prefix+"_sel_consumedHere");
+var om=max?max.value:null,ou=used?used.value:null,oh=here?here.value:null;
+if(max){max.value="0";}if(used){used.value="0";}if(here){here.value="0";}
+var eff=socialObjectEffect(prefix,pg,mode);
+if(max){max.value=om;}if(used){used.value=ou;}if(here){here.value=oh;}
+return !!(Number(eff.vol||0)||Number(eff.dial||0)||Number(eff.flat||0)||Number(eff.roll||0)||Number(eff.extraRoll||0)||Number(eff.opponent||0));
+}
+function syncOneAutomaticUse(usedId,maxId,hereId,shouldConsume){
+var usedNode=document.getElementById(usedId),maxNode=document.getElementById(maxId),hereNode=document.getElementById(hereId);
+if(!usedNode||!maxNode||!hereNode){return false;}
+var us=usageCountState(usedId),ms=usageCountState(maxId);
+if(!us.valid||!ms.valid){return false;}
+var used=us.value,max=ms.value,here=hereNode.value==="1",changed=false;
+if(max===0){
+if(here){hereNode.value="0";changed=true;}
+return changed;
+}
+if(shouldConsume){
+if(!here && used<max){usedNode.value=String(used+1);hereNode.value="1";changed=true;}
+}else if(here){
+usedNode.value=String(Math.max(0,used-1));hereNode.value="0";changed=true;
+}
+return changed;
+}
+function syncAutomaticEffectUses(){
+var changed=false,i,j;
+var objects=document.querySelectorAll(".object-box[data-object-select]");
+for(i=0;i<objects.length;i++){
+var sid=objects[i].getAttribute("data-object-select");
+var should=effectWasUsed(sid)&&configuredBuiltInObjectEffect(sid);
+changed=syncOneAutomaticUse(sid+"_used",sid+"_maxuses",sid+"_consumedHere",should)||changed;
+}
+var socials=document.querySelectorAll(".object-box[data-social-prefix]");
+for(i=0;i<socials.length;i++){
+var sp=socials[i].getAttribute("data-social-prefix");
+var shouldS=effectWasUsed(sp)&&configuredSocialObjectEffect(sp);
+changed=syncOneAutomaticUse(sp+"_sel_used",sp+"_sel_maxuses",sp+"_sel_consumedHere",shouldS)||changed;
+}
+var managers=allBonusManagers();
+for(i=0;i<managers.length;i++){
+var prefix=managers[i].getAttribute("data-bonus-prefix")||"";
+if((managers[i].getAttribute("data-bonus-scope")||"phase")==="general"){continue;}
+var rows=managers[i].querySelectorAll('[data-bonus-row="1"]');
+for(j=0;j<rows.length;j++){
+var rid=rows[j].id.replace(prefix+"_row_","");
+var active=document.getElementById(prefix+"_active_"+rid),val=document.getElementById(prefix+"_value_"+rid);
+var raw=val?String(val.value||"").trim():"",configured=!!(active&&active.checked&&/^-?\d+$/.test(raw)&&Number(raw)!==0);
+var shouldR=configured&&effectWasUsed(prefix);
+changed=syncOneAutomaticUse(prefix+"_used_"+rid,prefix+"_maxuses_"+rid,prefix+"_consumedHere_"+rid,shouldR)||changed;
+}
+}
+return changed;
+}
 function collectCurrentAgreementEffects(){
-var n=flowAgreementNumber(),entries=[],fatigue=0;
+var n=flowAgreementNumber(),entries=[];
 var managers=allBonusManagers();
 for(var i=0;i<managers.length;i++){
 var prefix=managers[i].getAttribute("data-bonus-prefix")||"";
 var scope=managers[i].getAttribute("data-bonus-scope")||"phase";
 if(scope!=="general" && n && prefix.indexOf("a"+n)!==0){ continue; }
+if(scope!=="general" && !effectWasUsed(prefix)){ continue; }
 var eff=bonusManagerEffect(prefix,managers[i].getAttribute("data-bonus-context")||"generic");
-entries=entries.concat(eff.entries||[]);fatigue+=eff.fatigue||0;
+for(var ei=0;ei<(eff.entries||[]).length;ei++){
+if(scope==="general" && !generalEffectWasUsed(prefix,eff.entries[ei].target,n)){continue;}
+eff.entries[ei].prefix=prefix;entries.push(eff.entries[ei]);
+}
 }
 var objects=document.querySelectorAll(".object-box[data-object-select]");
 for(i=0;i<objects.length;i++){
 var sid=objects[i].getAttribute("data-object-select"),context=objects[i].getAttribute("data-object-context")||"generic";
 if(n && sid.indexOf("a"+n)!==0){continue;}
-var base=baseObjectEffect(sid,objects[i].getAttribute("data-object-custom"),null,context);
+if(!effectWasUsed(sid)){continue;}
+var base=baseObjectEffect(sid,objects[i].getAttribute("data-object-custom"),objectEffectOwner(sid),context);
 var e=builtInObjectEntry(sid,base,context);
-if(e&&!e.invalid){entries.push(e);fatigue+=e.fatigue*e.used;}
+if(e&&!e.invalid){entries.push(e);}
 }
 var socials=document.querySelectorAll(".object-box[data-social-prefix]");
 for(i=0;i<socials.length;i++){
 var sp=socials[i].getAttribute("data-social-prefix"),sid2=sp+"_sel";
 if(n && sp.indexOf("a"+n)!==0){continue;}
-var sel=document.getElementById(sid2);
-if(sel&&sel.value&&sel.value!=="none"&&sel.selectedIndex>=0){
-var used=Math.max(0,Math.floor(num(sid2+"_used"))),max=Math.max(0,Math.floor(num(sid2+"_maxuses")));
-if(!(max>0&&used>max) && !(max>0&&used<1)){
-var src=sel.options[sel.selectedIndex].text;
-var entry={source:src,condition:text(sid2+"_condition").trim(),value:0,valueText:"EFFETTO PREDEFINITO",kind:"parameter",target:"prova",phase:bonusPhaseLabel(sp,"phase"),fatigue:Math.max(0,Math.floor(num(sid2+"_fatigue"))),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null};
-entries.push(entry);fatigue+=entry.fatigue*entry.used;
+if(!effectWasUsed(sp)){continue;}
+var socialEntry=socialBuiltInEntry(sp,socialObjectOwner(sp),socials[i].getAttribute("data-social-mode")||"threshold");
+if(socialEntry&&!socialEntry.invalid){entries.push(socialEntry);}
 }
-}
-}
-return {entries:entries,fatigue:fatigue};
+var potionEntries=collectPotionEntries(n);
+for(i=0;i<potionEntries.length;i++){entries.push(potionEntries[i]);}
+return {entries:entries};
 }
 function renderFinalEffectsSummary(){
 var n=flowAgreementNumber();
@@ -2234,9 +2580,8 @@ var old=document.getElementById("final-effects-summary");
 if(old&&old.parentNode){old.parentNode.removeChild(old);}
 var data=collectCurrentAgreementEffects();
 if(!data.entries.length){ return; }
-var h='<div class="final-effects-box" id="final-effects-summary"><b>Oggetti/Conoscenze usati</b>';
+var h='<div class="final-effects-box" id="final-effects-summary"><b>Oggetti, Pozioni ed effetti usati</b>';
 for(var i=0;i<data.entries.length;i++){h+='<div class="bonus-applied-line">'+bonusEntryLine(data.entries[i])+'</div>';}
-if(data.fatigue){h+='<div class="bonus-applied-line"><b>Fatica totale consumata dagli effetti: '+data.fatigue+'</b></div>';}
 h+='</div>';
 host.insertAdjacentHTML("beforeend",h);
 }
@@ -2254,7 +2599,7 @@ var note=document.createElement("span");note.className="number-only-hint";note.t
 }
 }
 function resetBuiltInMeta(selectId){
-var ids=[selectId+"_condition",selectId+"_fatigue",selectId+"_maxuses",selectId+"_used"];
+var ids=[selectId+"_condition",selectId+"_maxuses",selectId+"_used"];
 for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e){e.value=i===0?"":"0";}}
 var box=document.getElementById(selectId+"_builtinSummary");if(box){box.style.display="none";box.innerHTML="";}
 }
@@ -3454,9 +3799,9 @@ var z = a4Zona();
 var uk = document.getElementById("a4ukToggle");
 var txt = "";
 if(uk && uk.checked){
-txt = "<b>Gran Bretagna:</b> questa Missione viene trattata come Zona <b>Verde</b>.";
+txt = "<b>Gran Bretagna:</b> questo Accordo viene trattato come Zona <b>Verde</b>.";
 } else if(z){
-txt = "Zona effettiva per questa Missione: <b>" + zonaLabel(z) + "</b>.";
+txt = "Zona effettiva per questo Accordo: <b>" + zonaLabel(z) + "</b>.";
 } else {
 txt = "<b>Zona non determinata:</b> seleziona la provenienza al Passo 1 oppure attiva qui l’eccezione Gran Bretagna.";
 }
@@ -3499,12 +3844,12 @@ a4CoordObjectOptionsHTML(mode) + '</select></div>'
 prefix + '_flat" step="1" value="0"></div>'
 + '</div>'
 + builtInMetaHTML(prefix + "_sel")
-+ '<div class="object-help">I bonus ai Parametri vengono applicati prima dei calcoli; le possibilità alla soglia vengono aggiunte dopo. Fatica e usi sono tracciati qui.</div>'
-+ bonusManagerHTML(prefix + "_extra","generic","phase","Altri bonus da Oggetti/Conoscenze")
++ '<div class="object-help">I bonus ai Parametri vengono applicati prima dei calcoli; le possibilità alla soglia vengono aggiunte dopo. Gli eventuali usi disponibili e consumati sono tracciati qui.</div>'
++ bonusManagerHTML(prefix + "_extra","generic","phase","Altri bonus da Oggetti")
 + '</div>';
 }
 function a4CoordObjectEffect(prefix, pg, mode){
-var out = {acume:0,volonta:0,popolarita:0,flat:0,label:"",fatigue:0,entries:[]};
+var out = {acume:0,volonta:0,popolarita:0,flat:0,label:"",entries:[]};
 var sel = document.getElementById(prefix + "_sel");
 if(!sel){ return out; }
 var maxUses=Math.max(0,Math.floor(num(prefix+"_sel_maxuses"))),usedUses=Math.max(0,Math.floor(num(prefix+"_sel_used")));
@@ -3527,12 +3872,12 @@ out.flat = num(prefix + "_flat");
 }
 var custom = document.getElementById(prefix + "_custom");
 if(custom){ custom.style.display = sel.value === "custom" ? "grid" : "none"; }
+refreshBonusManagerTargets(prefix+"_extra","generic");
 var extra=bonusManagerEffect(prefix+"_extra","generic");
 out.acume += bonusParamFor(extra,"acume");
 out.volonta += bonusParamFor(extra,"volonta");
 out.popolarita += bonusParamFor(extra,"popolarita");
 out.flat += extra.roll;
-out.fatigue=extra.fatigue;
 out.entries=extra.entries||[];
 return out;
 }
@@ -4184,20 +4529,20 @@ function a1ComputeRound(did,idx){
 if(!state.a1.f2complete){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,'<span class="muted">Completa prima la Fase II di tutti i Diplomatici.</span>');return;}
 var info=a1ApproachInfo(did,idx),dip=info.dip,context=info.approach==="logica"?"acume":(info.approach==="pressione"?"volonta":"empatia");
 var objHolder=document.getElementById("a1objbox_"+did+"_"+idx); if(objHolder&&objHolder.getAttribute("data-built")!=="1"){objHolder.innerHTML=objectBoxHTML("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context);objHolder.setAttribute("data-built","1");}
-refreshObjectSelectForContext("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context); var potion=text("a1f3potionparam_"+did)===info.approach?potionBonus("a1f3potion_"+did):0; var objEff=objectEffectTotals("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,dip,context); var effectiveParam=info.param+potion+objEff.param; var dipSides=effectiveParam+objEff.roll; if(dipSides<1){dipSides=1;}
+refreshObjectSelectForContext("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,context); var potion=text("a1f3potionparam_"+did)===info.approach?potionBonus("a1f3potion_"+did):0; var objEff=objectEffectTotals("a1obj_"+did+"_"+idx,"a1objCustom_"+did+"_"+idx,dip,context); var effectiveParam=info.param+potion+objEff.param; var dipSides=effectiveParam+objEff.baseRoll; if(dipSides<1){dipSides=1;}
 var pickedNd=text("a1f3ndpick_"+did), bonusNd=0, ndDetail=""; var ndContext=context, ndParamLabel=info.label;
-var ndObjHolder=document.getElementById("a1ndobjbox_"+did+"_"+idx); if(ndObjHolder&&ndObjHolder.getAttribute("data-built")!=="1"){ndObjHolder.innerHTML=objectBoxHTML("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,ndContext);ndObjHolder.setAttribute("data-built","1");}
+var ndObjHolder=document.getElementById("a1ndobjbox_"+did+"_"+idx); if(ndObjHolder&&ndObjHolder.getAttribute("data-built")!=="1"){ndObjHolder.innerHTML=objectBoxHTML("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,ndContext,false);ndObjHolder.setAttribute("data-built","1");}
 refreshObjectSelectForContext("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,ndContext);
 if(pickedNd!=="none"){var nd=getNd(pickedNd); var ndBase=context==="volonta"?nd.volonta:(context==="empatia"?nd.empatia:nd.acume); var ndPotion=potionBonus("a1ndpotion_"+did+"_"+idx); var ndObjEff=objectEffectTotals("a1ndobj_"+did+"_"+idx,"a1ndobjCustom_"+did+"_"+idx,nd,ndContext); var ndModified=ndBase+ndPotion+ndObjEff.param; bonusNd=floorDiv(ndModified,3)+ndObjEff.roll; ndDetail=ndParamLabel+" effettivo "+ndModified+"; /3 = "+floorDiv(ndModified,3)+(ndObjEff.roll?(" +"+ndObjEff.roll+" possibilità"):""); setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND = "+ndDetail+" = <b>+"+bonusNd+"</b>");} else {setHTML("a1ndbonus_"+did+"_"+idx,"Bonus ND: <b>+0</b> — nessun non Diplomatico selezionato.");}
 var bonusF2=mapVal(state.a1.bonusF3round,did), prev=prevCoordForZone(getZona()), pos=diplomatIds.indexOf(did)+1;
 setDiceCmd("a1roundcmd_"+did+"_"+idx,"Diplomatico "+pos+" — tira 1d"+dipSides+" ("+info.label+")","1d"+dipSides,"Trattativa Round "+idx+" - Diplomatico "+pos); setDiceCmd("a1roundavvcmd_"+did+"_"+idx,"Avversario — tira 1d"+info.avvSides,"1d"+info.avvSides,"Trattativa Round "+idx+" - Avversario contro Diplomatico "+pos);
-var a1Flat=bonusF2+bonusNd+prev;
-setDiceFormula("a1roundcmd_"+did+"_"+idx,"Al risultato del dado aggiungi "+(a1Flat>=0?"+":"")+a1Flat+" (esito Fase II "+(bonusF2>=0?"+":"")+bonusF2+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", Coordinazione precedente "+(prev>=0?"+":"")+prev+"). Il totale si confronta con quello dell’Avversario.");
+var a1Flat=bonusF2+bonusNd+prev+objEff.extraRoll;
+setDiceFormula("a1roundcmd_"+did+"_"+idx,"Al risultato del dado aggiungi "+(a1Flat>=0?"+":"")+a1Flat+" (esito Fase II "+(bonusF2>=0?"+":"")+bonusF2+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", oggetto diretto "+(objEff.extraRoll>=0?"+":"")+objEff.extraRoll+", Coordinazione precedente "+(prev>=0?"+":"")+prev+"). Il totale si confronta con quello dell’Avversario.");
 setDiceFormula("a1roundavvcmd_"+did+"_"+idx,"Il risultato del dado costituisce il totale dell’Avversario in questo round.");
-var sig=[info.approach,dipSides,info.avvSides,bonusF2,bonusNd,pickedNd,prev].join("|"); guardRoll("a1f3_"+did+"_"+idx,sig,["a1roundval_"+did+"_"+idx,"a1roundavvval_"+did+"_"+idx]);
+var sig=[info.approach,dipSides,info.avvSides,bonusF2,bonusNd,pickedNd,prev,objEff.extraRoll].join("|"); guardRoll("a1f3_"+did+"_"+idx,sig,["a1roundval_"+did+"_"+idx,"a1roundavvval_"+did+"_"+idx]);
 var dr=rollState("a1roundval_"+did+"_"+idx,dipSides), ar=rollState("a1roundavvval_"+did+"_"+idx,info.avvSides);
 if(dr.status==="empty"||ar.status==="empty"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,'<span class="muted">in attesa di entrambi i risultati</span>');a1Recount();a1FinalTally();return;} if(dr.status==="invalid"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,rollErrorHTML(dipSides));a1Recount();a1FinalTally();return;} if(ar.status==="invalid"){a1StorePI(did,idx,null);setHTML("a1roundout_"+did+"_"+idx,rollErrorHTML(info.avvSides));a1Recount();a1FinalTally();return;}
-var dipTotal=dr.value+bonusF2+bonusNd+prev,pi=0,esito=""; if(dipTotal>ar.value){pi=2;esito="Vittoria";} else if(dipTotal===ar.value){pi=1;esito="Pareggio";} else {pi=0;esito="Sconfitta";} a1StorePI(did,idx,pi); setHTML("a1roundout_"+did+"_"+idx,"<b>"+esito+"</b> — Diplomatico "+dipTotal+" ("+dr.value+" su 1d"+dipSides+(bonusF2?(" "+(bonusF2>=0?"+":"")+bonusF2+" Fase II"):"")+(bonusNd?(" +"+bonusNd+" ND"):"")+(prev?(" "+(prev>=0?"+":"")+prev+" Coord. precedente"):"")+") vs Avversario "+ar.value+" → <b>+"+pi+" PI</b>"); a1Recount();a1FinalTally();
+var dipTotal=dr.value+bonusF2+bonusNd+prev+objEff.extraRoll,pi=0,esito=""; if(dipTotal>ar.value){pi=2;esito="Vittoria";} else if(dipTotal===ar.value){pi=1;esito="Pareggio";} else {pi=0;esito="Sconfitta";} a1StorePI(did,idx,pi); setHTML("a1roundout_"+did+"_"+idx,"<b>"+esito+"</b> — Diplomatico "+dipTotal+" ("+dr.value+" su 1d"+dipSides+(bonusF2?(" "+(bonusF2>=0?"+":"")+bonusF2+" Fase II"):"")+(bonusNd?(" +"+bonusNd+" ND"):"")+(objEff.extraRoll?(" "+(objEff.extraRoll>=0?"+":"")+objEff.extraRoll+" Oggetto"):"")+(prev?(" "+(prev>=0?"+":"")+prev+" Coord. precedente"):"")+") vs Avversario "+ar.value+" → <b>+"+pi+" PI</b>"); a1Recount();a1FinalTally();
 }
 function a1FinalTally(){
 a1Recount();
@@ -4314,7 +4659,8 @@ var ndPick = text("a2f3ndpick_" + id);
 if(ndPick === "none"){ effect = "none"; }
 var dipBonus = effect === "attivo" ? 5 : 0;
 var avvMalus = effect === "protettivo" ? 5 : 0;
-var flatObj = obj.flat;
+var flatObj = obj.flat + (obj.extraRoll || 0);
+var avvObject = obj.opponent || 0;
 setHTML("a2f3title_" + id,"Diplomatico " + pos);
 setHTML("a2f3ndnote_" + id,noteA2F3[effect] || "Nessun supporto non Diplomatico.");
 setDiceCmd("a2f3dipcmd_" + id,"Diplomatico " + pos + " — tira 1d" + volForDie,"1d" +
@@ -4329,14 +4675,14 @@ formula += " + Dialettica(" + dialFinal + ")" + (potionDial ? " [Pozione +" + po
 (bonusF2>=0?"+ ":"- ") + Math.abs(bonusF2) + " esito Fase II";
 if(flatObj){ formula += " " + (flatObj>=0?"+ ":"- ") + Math.abs(flatObj) + " Oggetto"; }
 if(dipBonus){ formula += " +5 Supporto ND"; }
-formula += " — Avversario = 1d" + avvDado + (avvMalus ? " −5 Supporto ND" : "");
+formula += " — Avversario = 1d" + avvDado + (avvMalus ? " −5 Supporto ND" : "") + (avvObject ? (" " + (avvObject>=0?"+ ":"− ") + Math.abs(avvObject) + " Oggetto") : "");
 setHTML("a2f3formula_" + id,formula);
 var prev = prevCoordForZone(getZona());
 if(prev){ formula += " " + (prev>=0?"+ ":"- ") + Math.abs(prev) + " Coord. precedente"; setHTML("a2f3formula_" + id,formula); }
 var a2Flat=dialFinal+floorDiv(dip.prestigio,2)+bonusF2+dipBonus+flatObj+prev;
 setDiceFormula("a2f3dipcmd_"+id,"Al risultato del dado aggiungi "+(a2Flat>=0?"+":"")+a2Flat+" (Dialettica "+dialFinal+", Prestigio/2 "+floorDiv(dip.prestigio,2)+", esito Fase II "+(bonusF2>=0?"+":"")+bonusF2+", supporto ND "+(dipBonus>=0?"+":"")+dipBonus+", oggetto "+(flatObj>=0?"+":"")+flatObj+", Coordinazione precedente "+(prev>=0?"+":"")+prev+").");
-setDiceFormula("a2f3avvcmd_"+id,avvMalus?"Al risultato dell’Avversario sottrai 5 per il supporto protettivo del non Diplomatico.":"Il risultato del dado costituisce il totale dell’Avversario.");
-guardRoll("a2f3_" + id,[volForDie,avvDado,dialFinal,bonusF2,dipBonus,avvMalus,flatObj,ndPick,effect,prev,dip.prestigio].join("|"),["a2f3dipval_"+id,"a2f3avvval_"+id]);
+setDiceFormula("a2f3avvcmd_"+id,(avvMalus?"Al risultato dell’Avversario sottrai 5 per il supporto protettivo del non Diplomatico. ":"")+(avvObject?("Applica inoltre " +(avvObject>=0?"+":"")+avvObject+" dall’Oggetto al risultato dell’Avversario."):(!avvMalus?"Il risultato del dado costituisce il totale dell’Avversario.":"")));
+guardRoll("a2f3_" + id,[volForDie,avvDado,dialFinal,bonusF2,dipBonus,avvMalus,flatObj,avvObject,obj.extraRoll||0,ndPick,effect,prev,dip.prestigio].join("|"),["a2f3dipval_"+id,"a2f3avvval_"+id]);
 var dr = rollState("a2f3dipval_" + id,volForDie);
 var ar = rollState("a2f3avvval_" + id,avvDado);
 var out = document.getElementById("a2f3out_" + id);
@@ -4351,7 +4697,7 @@ if(out){ out.style.display = "none"; out.innerHTML = ""; }
 results[id] = undefined;
 } else {
 var dipTotal = dr.value + dialFinal + floorDiv(dip.prestigio,2) + bonusF2 + dipBonus + flatObj + prev;
-var avvTotal = ar.value - avvMalus;
+var avvTotal = ar.value - avvMalus + avvObject;
 var success = dipTotal > avvTotal;
 results[id] = success;
 completed = completed + 1;
@@ -4438,6 +4784,7 @@ var potionTarget = text("a3f3potionTarget_" + id);
 var potionVol = potionTarget === "dialettica" ? 0 : pozione;
 var potionDial = potionTarget === "dialettica" ? pozione : 0;
 var obj = socialObjectEffect("a3f3obj_" + id, dip, "f3");
+var directObj=obj.flat+(obj.extraRoll||0);
 var volEffective = dip.volonta + potionVol + obj.vol;
 var volForDie = volEffective + (obj.roll || 0);
 if(volForDie < 1){ volForDie = 1; }
@@ -4469,15 +4816,15 @@ if(obj.roll){ formula += " [poi +" + obj.roll + " possibilità → 1d" + volForD
 formula += " + Dialettica " + dial + (potionDial ? " (Pozione +" + potionDial + ")" : "") + " + Persuasore " + dip.persuasore;
 formula += " " + ((bonusF1 + bonusF2)>=0?"+":"") + (bonusF1 + bonusF2) + " esiti Fasi I/II";
 if(bonusNd){ formula += " +" + bonusNd + " ND"; }
-if(obj.flat){ formula += " " + (obj.flat>=0?"+":"") + obj.flat + " Oggetto"; }
+if(directObj){ formula += " " + (directObj>=0?"+":"") + directObj + " Oggetto"; }
 var prev = prevCoordForZone(getZona());
 if(prev){ formula += " " + (prev>=0?"+ ":"- ") + Math.abs(prev) + " Coord. precedente"; }
 formula += " — Opinione pubblica = 1d" + pubSides;
 setHTML("a3f3formula_" + id, formula);
-var a3Flat=dial+dip.persuasore+bonusF1+bonusF2+bonusNd+obj.flat+prev;
-setDiceFormula("a3f3dipcmd_"+id,"Al risultato del dado aggiungi "+(a3Flat>=0?"+":"")+a3Flat+" (Dialettica "+dial+", Persuasore "+dip.persuasore+", esiti Fasi I/II "+((bonusF1+bonusF2)>=0?"+":"")+(bonusF1+bonusF2)+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", oggetto "+(obj.flat>=0?"+":"")+obj.flat+", Coordinazione precedente "+(prev>=0?"+":"")+prev+").");
+var a3Flat=dial+dip.persuasore+bonusF1+bonusF2+bonusNd+directObj+prev;
+setDiceFormula("a3f3dipcmd_"+id,"Al risultato del dado aggiungi "+(a3Flat>=0?"+":"")+a3Flat+" (Dialettica "+dial+", Persuasore "+dip.persuasore+", esiti Fasi I/II "+((bonusF1+bonusF2)>=0?"+":"")+(bonusF1+bonusF2)+", supporto ND "+(bonusNd>=0?"+":"")+bonusNd+", oggetto "+(directObj>=0?"+":"")+directObj+", Coordinazione precedente "+(prev>=0?"+":"")+prev+").");
 setDiceFormula("a3f3pubcmd_"+id,"Il risultato del dado costituisce il totale dell’opinione pubblica.");
-guardRoll("a3f3_"+id,[volForDie,pubSides,dial,dip.persuasore,bonusF1,bonusF2,bonusNd,pickedNd,obj.flat,prev].join("|"),["a3f3dipval_"+id,"a3f3pubval_"+id]);
+guardRoll("a3f3_"+id,[volForDie,pubSides,dial,dip.persuasore,bonusF1,bonusF2,bonusNd,pickedNd,directObj,obj.extraRoll||0,prev].join("|"),["a3f3dipval_"+id,"a3f3pubval_"+id]);
 var drs = rollState("a3f3dipval_" + id, volForDie);
 var prs = rollState("a3f3pubval_" + id, pubSides);
 if(drs.status === "invalid"){
@@ -4491,13 +4838,13 @@ setHTML("a3f3out_" + id, "In attesa dei due risultati.");
 results[id] = undefined;
 } else {
 var dipTotal = drs.value + dial + dip.persuasore + bonusF1 + bonusF2 + bonusNd +
-obj.flat + prev;
+directObj + prev;
 var success = dipTotal > prs.value;
 completed = completed + 1;
 if(success){ wins = wins + 1; }
 results[id] = success;
 var msg = "Diplomatico: <b>" + dipTotal + "</b> (" + drs.value + " su 1d" + volForDie + " + Dialettica " + dial + " + Persuasore " + dip.persuasore + " + esiti " + (bonusF1 + bonusF2) +
-(bonusNd?(" +" + bonusNd + " ND"):"") + (obj.flat?(" +" + obj.flat + " Oggetto"):"") + (prev?(" " + (prev>=0?"+":"") + prev + " Coord. precedente"):"") + ") · Opinione pubblica: <b>" + prs.value + "</b>.";
+(bonusNd?(" +" + bonusNd + " ND"):"") + (directObj?(" " + (directObj>=0?"+":"") + directObj + " Oggetto"):"") + (prev?(" " + (prev>=0?"+":"") + prev + " Coord. precedente"):"") + ") · Opinione pubblica: <b>" + prs.value + "</b>.";
 msg += "<br>" + (success ? stampHTML(true) + " Messaggio efficace." :
 stampHTML(false) + " La reputazione resta danneggiata per questo Diplomatico.");
 setHTML("a3f3out_" + id, msg);
@@ -4797,7 +5144,7 @@ function summaryPhaseScores(n){
 function buildAccordSummaryData(){
  var n=flowAgreementNumber();if(!n||!flowSetupOk())return null;var z=n===4?a4Zona():getZona(),html=[],copy=[],rows=[];
  rows.push(["Accordo",agreementNameFromNumber(n)]);rows.push(["Zona effettiva",zonaLabel(z)]);rows.push(["Partecipanti",(diplomatIds.length+ndIds.length)+" PG · "+diplomatIds.length+" Diplomatic"+(diplomatIds.length===1?"o":"i")+" · "+ndIds.length+" non Diplomatic"+(ndIds.length===1?"o":"i")]);
- var prev=prevCoordForZone(z);if(prev)rows.push(["Coordinazione precedente",(prev>0?"+":"")+prev+" nella stessa Zona"]);if(n===4&&document.getElementById("a4ukToggle")&&document.getElementById("a4ukToggle").checked)rows.push(["Eccezione Gran Bretagna","attiva · la Missione è trattata come Zona Verde"]);
+ var prev=prevCoordForZone(z);if(prev)rows.push(["Coordinazione precedente",(prev>0?"+":"")+prev+" nella stessa Zona"]);if(n===4&&document.getElementById("a4ukToggle")&&document.getElementById("a4ukToggle").checked)rows.push(["Eccezione Gran Bretagna","attiva · l’Accordo è trattato come Zona Verde"]);
  if(n===3){if(document.getElementById("a3gbToggle")&&document.getElementById("a3gbToggle").checked){rows.push(["Gran Bretagna","sì"]);rows.push(["Gravità",a3GravitaReady()?gravitaLabel(state.a3.gravita):"da determinare con 1d4 nella Fase I"]);}else rows.push(["Gravità",gravitaLabel(gravitaFromZona())+" (derivata dalla Zona)"]);}
  html.push('<div class="accord-summary-grid">');copy.push('[spoiler=Situazione iniziale dell’Accordo]');for(var ri=0;ri<rows.length;ri++){html.push('<div class="accord-summary-item"><b>'+summaryEscape(rows[ri][0])+':</b> '+summaryEscape(rows[ri][1])+'</div>');copy.push('<b>'+rows[ri][0]+':</b> '+rows[ri][1]);}html.push('</div>');
  html.push('<div class="accord-summary-section">Parametri utili all’Accordo</div>');copy.push('','<b>Parametri utili all’Accordo</b>');var df=summaryRelevantDipFields(n);for(var i=0;i<diplomatIds.length;i++){var id=diplomatIds[i],d=getDip(id),dn=summaryDipName(i);html.push('<div class="accord-summary-character"><div class="accord-summary-character-title">'+summaryEscape(dn)+'</div><ul class="accord-summary-list">');copy.push('','<b>'+dn+'</b>');for(var di=0;di<df.length;di++){var lab=df[di][0],key=df[di][1],val=key==="rango"?summaryRangoText(id):d[key];html.push('<li><b>'+summaryEscape(lab)+':</b> '+summaryEscape(val)+'</li>');copy.push('• '+lab+': '+val);}html.push('</ul></div>');}
@@ -5006,6 +5353,7 @@ refreshA4F1();
 refreshA4F2();
 refreshA4F3();
 if(typeof renderAccordInitialSummary==="function"){renderAccordInitialSummary();}
+syncAutomaticEffectUses();
 refreshBonusSummaries();
 renderFinalEffectsSummary();
 decorateNumericFields(document);
@@ -5029,33 +5377,43 @@ clearRollInputsMatching(["a1","a2","a3","a4"]);
 rollSignatures={};
 }
 function invalidateDownstreamForTarget(target){
-if(!target){return;}
-var id=target.id||"";
-/* Metadati descrittivi non modificano alcuna formula e non devono cancellare tiri validi. */
-if(id.indexOf("_condition_")!==-1 || /_condition$/.test(id) || id.indexOf("_fatigue_")!==-1 || /_fatigue$/.test(id) || id.indexOf("_phase_")!==-1 || /_phase$/.test(id)){ return; }
-/* Modificatori globali o dati delle schede alterano tutte le formule. */
-if(target.name==="zona" || id==="prevCoordMod" || id==="prevCoordZone" || id.indexOf("dipAcume_")===0 || id.indexOf("dipVolonta_")===0 || id.indexOf("dipEmpatia_")===0 || id.indexOf("dipDialettica_")===0 || id.indexOf("dipPercezione_")===0 || id.indexOf("dipPopolarita_")===0 || id.indexOf("dipSapienze_")===0 || id.indexOf("dipPersuasore_")===0 || id.indexOf("dipRango_")===0 || id.indexOf("dipPrestigio_")===0 || id.indexOf("ndCategoria_")===0 || id.indexOf("ndCategoriaAffine_")===0 || id.indexOf("ndParamRif_")===0 || id.indexOf("ndSapienzaAffine_")===0 || id.indexOf("ndSapienzeTotali_")===0 || id.indexOf("ndAcume_")===0 || id.indexOf("ndVolonta_")===0 || id.indexOf("ndEmpatia_")===0 || id.indexOf("ndDialettica_")===0 || id.indexOf("ndPopolarita_")===0 || id.indexOf("dipGeneral_")===0 || id.indexOf("ndGeneral_")===0){
-invalidateAllAgreementRolls(); return;
+/* L'invalidazione delle formule è demandata a guardRoll; la propagazione alle Fasi dipendenti avviene dopo il refresh, quando sappiamo quali tiri sono stati davvero invalidati. */
+return;
 }
-/* Gravità dello scandalo cambia l'intero Accordo 3. */
-if(id==="a3gbToggle" || id==="a3gbval"){
-clearRollInputsMatching(["a3f1","a3f2","a3f3"]); clearSignaturePrefix("a3"); return;
+var RA_ROLL_SNAPSHOT=null;
+function snapshotRollInputs(){
+var out={},els=document.querySelectorAll('input[type="number"][min="1"]');
+for(var i=0;i<els.length;i++){var id=els[i].id||"";if(id){out[id]=String(els[i].value||"");}}
+return out;
 }
-/* Accordo 1: una modifica nelle Fasi I/II invalida le Fasi successive. */
-if(id.indexOf("a1f1")===0){clearRollInputsMatching(["a1f2val_","a1roundval_","a1roundavvval_"]);clearSignaturePrefix("a1f2");clearSignaturePrefix("a1f3");return;}
-if(id.indexOf("a1f2")===0){clearRollInputsMatching(["a1roundval_","a1roundavvval_"]);clearSignaturePrefix("a1f3");return;}
-/* Accordo 2: il secondo tentativo appartiene alla Fase I. */
-if(id.indexOf("a2f1")===0){
-if(id.indexOf("_2_")===-1){clearRollInputsMatching(["a2f1val_2_","a2f1ndval_2_"]);}
-clearRollInputsMatching(["a2f2val_","a2f3dipval_","a2f3avvval_"]);clearSignaturePrefix("a2f2");clearSignaturePrefix("a2f3");return;
+function clearAgreementDownstreamFromRoll(id){
+id=String(id||"");var changed=false;
+if(id.indexOf("a1f1")===0){clearRollInputsMatching(["a1f2val_","a1roundval_","a1roundavvval_"]);clearSignaturePrefix("a1f2");clearSignaturePrefix("a1f3");changed=true;}
+else if(id.indexOf("a1f2")===0){clearRollInputsMatching(["a1roundval_","a1roundavvval_"]);clearSignaturePrefix("a1f3");changed=true;}
+else if(id.indexOf("a2f1")===0){
+if(id.indexOf("_2_")===-1){clearRollInputsMatching(["a2f1val_2_","a2f1ndval_2_"]);clearSignaturePrefix("a2f1main_2");clearSignaturePrefix("a2f1nd_2");}
+clearRollInputsMatching(["a2f2val_","a2f3dipval_","a2f3avvval_"]);clearSignaturePrefix("a2f2");clearSignaturePrefix("a2f3");changed=true;
 }
-if(id.indexOf("a2f2")===0){clearRollInputsMatching(["a2f3dipval_","a2f3avvval_"]);clearSignaturePrefix("a2f3");return;}
-/* Accordo 3. */
-if(id.indexOf("a3f1")===0){clearRollInputsMatching(["a3f2val_","a3f3dipval_","a3f3pubval_"]);clearSignaturePrefix("a3f2");clearSignaturePrefix("a3f3");return;}
-if(id.indexOf("a3f2")===0){clearRollInputsMatching(["a3f3dipval_","a3f3pubval_"]);clearSignaturePrefix("a3f3");return;}
-/* Accordo 4. */
-if(id==="a4ukToggle" || id.indexOf("a4f1")===0){clearRollInputsMatching(["a4f2","a4f3"]);clearSignaturePrefix("a4f2");clearSignaturePrefix("a4f3");return;}
-if(id.indexOf("a4f2")===0){clearRollInputsMatching(["a4f3"]);clearSignaturePrefix("a4f3");return;}
+else if(id.indexOf("a2f2")===0){clearRollInputsMatching(["a2f3dipval_","a2f3avvval_"]);clearSignaturePrefix("a2f3");changed=true;}
+else if(id.indexOf("a3f1")===0){clearRollInputsMatching(["a3f2val_","a3f3dipval_","a3f3pubval_"]);clearSignaturePrefix("a3f2");clearSignaturePrefix("a3f3");changed=true;}
+else if(id.indexOf("a3f2")===0){clearRollInputsMatching(["a3f3dipval_","a3f3pubval_"]);clearSignaturePrefix("a3f3");changed=true;}
+else if(id.indexOf("a4f1")===0){clearRollInputsMatching(["a4f2val_","a4f2sensusVal_","a4f3val_"]);clearSignaturePrefix("a4f2");clearSignaturePrefix("a4f3");changed=true;}
+else if(id.indexOf("a4f2")===0){clearRollInputsMatching(["a4f3val_"]);clearSignaturePrefix("a4f3");changed=true;}
+return changed;
+}
+function cascadeInvalidatedRolls(before,target){
+var changed=false,id=target&&target.id?String(target.id):"";
+/* Se l'utente modifica direttamente un risultato, il tiro resta quello nuovo ma gli esiti che dipendono da esso vanno azzerati. */
+if(id && target && target.matches && target.matches('input[type="number"][min="1"]')){changed=clearAgreementDownstreamFromRoll(id)||changed;}
+/* Decisioni che possono cambiare l'esito senza cambiare la formula numerica. */
+if(/^a1f1(?:numenChoice|sensusChoice)_/.test(id)){changed=clearAgreementDownstreamFromRoll("a1f1")||changed;}
+if(id==="a2f1secondToggle"){
+clearRollInputsMatching(["a2f1val_2_","a2f1ndval_2_","a2f2val_","a2f3dipval_","a2f3avvval_"]);clearSignaturePrefix("a2f1main_2");clearSignaturePrefix("a2f1nd_2");clearSignaturePrefix("a2f2");clearSignaturePrefix("a2f3");changed=true;
+}
+if(/^a4f2sensusChoice_/.test(id)){changed=clearAgreementDownstreamFromRoll("a4f2")||changed;}
+/* Un campo di formula può avere fatto scattare guardRoll durante refreshAll. Propaghiamo solo dai tiri che prima avevano un valore e che guardRoll ha realmente svuotato. */
+if(before){for(var rid in before){if(!Object.prototype.hasOwnProperty.call(before,rid)||String(before[rid]||"").trim()===""){continue;}var e=document.getElementById(rid);if(e&&String(e.value||"").trim()===""){changed=clearAgreementDownstreamFromRoll(rid)||changed;}}}
+return changed;
 }
 /* =================== EVENT WIRING =================== */
 function wireAll(){
@@ -5089,10 +5447,13 @@ if(badge){evt.preventDefault();var dice = badge.getAttribute("data-dice");if(dic
 }
 });
 document.addEventListener("keydown", numericKeyGuard, true);
+document.addEventListener("input", function(){RA_ROLL_SNAPSHOT=snapshotRollInputs();}, true);
+document.addEventListener("change", function(){RA_ROLL_SNAPSHOT=snapshotRollInputs();}, true);
 document.addEventListener("input", function(e){
-if(!e.target){ return; }
-if(!e.target.tagName){ return; }
-if(e.target.tagName === "INPUT"){ invalidateDownstreamForTarget(e.target); refreshAll(); }
+if(!e.target||!e.target.tagName){ return; }
+if(e.target.tagName === "INPUT"){
+var snap=RA_ROLL_SNAPSHOT;RA_ROLL_SNAPSHOT=null;refreshAll();if(cascadeInvalidatedRolls(snap,e.target)){refreshAll();}
+}
 });
 document.addEventListener("change", function(e){
 if(!e.target){ return; }
@@ -5106,7 +5467,9 @@ if(builtin===e.target.id){syncBuiltInObjectMeta(e.target.id,true);}
 if(social && (social+"_sel")===e.target.id){syncBuiltInObjectMeta(e.target.id,true);}
 }
 }
-if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT"){ invalidateDownstreamForTarget(e.target); refreshAll(); }
+if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT"){
+var snap=RA_ROLL_SNAPSHOT;RA_ROLL_SNAPSHOT=null;refreshAll();if(cascadeInvalidatedRolls(snap,e.target)){refreshAll();}
+}
 });
 }
 wireAll();
@@ -5233,7 +5596,7 @@ function setWorkspaceReadOnly(ro){
 }
 function payload(){
   var a=selectedAgreement();
-  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:SESSION_ACTIONS};
+  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v16',actionLog:SESSION_ACTIONS};
 }
 function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(function(){SAVE_TIMER=null;saveNow();},850);}
 function saveNow(){
@@ -5267,7 +5630,7 @@ function setCreateSessionBusy(busy){
 function createSession(){
   if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
-  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'firebase-v5',actionLog:[]};
+  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v16',actionLog:[]};
   FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setCreateSessionBusy(false);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');if(inp)inp.focus();});
 }
 function positionDeleteModalAtCurrentView(ev){var m=sq('delete-session-modal');if(!m)return;var box=m.querySelector('.session-modal-card');if(!box)return;var anchorY=null;if(ev&&Number.isFinite(ev.clientY)){anchorY=ev.clientY;}if(anchorY===null){var trigger=sq('btn-delete-session');if(trigger){var tr=trigger.getBoundingClientRect();anchorY=tr.top+(tr.height/2);}}if(anchorY===null){anchorY=Math.max(24,Math.min(window.innerHeight/2,window.innerHeight-24));}var mh=m.getBoundingClientRect().height||window.innerHeight||document.documentElement.clientHeight||600;var bh=box.offsetHeight||0;var top=anchorY-(bh/2);var minTop=18;var maxTop=Math.max(minTop,mh-bh-18);top=Math.max(minTop,Math.min(maxTop,top));box.style.position='absolute';box.style.left='50%';box.style.top=Math.round(top)+'px';box.style.transform='translateX(-50%)';box.style.margin='0';}
