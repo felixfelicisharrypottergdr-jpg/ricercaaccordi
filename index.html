@@ -1,3 +1,4 @@
+<!-- Revisione v11: quote semplificati — niente elenchi ridondanti quando il risultato coincide con il dado o con un bonus diretto -->
 <!-- Revisione v9: standard completo Ricerche — riepilogo iniziale copiabile, difficoltà complessiva sulle 3 Fasi, copia stabile, grammatica dadi, navigazione Configurazione/Riepilogo/Fasi e ripresa intelligente -->
 <!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
 <!-- Revisione v7: copia dadi senza salto della pagina + formulazione più naturale delle domande BBCode -->
@@ -4238,7 +4239,7 @@ function flashCopied(elm){if(!elm)return;var original=elm.textContent;elm.classL
 function forumDiceBlock(domanda,risposte,dado){var out="<b>"+domanda+"</b>";if(risposte){out+="\n[quote]"+risposte+"[/quote]";}out+="\n\n"+dado;return out;}
 function diceFacesFromSpec(spec){var m=String(spec||"").match(/^1d(\d+)$/i);return m?parseInt(m[1],10):null;}
 function thresholdAnswers(threshold,faces){if(!Number.isFinite(threshold)||!Number.isFinite(faces))return "";var th=Math.floor(threshold),f=Math.floor(faces);if(th<1)return "1-"+f+". Fallimento";if(th>=f)return "1-"+f+". Successo";return "1-"+th+". Successo\n"+(th+1)+"-"+f+". Fallimento";}
-function oneToOneBonusAnswers(faces){var out=[],i=1;while(i<=faces){out.push(i+". +"+i);i++;}return out.join("\n");}
+function oneToOneBonusAnswers(faces){return "Il risultato del dado corrisponde direttamente al bonus da aggiungere alla soglia.";}
 function agreementQuestionName(name){if(/^Trattativa\b/i.test(name))return "Trattativa";if(/^Networking\b/i.test(name))return "Networking";if(/^Scandali\b/i.test(name))return "Gestione Scandali";if(/^Coordinazione\b/i.test(name))return "Coordinazione Interministeriale";return "questa prova";}
 function naturalThresholdQuestion(name){
  var n=String(name||"");
@@ -4266,7 +4267,7 @@ function forumDiceForBadge(badge){
  else if(/^Scandali Fase III - Opinione pubblica - Diplomatico \d+/i.test(name)){var mp=name.match(/Diplomatico (\d+)/i);domanda="Qual è il totale dell’opinione pubblica contro il Diplomatico "+mp[1]+"?";risposte=formula||"Il risultato del dado costituisce il totale dell’opinione pubblica.";}
  else if(faces===10&&(/Bonus/i.test(name)||/Ars/i.test(name)||/Voluntas/i.test(name))){domanda=naturalBonusQuestion(name);risposte=oneToOneBonusAnswers(10);}
  else if(formula){var tm=formula.match(/Riesce se\s+1-(-?\d+)/i);if(tm&&faces){domanda=naturalThresholdQuestion(name||"Questa prova");risposte=thresholdAnswers(parseInt(tm[1],10),faces);}else{domanda="Qual è il risultato del tiro «"+(name||"questa prova").replace(/\s+-\s+/g," — ")+"»?";risposte=formula;}}
- else if(faces){domanda="Qual è il risultato del tiro «"+(name||"questa prova").replace(/\s+-\s+/g," — ")+"»?";risposte="1-"+faces+". Inserisci il risultato nel tool per applicare l’esito previsto dalla Fase.";}
+ else if(faces){domanda="Qual è il risultato del tiro «"+(name||"questa prova").replace(/\s+-\s+/g," — ")+"»?";risposte="Il risultato del dado corrisponde direttamente al valore da inserire nel tool.";}
  return "[url=linkrole]Nome role[/url]\n"+forumDiceBlock(domanda,risposte,dado);
 }
 
