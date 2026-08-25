@@ -1,13 +1,3 @@
-<!-- Revisione v16: usi consumati automaticamente solo su prove risolte; ripristino coerente su invalidazione; controlli finali Numen/Sensus e prove multiple -->
-<!-- Revisione v15: audit conclusivo riepiloghi/validità; effetti sociali e percentuali mostrano il valore reale; effetti esclusi se il tiro è fuori range; Firebase invariato -->
-<!-- Revisione v14: audit profondo bonus/usi e invalidazione dipendenze; Pozioni e bonus generali nel riepilogo; Amuleto ND Fase III corretto; malus avversario dinamico; Firebase invariato -->
-<!-- Revisione v13: controllo regolamento completo; rimossa risorsa estranea, Conoscenze solo di colore, bonus di Fase coerenti col contesto e col momento di applicazione; Firebase invariato -->
-<!-- Revisione v11: quote semplificati — niente elenchi ridondanti quando il risultato coincide con il dado o con un bonus diretto -->
-<!-- Revisione v9: standard completo Ricerche — riepilogo iniziale copiabile, difficoltà complessiva sulle 3 Fasi, copia stabile, grammatica dadi, navigazione Configurazione/Riepilogo/Fasi e ripresa intelligente -->
-<!-- Revisione v8: navigazione Configurazione/Fasi a pagine, ripresa intelligente dopo refresh, verifica completa delle 4 tipologie; mantiene BBCode e popup locale -->
-<!-- Revisione v7: copia dadi senza salto della pagina + formulazione più naturale delle domande BBCode -->
-<!-- Revisione v6: BBCode dei dadi con domanda/risposte + popup eliminazione ancorato al punto visualizzato -->
-<!-- Revisione Firebase v5: sessioni multiple, autosalvataggio, ripresa, sola lettura e cancellazione definitiva protetta -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -1619,7 +1609,6 @@ azzera Accordo 4</button></div>
     </div>
   </div>
 </div>
-<!-- Revisione v4: ripristinata la Zona generale di provenienza anche per gli Scandali in Gran Bretagna; il 1d4 GB modifica solo la Gravità. Ripristinati inoltre i +5 individuali per i Diplomatici riusciti negli Accordi 1, 3 e 4. -->
 <script type="text/javascript">
 (function(){
 /* Revisione 2026-08-20: allineamento Regolamento/HTML; fix reset A1, Pozioni Volontà/Dialettica, invalidazione A3 F3 e refusi CSS/testuali. */
@@ -5631,7 +5620,22 @@ function createSession(){
   if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
   setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v16',actionLog:[]};
-  FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){navigateToSession(ref.id);}).catch(function(err){console.error(err);setCreateSessionBusy(false);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');if(inp)inp.focus();});
+  FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){
+    setCreateSessionBusy(false);if(inp)inp.value='';
+    var localData={};Object.keys(data).forEach(function(k){localData[k]=data[k];});
+    var now=firebase.firestore.Timestamp.now();localData.createdAt=now;localData.updatedAt=now;
+    try{
+      var h='#session='+encodeURIComponent(ref.id);
+      try{if(window.history&&window.history.replaceState)window.history.replaceState(null,'',window.location.pathname+window.location.search+h);else window.location.hash='session='+encodeURIComponent(ref.id);}catch(e){try{window.location.hash='session='+encodeURIComponent(ref.id);}catch(e2){}}
+      openSessionDoc(ref.id,localData);setStatus('session-home-msg','','');
+    }catch(err){
+      console.error(err);CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];SESSION_READONLY=false;SESSION_DELETING=false;RESTORING_SESSION=false;
+      if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}PENDING_SAVE=false;SAVE_IN_FLIGHT=false;LAST_SAVE_OK=true;
+      try{if(window.history&&window.history.replaceState)window.history.replaceState(null,'',window.location.pathname+window.location.search);else window.location.hash='';}catch(e3){try{window.location.hash='';}catch(e4){}}
+      if(workspace())workspace().style.display='none';if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';
+      setStatus('session-home-msg','Accordo creato correttamente, ma non riesco ad aprirlo automaticamente. Aggiorna l’elenco e aprilo da lì.','bad');loadSessionList();
+    }
+  }).catch(function(err){console.error(err);setCreateSessionBusy(false);setStatus('session-home-msg','Impossibile creare l’Accordo: '+err.message,'bad');if(inp)inp.focus();});
 }
 function positionDeleteModalAtCurrentView(ev){var m=sq('delete-session-modal');if(!m)return;var box=m.querySelector('.session-modal-card');if(!box)return;var anchorY=null;if(ev&&Number.isFinite(ev.clientY)){anchorY=ev.clientY;}if(anchorY===null){var trigger=sq('btn-delete-session');if(trigger){var tr=trigger.getBoundingClientRect();anchorY=tr.top+(tr.height/2);}}if(anchorY===null){anchorY=Math.max(24,Math.min(window.innerHeight/2,window.innerHeight-24));}var mh=m.getBoundingClientRect().height||window.innerHeight||document.documentElement.clientHeight||600;var bh=box.offsetHeight||0;var top=anchorY-(bh/2);var minTop=18;var maxTop=Math.max(minTop,mh-bh-18);top=Math.max(minTop,Math.min(maxTop,top));box.style.position='absolute';box.style.left='50%';box.style.top=Math.round(top)+'px';box.style.transform='translateX(-50%)';box.style.margin='0';}
 function openDeleteModal(ev){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';var m=sq('delete-session-modal');m.classList.add('open');m.setAttribute('aria-hidden','false');requestAnimationFrame(function(){positionDeleteModalAtCurrentView(ev);});}
