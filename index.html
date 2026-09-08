@@ -5625,6 +5625,42 @@ var FIREBASE_CONFIG={
 };
 var SESSION_COLLECTION='ricerca_accordi';
 var NARRATOR_UID='TFgqfVrFLjW5SwqRFXmEi8tDhtM2';
+
+/* Cache leggera dell'elenco sessioni: riduce le document reads senza memorizzare i dati di gioco.
+   La cache viene usata soltanto quando rappresenta un elenco COMPLETO ottenuto da Firebase. */
+var SESSION_LIST_CACHE_KEY=SESSION_COLLECTION+'_list_cache_v2';
+function sessionListMeta(d){
+  d=d||{};var out={ownerUid:d.ownerUid||'',initialPgName:d.initialPgName||'',pgName:d.pgName||'',tipoPaziente:d.tipoPaziente||'',tipoMissione:d.tipoMissione||'',missionId:d.missionId||'',tipoPassaggio:d.tipoPassaggio||'',passaggioId:d.passaggioId||'',tipoAccordo:d.tipoAccordo||'',accordoId:d.accordoId||'',tipoCaso:d.tipoCaso||'',tipoCasoNum:d.tipoCasoNum==null?null:d.tipoCasoNum,tipoCrimine:d.tipoCrimine||'',crimeKey:d.crimeKey||''};
+  var ts=d.updatedAt,sec=null;
+  try{if(ts&&typeof ts.toMillis==='function')sec=Math.floor(ts.toMillis()/1000);else if(ts&&isFinite(Number(ts.seconds)))sec=Number(ts.seconds);}catch(e){}
+  if(sec!==null)out.updatedAt={seconds:sec};
+  return out;
+}
+function readSessionListCache(){
+  try{
+    var raw=sessionStorage.getItem(SESSION_LIST_CACHE_KEY);if(raw===null)return null;
+    var box=JSON.parse(raw);
+    if(!box||box.version!==2||box.complete!==true||!Array.isArray(box.rows))return null;
+    return box;
+  }catch(e){return null;}
+}
+function writeSessionListCache(rows){
+  try{sessionStorage.setItem(SESSION_LIST_CACHE_KEY,JSON.stringify({version:2,complete:true,savedAt:Date.now(),rows:rows||[]}));}catch(e){}
+}
+function cacheSessionListSnapshot(snap){var rows=[];snap.forEach(function(doc){rows.push({id:doc.id,data:sessionListMeta(doc.data())});});writeSessionListCache(rows);}
+function updateSessionListCacheEntry(id,data){
+  if(!id)return;var box=readSessionListCache();if(!box)return;
+  var rows=box.rows.slice(),found=false;
+  for(var i=0;i<rows.length;i++){if(rows[i]&&rows[i].id===id){rows[i]={id:id,data:sessionListMeta(data)};found=true;break;}}
+  if(!found)rows.push({id:id,data:sessionListMeta(data)});writeSessionListCache(rows);
+}
+function removeSessionListCacheEntry(id){var box=readSessionListCache();if(!box)return;writeSessionListCache(box.rows.filter(function(r){return r&&r.id!==id;}));}
+function cachedSessionListSnapshot(rows){return {forEach:function(cb){(rows||[]).forEach(function(r){cb({id:r.id,data:function(){return r.data||{};}});});}};}
+function sessionListSnapshot(forceServer){
+  if(!forceServer){var box=readSessionListCache();if(box)return Promise.resolve(cachedSessionListSnapshot(box.rows));}
+  return FB.db.collection(SESSION_COLLECTION).get().then(function(snap){cacheSessionListSnapshot(snap);return snap;});
+}
+
 var FB={app:null,auth:null,db:null,user:null};
 var CURRENT_SESSION=null,CURRENT_SESSION_DATA=null,SESSION_READONLY=false,SESSION_DELETING=false;
 var SESSION_ACTIONS=[],RESTORING_SESSION=false,SAVE_TIMER=null,SAVE_IN_FLIGHT=false,PENDING_SAVE=false,LAST_SAVE_OK=true,CREATING_SESSION=false;
@@ -5633,7 +5669,7 @@ function sq(id){return document.getElementById(id);}
 function workspace(){return sq('accordi-workspace');}
 function sessionCanEdit(data){return !!(FB.user&&data&&(data.ownerUid===FB.user.uid||FB.user.uid===NARRATOR_UID));}
 function setStatus(id,text,kind){var n=sq(id);if(!n)return;n.textContent=text||'';n.className='session-status'+(kind?' '+kind:'');}
-function formatTs(ts){try{var d=ts&&typeof ts.toDate==='function'?ts.toDate():null;return d?d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}):'';}catch(e){return '';}}
+function formatTs(ts){try{var d=ts&&typeof ts.toDate==='function'?ts.toDate():(ts&&isFinite(Number(ts.seconds))?new Date(Number(ts.seconds)*1000):null);return d?d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}):'';}catch(e){return '';}}
 function sessionIdFromHash(){var h=String(window.location.hash||'').replace(/^#/,'');if(h.indexOf('session=')!==0)return '';try{return decodeURIComponent(h.slice(8));}catch(e){return h.slice(8);}}
 function navigateToSession(id){window.location.hash='session='+encodeURIComponent(id);window.location.reload();}
 function navigateToDashboard(){if(window.location.hash){try{history.replaceState(null,'',window.location.pathname+window.location.search);}catch(e){window.location.hash='';}}window.location.reload();}
@@ -5725,14 +5761,14 @@ function setWorkspaceReadOnly(ro){
 }
 function payload(){
   var a=selectedAgreement();
-  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v19',actionLog:SESSION_ACTIONS};
+  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v21',actionLog:SESSION_ACTIONS};
 }
 function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(function(){SAVE_TIMER=null;saveNow();},850);}
 function saveNow(){
   if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return Promise.resolve(true);
   if(SAVE_IN_FLIGHT){PENDING_SAVE=true;return Promise.resolve(null);}
   SAVE_IN_FLIGHT=true;PENDING_SAVE=false;var p=payload();
-  return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){LAST_SAVE_OK=true;Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});CURRENT_SESSION_DATA.updatedAt=firebase.firestore.Timestamp.now();setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();return true;}).catch(function(err){LAST_SAVE_OK=false;console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');return false;}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
+  return FB.db.collection(SESSION_COLLECTION).doc(CURRENT_SESSION).set(p,{merge:true}).then(function(){LAST_SAVE_OK=true;Object.keys(p).forEach(function(k){if(k!=='updatedAt')CURRENT_SESSION_DATA[k]=p[k];});CURRENT_SESSION_DATA.updatedAt=firebase.firestore.Timestamp.now();updateSessionListCacheEntry(CURRENT_SESSION,CURRENT_SESSION_DATA);setStatus('save-status','Accordo salvato automaticamente ✓','ok');updateToolbar();return true;}).catch(function(err){LAST_SAVE_OK=false;console.error(err);setStatus('save-status','Errore di salvataggio: non chiudere la pagina.','bad');return false;}).finally(function(){SAVE_IN_FLIGHT=false;if(PENDING_SAVE){PENDING_SAVE=false;scheduleSave();}});
 }
 function openSessionDoc(id,data){
   CURRENT_SESSION=id;CURRENT_SESSION_DATA=data;window.RA_SESSION_PRIMARY_NAME=String(data.pgName||data.initialPgName||"").trim();SESSION_ACTIONS=prepareLegacyLinkedActions(data.actionLog,data);SESSION_READONLY=!sessionCanEdit(data);
@@ -5742,10 +5778,10 @@ function openSessionDoc(id,data){
   setWorkspaceReadOnly(SESSION_READONLY);updateToolbar();setStatus('save-status',SESSION_READONLY?'Modalità sola lettura.':'Accordo caricato · autosalvataggio attivo',SESSION_READONLY?'':'ok');
   if(window.RA_FLOW&&typeof window.RA_FLOW.resume==='function')window.RA_FLOW.resume(SESSION_READONLY);
 }
-function loadSession(id){setStatus('session-home-msg','Caricamento Accordo…','');return FB.db.collection(SESSION_COLLECTION).doc(id).get().then(function(doc){if(!doc.exists)throw new Error('L’Accordo non esiste più.');openSessionDoc(doc.id,doc.data());setStatus('session-home-msg','','');}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile aprire l’Accordo: '+err.message,'bad');if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';});}
-function loadSessionList(){
+function loadSession(id){setStatus('session-home-msg','Caricamento Accordo…','');return FB.db.collection(SESSION_COLLECTION).doc(id).get().then(function(doc){if(!doc.exists)throw new Error('L’Accordo non esiste più.');openSessionDoc(doc.id,doc.data());setStatus('session-home-msg','','');}).catch(function(err){console.error(err);setStatus('session-home-msg','Impossibile aprire l’Accordo: '+err.message,'bad');if(sq('accordi-session-home'))sq('accordi-session-home').style.display='block';loadSessionList(true);});}
+function loadSessionList(forceServer){
   var host=sq('session-list');if(!host||!FB.db||!FB.user)return;host.innerHTML='<div class="session-status">Caricamento sessioni…</div>';
-  FB.db.collection(SESSION_COLLECTION).get().then(function(snap){
+  sessionListSnapshot(!!forceServer).then(function(snap){
     var rows=[];snap.forEach(function(doc){rows.push({id:doc.id,data:doc.data()});});rows.sort(function(a,b){var at=a.data.updatedAt&&a.data.updatedAt.seconds?a.data.updatedAt.seconds:0,bt=b.data.updatedAt&&b.data.updatedAt.seconds?b.data.updatedAt.seconds:0;return bt-at;});host.innerHTML='';
     if(!rows.length){host.innerHTML='<div class="session-status">Non ci sono Accordi in corso. Puoi crearne uno qui sopra.</div>';return;}
     rows.forEach(function(r){var d=r.data,mine=d.ownerUid===FB.user.uid,narr=FB.user.uid===NARRATOR_UID;var box=document.createElement('div');box.className='session-item';var row=document.createElement('div');row.className='session-item-row';var left=document.createElement('div');var ti=document.createElement('div');ti.className='session-title';ti.textContent=(d.pgName||'PG')+' — '+(d.tipoAccordo||'Accordo da determinare');left.appendChild(ti);var meta=document.createElement('div');meta.className='session-meta';var dt=formatTs(d.updatedAt);meta.textContent=dt?'Aggiornata '+dt:'';left.appendChild(meta);var own=document.createElement('span');own.className='session-owner'+(mine?' mine':'');own.textContent=mine?'Tuo Accordo':(narr?'Gestibile dal Narratore':'Altro giocatore');left.appendChild(own);var b=document.createElement('button');b.type='button';b.className='session-btn'+((mine||narr)?'':' ghost');b.setAttribute('data-session-control','1');b.textContent=(mine||narr)?'Riprendi':'Visualizza';b.addEventListener(EVT,function(){navigateToSession(r.id);});row.appendChild(left);row.appendChild(b);box.appendChild(row);host.appendChild(box);});
@@ -5759,11 +5795,11 @@ function setCreateSessionBusy(busy){
 function createSession(){
   if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
-  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v19',actionLog:[]};
+  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v21',actionLog:[]};
   FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){
     setCreateSessionBusy(false);if(inp)inp.value='';
     var localData={};Object.keys(data).forEach(function(k){localData[k]=data[k];});
-    var now=firebase.firestore.Timestamp.now();localData.createdAt=now;localData.updatedAt=now;
+    var now=firebase.firestore.Timestamp.now();localData.createdAt=now;localData.updatedAt=now;updateSessionListCacheEntry(ref.id,localData);
     try{
       var h='#session='+encodeURIComponent(ref.id);
       try{if(window.history&&window.history.replaceState)window.history.replaceState(null,'',window.location.pathname+window.location.search+h);else window.location.hash='session='+encodeURIComponent(ref.id);}catch(e){try{window.location.hash='session='+encodeURIComponent(ref.id);}catch(e2){}}
@@ -5780,13 +5816,13 @@ function createSession(){
 function positionDeleteModalAtCurrentView(ev){var m=sq('delete-session-modal');if(!m)return;var box=m.querySelector('.session-modal-card');if(!box)return;var anchorY=null;if(ev&&Number.isFinite(ev.clientY)){anchorY=ev.clientY;}if(anchorY===null){var trigger=sq('btn-delete-session');if(trigger){var tr=trigger.getBoundingClientRect();anchorY=tr.top+(tr.height/2);}}if(anchorY===null){anchorY=Math.max(24,Math.min(window.innerHeight/2,window.innerHeight-24));}var mh=m.getBoundingClientRect().height||window.innerHeight||document.documentElement.clientHeight||600;var bh=box.offsetHeight||0;var top=anchorY-(bh/2);var minTop=18;var maxTop=Math.max(minTop,mh-bh-18);top=Math.max(minTop,Math.min(maxTop,top));box.style.position='absolute';box.style.left='50%';box.style.top=Math.round(top)+'px';box.style.transform='translateX(-50%)';box.style.margin='0';}
 function openDeleteModal(ev){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA))return;sq('delete-session-check').checked=false;sq('btn-confirm-delete').disabled=true;sq('delete-session-msg').textContent='';var m=sq('delete-session-modal');m.classList.add('open');m.setAttribute('aria-hidden','false');requestAnimationFrame(function(){positionDeleteModalAtCurrentView(ev);});}
 function closeDeleteModal(){if(SESSION_DELETING)return;var m=sq('delete-session-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');var box=m.querySelector('.session-modal-card');if(box){box.style.position='';box.style.left='';box.style.top='';box.style.transform='';box.style.margin='';}}
-function deleteCurrentSession(){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;SESSION_DELETING=true;if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}PENDING_SAVE=false;sq('btn-confirm-delete').disabled=true;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';waitForSaveDrain().then(function(){return FB.db.collection(SESSION_COLLECTION).doc(id).delete();}).then(function(){CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];SESSION_DELETING=false;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){SESSION_DELETING=false;console.error(err);if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;scheduleSave();});}
+function deleteCurrentSession(){if(SESSION_DELETING||!CURRENT_SESSION||!sessionCanEdit(CURRENT_SESSION_DATA)||!sq('delete-session-check').checked)return;var id=CURRENT_SESSION;SESSION_DELETING=true;if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}PENDING_SAVE=false;sq('btn-confirm-delete').disabled=true;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=true;sq('delete-session-msg').textContent='Eliminazione definitiva in corso…';waitForSaveDrain().then(function(){return FB.db.collection(SESSION_COLLECTION).doc(id).delete();}).then(function(){removeSessionListCacheEntry(id);CURRENT_SESSION=null;CURRENT_SESSION_DATA=null;SESSION_ACTIONS=[];SESSION_DELETING=false;if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;closeDeleteModal();try{sessionStorage.setItem('ra_deleted_notice','1');}catch(e){}navigateToDashboard();}).catch(function(err){SESSION_DELETING=false;console.error(err);if(sq('btn-cancel-delete'))sq('btn-cancel-delete').disabled=false;sq('delete-session-msg').textContent='Eliminazione non riuscita: '+err.message;sq('btn-confirm-delete').disabled=false;scheduleSave();});}
 function waitForSaveDrain(){return new Promise(function(resolve){function check(){if(!SAVE_IN_FLIGHT&&!PENDING_SAVE&&!SAVE_TIMER){resolve();return;}setTimeout(check,40);}check();});}
 function backToDashboard(){if(SESSION_DELETING)return;if(CURRENT_SESSION&&sessionCanEdit(CURRENT_SESSION_DATA)){if(SAVE_TIMER){clearTimeout(SAVE_TIMER);SAVE_TIMER=null;}saveNow();waitForSaveDrain().then(function(){if(LAST_SAVE_OK){navigateToDashboard();return;}setStatus('save-status','Ultimo salvataggio non riuscito: sei rimasto nella sessione. Riprova quando la connessione è disponibile.','bad');});return;}navigateToDashboard();}
 function setupControls(){
   attachRecorder();
   var w=workspace();if(w){['pointerdown','keydown','input','change'].forEach(function(ev){w.addEventListener(ev,function(){if(!RESTORING_SESSION&&window.RA_FLOW&&typeof window.RA_FLOW.cancelResume==='function'){window.RA_FLOW.cancelResume();}},true);});}
-  sq('btn-new-session').addEventListener(EVT,createSession);sq('new-session-pg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();createSession();}});sq('btn-refresh-sessions').addEventListener(EVT,loadSessionList);sq('btn-back-sessions').addEventListener(EVT,backToDashboard);sq('btn-delete-session').addEventListener(EVT,openDeleteModal);sq('btn-cancel-delete').addEventListener(EVT,closeDeleteModal);sq('delete-session-check').addEventListener('change',function(){sq('btn-confirm-delete').disabled=!sq('delete-session-check').checked;});sq('btn-confirm-delete').addEventListener(EVT,deleteCurrentSession);sq('delete-session-modal').addEventListener(EVT,function(e){if(e.target===sq('delete-session-modal'))closeDeleteModal();});
+  sq('btn-new-session').addEventListener(EVT,createSession);sq('new-session-pg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();createSession();}});sq('btn-refresh-sessions').addEventListener(EVT,function(){loadSessionList(true);});sq('btn-back-sessions').addEventListener(EVT,backToDashboard);sq('btn-delete-session').addEventListener(EVT,openDeleteModal);sq('btn-cancel-delete').addEventListener(EVT,closeDeleteModal);sq('delete-session-check').addEventListener('change',function(){sq('btn-confirm-delete').disabled=!sq('delete-session-check').checked;});sq('btn-confirm-delete').addEventListener(EVT,deleteCurrentSession);sq('delete-session-modal').addEventListener(EVT,function(e){if(e.target===sq('delete-session-modal'))closeDeleteModal();});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'&&CURRENT_SESSION&&!SESSION_READONLY)saveNow();});window.addEventListener('pagehide',function(){if(CURRENT_SESSION&&!SESSION_READONLY)saveNow();});
 }
 function setupFirebase(){
