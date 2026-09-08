@@ -1317,8 +1317,7 @@ nella prova. <a href="https://felixfelicisharrypottergdr.forumfree.it/?t=8040807
 target="_blank">Apri il Pozionario</a>.</div>
 <div class="ndnote"><b>Oggetti dalla Borsa.</b> In tutti e quattro gli Accordi compaiono
 selettori per gli oggetti del prezzario che possono modificare direttamente la prova in corso
-(oltre all'Amuleto della Fortuna, che concede possibilità/facce). La pagina applica il bonus,
-e permette di registrare <b>usi disponibili e usi consumati</b>, calcolando automaticamente gli usi residui. È presente anche “Altro oggetto applicabile” per eventuali effetti situazionali coerenti con il regolamento.</div>
+(oltre all'Amuleto della Fortuna, che concede possibilità/facce). Per i preset conosciuti, gli usi sono condivisi automaticamente tra le Fasi per <b>stesso PG + stessa Fonte</b>: Manuali, Biografie e Amuleto consumano un uso quando la prova viene realmente risolta. Gli effetti a durata (per esempio Oggetti Astronomici, abiti o Maschera di Fango di Sblorb) non consumano invece un nuovo utilizzo a ogni tiro: selezionali soltanto finché l'effetto è ancora attivo. È presente anche “Altro oggetto applicabile” per effetti situazionali; in quel caso il conteggio condiviso tra Fasi va verificato manualmente.</div>
 <div class="ndnote"><b>Modificatore da una precedente Coordinazione.</b> Se il precedente Accordo di Coordinazione nella <u>stessa Zona</u> ha prodotto +5 o −5, registralo qui. Nelle prove a soglia modifica la soglia; nei round e nelle prove contrapposte modifica il risultato del Diplomatico, mai quello dell'Avversario o dell'opinione pubblica.
 <div class="assignment-grid">
 <div class="field"><label>Modificatore precedente</label><select id="prevCoordMod"><option value="0">Nessuno (0)</option><option value="5">Successo precedente (+5)</option><option value="-5">Fallimento precedente (−5)</option></select></div>
@@ -1611,7 +1610,7 @@ azzera Accordo 4</button></div>
 </div>
 <script type="text/javascript">
 (function(){
-/* Revisione 2026-08-20: allineamento Regolamento/HTML; fix reset A1, Pozioni Volontà/Dialettica, invalidazione A3 F3 e refusi CSS/testuali. */
+/* Revisione v17: audit completo regolamento/Prezzario; usi Oggetti condivisi per PG+Fonte, totali preset corretti, durate esplicitate e bonus/malus persistenti separati dalle Conoscenze di colore. */
 var CLICK = "cli" + "ck";
 /* =================== BASIC HELPERS =================== */
 function num(id){
@@ -1755,30 +1754,30 @@ function objectOptionsHTML(context, allowFortuna){
 if(allowFortuna === undefined){ allowFortuna = true; }
 var h = '<option value="none">Nessun oggetto</option>';
 if(context === "acume"){
-h += '<option value="manuale_acume_2">Manuale dell\'Acumen (+2 Acume; 1 uso)</option>';
-h += '<option value="manuale_acume_1">Manuale dell\'Acumen — Mercato degli Elfi (+1 Acume; 1 uso)</option>';
-h += '<option value="astronomico_2">Oggetto Astronomico generico (+2 Acume; 1 uso)</option>';
-h += '<option value="astronomico_1">Oggetto Astronomico — Mercato degli Elfi (+1 Acume; 1 uso)</option>';
+h += '<option value="manuale_acume_2">Manuale dell\'Acumen — standard/Obscurus (+2 Acume; 10 usi)</option>';
+h += '<option value="manuale_acume_1">Manuale dell\'Acumen — Mercato degli Elfi (+1 Acume; 5 usi)</option>';
+h += '<option value="astronomico_2">Oggetto Astronomico generico (+2 Acume; 1 uso → effetto per 5 post)</option>';
+h += '<option value="astronomico_1">Oggetto Astronomico — Mercato degli Elfi (+1 Acume; 1 uso → effetto per 3 post)</option>';
 }
 if(context === "percezione"){
-h += '<option value="manuale_percezione_2">Manuali del Sensus (+2 Percezione; 1 uso)</option>';
-h += '<option value="manuale_percezione_1">Manuali del Sensus — Mercato degli Elfi (+1 Percezione; 1 uso)</option>';
+h += '<option value="manuale_percezione_2">Manuali del Sensus — standard/Obscurus (+2 Percezione; 10 usi)</option>';
+h += '<option value="manuale_percezione_1">Manuali del Sensus — Mercato degli Elfi (+1 Percezione; 5 usi)</option>';
 }
 if(context === "volonta"){
-h += '<option value="manuale_volonta_2">Manuale del Voluntas (+2 Volontà; 1 uso)</option>';
-h += '<option value="manuale_volonta_1">Manuale del Voluntas — Mercato degli Elfi (+1 Volontà; 1 uso)</option>';
-h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà)</option>';
-h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà)</option>';
-h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; con rischio previsto dal prezzario)</option>';
+h += '<option value="manuale_volonta_2">Manuale del Voluntas — standard/Obscurus (+2 Volontà; 10 usi)</option>';
+h += '<option value="manuale_volonta_1">Manuale del Voluntas — Mercato degli Elfi (+1 Volontà; 5 usi)</option>';
+h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà; 5 post consecutivi)</option>';
+h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà; 3 post)</option>';
+h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; 3 post; rischio intossicazione 1-5 su 1d10)</option>';
 }
 if(context === "empatia"){
-h += '<option value="manuale_empatia_2">Manuale dell\'Animus (+2 Empatia; 1 uso)</option>';
-h += '<option value="manuale_empatia_1">Manuale dell\'Animus — Mercato degli Elfi (+1 Empatia; 1 uso)</option>';
+h += '<option value="manuale_empatia_2">Manuale dell\'Animus — standard/Obscurus (+2 Empatia; 10 usi)</option>';
+h += '<option value="manuale_empatia_1">Manuale dell\'Animus — Mercato degli Elfi (+1 Empatia; 5 usi)</option>';
 }
 if(allowFortuna){
 var i = 1;
 while(i <= 7){
-h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità/facce; 1 uso)</option>';
+h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità/facce; 3 usi totali; max 1 Amuleto per role)</option>';
 i = i + 1;
 }
 }
@@ -1792,7 +1791,7 @@ return ''
 objectOptionsHTML(context, allowFortuna) + '</select></div>'
 + '<div class="field" id="' + customId + '_row" style="display:none;"><label>Bonus dell\'oggetto</label><input type="number" id="' + customId + '" min="0" step="1" value="0"></div>'
 + builtInMetaHTML(selectId)
-+ '<div class="object-help">L\'effetto selezionato viene applicato ai calcoli. I bonus al <b>Parametro</b> vengono applicati prima di divisioni/conversioni; i <b>bonus diretti alla soglia o al risultato</b> vengono aggiunti dopo. L’Amuleto della Fortuna, dove previsto, modifica invece le possibilità/facce del dado. Indica gli usi disponibili: gli usi consumati vengono aggiornati automaticamente quando la prova associata viene realmente risolta.</div>'
++ '<div class="object-help">L\'effetto selezionato viene applicato ai calcoli. I bonus al <b>Parametro</b> vengono applicati prima di divisioni/conversioni; i <b>bonus diretti alla soglia o al risultato</b> vengono aggiunti dopo. L’Amuleto della Fortuna, dove previsto, modifica invece le possibilità/facce del dado. Per i preset a consumo, gli usi sono condivisi tra le Fasi dello stesso PG e vengono aggiornati quando la prova viene realmente risolta; per gli effetti a durata, un\'attivazione resta valida finché il player conferma che la durata non è terminata.</div>'
 + bonusManagerHTML(selectId + "_extra", context, "phase", "Altri bonus da Oggetti")
 + '</div>';
 }
@@ -1819,8 +1818,9 @@ var maxState=usageCountState(selectId + "_maxuses"),usedState=usageCountState(se
 var maxUses=maxState.value,usedUses=usedState.value;
 var hereNode=document.getElementById(selectId+"_consumedHere"),consumedHere=!!(hereNode&&hereNode.value==="1");
 if(!maxState.valid||!usedState.valid||(maxUses > 0 && usedUses > maxUses)){ return out; }
-if(maxUses>0 && usedUses>=maxUses && !consumedHere){ return out; }
 var v = sel.value;
+var presetMeta=builtInPresetMeta(v);
+if(maxUses>0 && usedUses>=maxUses && !consumedHere && presetMeta.mode!=="activation"){ return out; }
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_acume_2" || v === "astronomico_2"){ if(context === "acume"){ out.param = 2; } }
 else if(v === "manuale_acume_1" || v === "astronomico_1"){ if(context === "acume"){ out.param = 1; } }
@@ -1871,29 +1871,29 @@ return objectBoxHTML("a1f1supportObj", "a1f1supportObjCustom", "generic");
 }
 function socialObjectOptionsHTML(role, allowFortuna){
 var h = '<option value="none">Nessun oggetto</option>';
-h += '<option value="manuale_volonta_2">Manuali del Voluntas (+2 Volontà; 1 uso)</option>';
-h += '<option value="manuale_volonta_1">Manuali del Voluntas — Mercato degli Elfi (+1 Volontà; 1 uso)</option>';
-h += '<option value="biografie_2">Biografie e libri d\'altro genere (+2 Dialettica; 1 uso)</option>';
-h += '<option value="biografie_1">Biografie e libri d\'altro genere — Mercato degli Elfi (+1 Dialettica; 1 uso)</option>';
-h += '<option value="abiti_2">Abiti da tutti i giorni (+2 Dialettica)</option>';
-h += '<option value="abiti_1">Abiti da tutti i giorni — Mercato degli Elfi (+1 Dialettica)</option>';
+h += '<option value="manuale_volonta_2">Manuali del Voluntas — standard/Obscurus (+2 Volontà; 10 usi)</option>';
+h += '<option value="manuale_volonta_1">Manuali del Voluntas — Mercato degli Elfi (+1 Volontà; 5 usi)</option>';
+h += '<option value="biografie_2">Biografie e libri d\'altro genere — standard/Obscurus (+2 Dialettica; 10 usi)</option>';
+h += '<option value="biografie_1">Biografie e libri d\'altro genere — Mercato degli Elfi (+1 Dialettica; 5 usi)</option>';
+h += '<option value="abiti_2">Abiti da tutti i giorni (+2 Dialettica; durata 30 post)</option>';
+h += '<option value="abiti_1">Abiti da tutti i giorni — Mercato degli Elfi (+1 Dialettica; durata 15 post)</option>';
 if(role === "dip"){
-h += '<option value="completo_dip_4">Completo da Diplomatico (+4 Dialettica)</option>';
-h += '<option value="completo_dip_2">Completo da Diplomatico — Mercato degli Elfi (+2 Dialettica)</option>';
+h += '<option value="completo_dip_4">Completo da Diplomatico (+4 Dialettica; durata 50 post)</option>';
+h += '<option value="completo_dip_2">Completo da Diplomatico — Mercato degli Elfi (+2 Dialettica; durata 25 post)</option>';
 } else {
-h += '<option value="completo_giornalista_4">Completo da Giornalista (+4 Dialettica; solo Giornalisti)</option>';
-h += '<option value="completo_giornalista_2">Completo da Giornalista — Mercato degli Elfi (+2 Dialettica; solo Giornalisti)</option>';
-h += '<option value="completo_difensore_4">Completo/Tailleur del Difensore (+4 Dialettica; solo Difensori)</option>';
-h += '<option value="completo_difensore_2">Completo/Tailleur del Difensore — Mercato degli Elfi (+2 Dialettica; solo Difensori)</option>';
+h += '<option value="completo_giornalista_4">Completo da Giornalista (+4 Dialettica; 50 post; solo Giornalisti)</option>';
+h += '<option value="completo_giornalista_2">Completo da Giornalista — Mercato degli Elfi (+2 Dialettica; 25 post; solo Giornalisti)</option>';
+h += '<option value="completo_difensore_4">Completo/Tailleur del Difensore (+4 Dialettica; 50 post; solo Difensori)</option>';
+h += '<option value="completo_difensore_2">Completo/Tailleur del Difensore — Mercato degli Elfi (+2 Dialettica; 25 post; solo Difensori)</option>';
 }
-h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà)</option>';
-h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà)</option>';
-h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; con rischio previsto dal prezzario)</option>';
+h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà; 5 post consecutivi)</option>';
+h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà; 3 post)</option>';
+h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; 3 post; rischio intossicazione 1-5 su 1d10)</option>';
 h += '<option value="sonetti">Sonetti di un Mago (-20% Volontà, +20% Dialettica)</option>';
 if(allowFortuna){
 var i = 1;
 while(i <= 7){
-h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità/facce; 1 uso)</option>';
+h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità/facce; 3 usi totali; max 1 Amuleto per role)</option>';
 i = i + 1;
 }
 }
@@ -1928,8 +1928,9 @@ var maxState=usageCountState(prefix + "_sel_maxuses"),usedState=usageCountState(
 var maxUses=maxState.value,usedUses=usedState.value;
 var hereNode=document.getElementById(prefix+"_sel_consumedHere"),consumedHere=!!(hereNode&&hereNode.value==="1");
 if(!maxState.valid||!usedState.valid||(maxUses > 0 && usedUses > maxUses)){ return out; }
-if(maxUses>0 && usedUses>=maxUses && !consumedHere){ return out; }
 var v = sel.value;
+var presetMeta=builtInPresetMeta(v);
+if(maxUses>0 && usedUses>=maxUses && !consumedHere && presetMeta.mode!=="activation"){ return out; }
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_volonta_2"){ out.vol = 2; }
 else if(v === "manuale_volonta_1"){ out.vol = 1; }
@@ -2037,7 +2038,7 @@ return "Soglia della prova";
 function bonusManagerHTML(prefix, context, scope, title){
 var phase = bonusPhaseLabel(prefix,scope);
 var help = scope === "general"
-? "Inserisci qui soltanto bonus permanenti/generali ai Parametri. Verranno applicati una sola volta alla scheda del personaggio e poi usati automaticamente dalle formule che impiegano quel Parametro."
+? "Inserisci qui bonus o malus generali già attivi e realmente validi sul personaggio (anche effetti persistenti di Oggetti o Incantesimi). Verranno applicati una sola volta alla scheda e poi usati automaticamente dalle formule. Non inserire qui le Conoscenze usate durante l’Accordo: in questa Ricerca restano solo di colore."
 : "Inserisci qui soltanto effetti specifici di questa Fase provenienti da Oggetti o altri effetti realmente ammessi. Le Conoscenze restano solo di colore. I bonus al Parametro entrano prima di divisioni/conversioni; i bonus diretti entrano dopo.";
 return ''
 + '<div class="bonus-manager" id="' + prefix + '_manager" data-bonus-prefix="' + prefix + '" data-bonus-context="' + context + '" data-bonus-scope="' + scope + '" data-next-row="0">'
@@ -2206,20 +2207,133 @@ return ''
 + '</div>'
 + '<div class="bonus-applied-summary" id="' + selectId + '_builtinSummary" style="display:none;"></div>';
 }
+function builtInPresetMeta(v){
+var meta={maxUses:0,mode:"duration",condition:"",pool:v};
+if(/^manuale_(acume|percezione|volonta|empatia)_2$/.test(v)){meta.maxUses=10;meta.mode="per_test";}
+else if(/^manuale_(acume|percezione|volonta|empatia)_1$/.test(v)){meta.maxUses=5;meta.mode="per_test";}
+else if(v==="biografie_2"){meta.maxUses=10;meta.mode="per_test";}
+else if(v==="biografie_1"){meta.maxUses=5;meta.mode="per_test";}
+else if(/^fortuna_[1-7]$/.test(v)){meta.maxUses=3;meta.mode="per_test";meta.pool="fortuna";meta.condition="Solo l’acquirente può usarlo; massimo 1 Amuleto della Fortuna per role e non cumulabile.";}
+else if(v==="astronomico_2"){meta.maxUses=1;meta.mode="activation";meta.condition="1 uso all’attivazione; +2 Acume resta attivo per 5 post a scelta dopo l’uso ON.";}
+else if(v==="astronomico_1"){meta.maxUses=1;meta.mode="activation";meta.condition="1 uso all’attivazione; +1 Acume resta attivo per 3 post a scelta dopo l’uso ON.";}
+else if(v==="sblorb_33"){meta.condition="Effetto attivo per 5 post consecutivi dopo l’uso.";}
+else if(v==="sblorb_10"){meta.condition="Effetto attivo per 3 post dopo l’uso.";}
+else if(v==="sblorb_66"){meta.condition="Effetto attivo per 3 post; all’uso verifica anche il rischio di intossicazione (1-5 su 1d10).";}
+else if(v==="abiti_2"){meta.condition="Bonus valido finché rientra nei 30 post di utilizzo dell’abito.";}
+else if(v==="abiti_1"){meta.condition="Bonus valido finché rientra nei 15 post di utilizzo dell’abito.";}
+else if(/^(completo_dip_4|completo_giornalista_4|completo_difensore_4)$/.test(v)){meta.condition="Bonus valido finché rientra nei 50 post di utilizzo del completo.";}
+else if(/^(completo_dip_2|completo_giornalista_2|completo_difensore_2)$/.test(v)){meta.condition="Bonus valido finché rientra nei 25 post di utilizzo del completo.";}
+else if(v==="sonetti"){meta.condition="Effetto della maledizione attivo finché il PG non viene liberato secondo il Prezzario.";}
+return meta;
+}
+function builtInSelectOwnerKey(selectId){
+var owner=null;
+if(/_sel$/.test(selectId)){owner=socialObjectOwner(selectId.replace(/_sel$/,""));}
+else{owner=objectEffectOwner(selectId);}
+if(owner&&owner._kind!==undefined&&owner._id!==undefined){return owner._kind+":"+owner._id;}
+return "unowned:"+selectId;
+}
+function allBuiltInSelectIds(){
+var out=[],nodes=document.querySelectorAll(".object-box[data-object-select],.object-box[data-social-prefix]");
+for(var i=0;i<nodes.length;i++){
+var id=nodes[i].getAttribute("data-object-select");
+if(!id){var p=nodes[i].getAttribute("data-social-prefix");if(p){id=p+"_sel";}}
+if(id&&document.getElementById(id)){out.push(id);}
+}
+return out;
+}
+function builtInPoolSourceFor(selectId,overrideValue){
+var sel=document.getElementById(selectId),v=overrideValue!==undefined?overrideValue:(sel?sel.value:"");
+if(!v||v==="none"||v==="custom"){return "";}
+return builtInPresetMeta(v).pool||v;
+}
+function builtInPoolMembers(selectId,sourceOverride,ownerOverride){
+var source=sourceOverride!==undefined?sourceOverride:builtInPoolSourceFor(selectId);
+var owner=ownerOverride!==undefined?ownerOverride:builtInSelectOwnerKey(selectId);
+if(!source){return [selectId];}
+var ids=allBuiltInSelectIds(),out=[];
+for(var i=0;i<ids.length;i++){
+if(builtInPoolSourceFor(ids[i])===source&&builtInSelectOwnerKey(ids[i])===owner){out.push(ids[i]);}
+}
+return out.length?out:[selectId];
+}
+function releaseDetachedBuiltInContribution(selectId,oldSource,oldOwner){
+if(!oldSource||!oldOwner){return;}
+var here=document.getElementById(selectId+"_consumedHere");
+if(!here||here.value!=="1"){return;}
+var ids=allBuiltInSelectIds();
+for(var i=0;i<ids.length;i++){
+var sid=ids[i];if(sid===selectId){continue;}
+if(builtInPoolSourceFor(sid)===oldSource&&builtInSelectOwnerKey(sid)===oldOwner){
+var u=document.getElementById(sid+"_used"),st=usageCountState(sid+"_used");
+if(u&&st.valid){u.value=String(Math.max(0,st.value-1));}
+}
+}
+here.value="0";
+}
 function syncBuiltInObjectMeta(selectId, forceDefaults){
 var sel=document.getElementById(selectId),meta=document.getElementById(selectId+"_meta");
 if(!sel || !meta){ return; }
+var newSource=builtInPoolSourceFor(selectId),newOwner=builtInSelectOwnerKey(selectId);
+var oldSource=sel.getAttribute("data-last-pool-source")||"",oldOwner=sel.getAttribute("data-last-pool-owner")||"";
+if((oldSource&&oldSource!==newSource)||(oldOwner&&oldOwner!==newOwner)){releaseDetachedBuiltInContribution(selectId,oldSource,oldOwner);}
+sel.setAttribute("data-last-pool-source",newSource);
+sel.setAttribute("data-last-pool-owner",newOwner);
 var active=sel.value && sel.value!=="none";
 meta.style.display=active?"grid":"none";
 if(!active){ return; }
 if(forceDefaults){
-var label=sel.selectedIndex>=0?sel.options[sel.selectedIndex].text:"";
-var consumable=/1 uso/i.test(label);
-var max=document.getElementById(selectId+"_maxuses"),used=document.getElementById(selectId+"_used");
-if(max){ max.value=consumable?"1":"0"; }
+var pm=builtInPresetMeta(sel.value);
+var max=document.getElementById(selectId+"_maxuses"),used=document.getElementById(selectId+"_used"),cond=document.getElementById(selectId+"_condition");
+if(max){ max.value=String(pm.maxUses||0); }
 if(used){ used.value="0"; }
+if(cond){cond.value=pm.condition||"";}
 var here=document.getElementById(selectId+"_consumedHere"); if(here){ here.value="0"; }
 }
+}
+function syncManualBuiltInPoolField(field){
+if(!field||!field.id){return;}
+var m=String(field.id).match(/^(.*)_(used|maxuses)$/);if(!m||!document.getElementById(m[1])){return;}
+var sid=m[1],kind=m[2],members=builtInPoolMembers(sid),val=field.value;
+for(var i=0;i<members.length;i++){
+var e=document.getElementById(members[i]+"_"+kind);if(e&&e!==field){e.value=val;}
+}
+}
+function builtInEffectUsed(selectId){
+if(/_sel$/.test(selectId)){return effectWasUsed(selectId.replace(/_sel$/,""))&&configuredSocialObjectEffect(selectId.replace(/_sel$/,""));}
+return effectWasUsed(selectId)&&configuredBuiltInObjectEffect(selectId);
+}
+function reconcileBuiltInPool(selectId){
+var sel=document.getElementById(selectId);if(!sel||!sel.value||sel.value==="none"||sel.value==="custom"){return false;}
+syncBuiltInObjectMeta(selectId,false);
+var source=builtInPoolSourceFor(selectId),owner=builtInSelectOwnerKey(selectId),members=builtInPoolMembers(selectId,source,owner);
+var pm=builtInPresetMeta(sel.value),maxDefault=pm.maxUses||0,maxUses=maxDefault,maxObserved=0,currentFlags=0;
+for(var i=0;i<members.length;i++){
+var ms=usageCountState(members[i]+"_maxuses"),us=usageCountState(members[i]+"_used"),h=document.getElementById(members[i]+"_consumedHere");
+if(ms.valid&&ms.value>0){maxUses=ms.value;}
+if(us.valid){maxObserved=Math.max(maxObserved,us.value);}
+if(h&&h.value==="1"){currentFlags++;}
+}
+var currentCount=pm.mode==="activation"?(currentFlags>0?1:0):currentFlags;
+var baseline=Math.max(0,maxObserved-currentCount),active=[];
+for(i=0;i<members.length;i++){if(builtInEffectUsed(members[i])){active.push(members[i]);}}
+var wanted=pm.mode==="activation"?(active.length?1:0):active.length;
+var room=maxUses>0?Math.max(0,maxUses-baseline):wanted;
+var allowed=maxUses>0?Math.min(wanted,room):wanted;
+var usedGlobal=baseline+allowed,changed=false,marked=0;
+for(i=0;i<members.length;i++){
+var mid=members[i],u=document.getElementById(mid+"_used"),mx=document.getElementById(mid+"_maxuses"),h2=document.getElementById(mid+"_consumedHere");
+if(u&&String(u.value)!==String(usedGlobal)){u.value=String(usedGlobal);changed=true;}
+if(mx&&String(mx.value)!==String(maxUses)){mx.value=String(maxUses);changed=true;}
+var shouldMark=false;
+if(allowed>0&&active.indexOf(mid)>=0){
+if(pm.mode==="activation"){shouldMark=(marked===0&&baseline===0);}
+else{shouldMark=marked<allowed;}
+if(shouldMark){marked++;}
+}
+if(h2&&h2.value!==(shouldMark?"1":"0")){h2.value=shouldMark?"1":"0";changed=true;}
+}
+return changed;
 }
 function renderBuiltInObjectSummary(selectId){
 var sel=document.getElementById(selectId),box=document.getElementById(selectId+"_builtinSummary");
@@ -2416,15 +2530,27 @@ return null;
 function socialObjectOwner(prefix){
 var p=String(prefix||""),m,pick;
 if((m=p.match(/^a2f2ndobj_(.+)$/))){pick=text("a2f2ndpick_"+m[1]);return pick&&pick!=="none"?getNd(pick):null;}
+if((m=p.match(/^a4f1obj_(.+)$/))){return getDip(m[1]);}
 m=p.match(/^a[23]f[123]obj(?:_2)?_(.+)$/);return m?getDip(m[1]):null;
 }
 function socialBuiltInEntry(prefix,pg,mode){
 var sel=document.getElementById(prefix+"_sel");
 if(!sel||!sel.value||sel.value==="none"||sel.selectedIndex<0){return null;}
+var box=document.querySelector('.object-box[data-social-prefix="'+String(prefix).replace(/"/g,'\\"')+'"]');
 var usedS=usageCountState(prefix+"_sel_used"),maxS=usageCountState(prefix+"_sel_maxuses"),used=usedS.value,max=maxS.value;
 if(!usedS.valid||!maxS.valid||(max>0&&used>max)){return {invalid:true,source:sel.options[sel.selectedIndex].text};}
-if(max>0&&used<1){return null;}
-var v=sel.value,vol=0,dial=0,flat=0,roll=0;
+var v=sel.value,pm=builtInPresetMeta(v),here=document.getElementById(prefix+"_sel_consumedHere"),consumedHere=!!(here&&here.value==="1");
+if(max>0&&used>=max&&!consumedHere&&pm.mode!=="activation"){return null;}
+if(box&&box.getAttribute("data-a4coord")==="1"){
+var ae=a4CoordObjectEffect(prefix,pg,mode),ab=[];
+if(ae.acume){ab.push((ae.acume>=0?"+":"")+ae.acume+" ACUME");}
+if(ae.volonta){ab.push((ae.volonta>=0?"+":"")+ae.volonta+" VOLONTÀ");}
+if(ae.popolarita){ab.push((ae.popolarita>=0?"+":"")+ae.popolarita+" POPOLARITÀ");}
+if(ae.flat){ab.push((ae.flat>=0?"+":"")+ae.flat+" ALLA SOGLIA");}
+if(!ab.length){return null;}
+return {source:sel.options[sel.selectedIndex].text,condition:text(prefix+"_sel_condition").trim(),value:0,valueText:ab.join(" · "),kind:"parameter",target:"prova",phase:bonusPhaseLabel(prefix,"phase"),maxUses:max,used:used,remaining:max>0?Math.max(0,max-used):null,prefix:prefix};
+}
+var vol=0,dial=0,flat=0,roll=0;
 if(v==="manuale_volonta_2"){vol=2;}
 else if(v==="manuale_volonta_1"){vol=1;}
 else if(v==="biografie_2"||v==="abiti_2"){dial=2;}
@@ -2474,9 +2600,9 @@ var pg=socialObjectOwner(prefix),mode=box.getAttribute("data-social-mode")||"thr
 var max=document.getElementById(prefix+"_sel_maxuses"),used=document.getElementById(prefix+"_sel_used"),here=document.getElementById(prefix+"_sel_consumedHere");
 var om=max?max.value:null,ou=used?used.value:null,oh=here?here.value:null;
 if(max){max.value="0";}if(used){used.value="0";}if(here){here.value="0";}
-var eff=socialObjectEffect(prefix,pg,mode);
+var eff=box.getAttribute("data-a4coord")==="1"?a4CoordObjectEffect(prefix,pg,mode):socialObjectEffect(prefix,pg,mode);
 if(max){max.value=om;}if(used){used.value=ou;}if(here){here.value=oh;}
-return !!(Number(eff.vol||0)||Number(eff.dial||0)||Number(eff.flat||0)||Number(eff.roll||0)||Number(eff.extraRoll||0)||Number(eff.opponent||0));
+return !!(Number(eff.acume||0)||Number(eff.volonta||0)||Number(eff.popolarita||0)||Number(eff.vol||0)||Number(eff.dial||0)||Number(eff.flat||0)||Number(eff.roll||0)||Number(eff.extraRoll||0)||Number(eff.opponent||0));
 }
 function syncOneAutomaticUse(usedId,maxId,hereId,shouldConsume){
 var usedNode=document.getElementById(usedId),maxNode=document.getElementById(maxId),hereNode=document.getElementById(hereId);
@@ -2497,17 +2623,11 @@ return changed;
 }
 function syncAutomaticEffectUses(){
 var changed=false,i,j;
-var objects=document.querySelectorAll(".object-box[data-object-select]");
-for(i=0;i<objects.length;i++){
-var sid=objects[i].getAttribute("data-object-select");
-var should=effectWasUsed(sid)&&configuredBuiltInObjectEffect(sid);
-changed=syncOneAutomaticUse(sid+"_used",sid+"_maxuses",sid+"_consumedHere",should)||changed;
-}
-var socials=document.querySelectorAll(".object-box[data-social-prefix]");
-for(i=0;i<socials.length;i++){
-var sp=socials[i].getAttribute("data-social-prefix");
-var shouldS=effectWasUsed(sp)&&configuredSocialObjectEffect(sp);
-changed=syncOneAutomaticUse(sp+"_sel_used",sp+"_sel_maxuses",sp+"_sel_consumedHere",shouldS)||changed;
+var ids=allBuiltInSelectIds(),seen={};
+for(i=0;i<ids.length;i++){
+var sid=ids[i],source=builtInPoolSourceFor(sid),owner=builtInSelectOwnerKey(sid),key=owner+"|"+source;
+if(!source||seen[key]){continue;}seen[key]=true;
+changed=reconcileBuiltInPool(sid)||changed;
 }
 var managers=allBonusManagers();
 for(i=0;i<managers.length;i++){
@@ -2758,6 +2878,7 @@ rango:num("dipRango_" + id),
 prestigio:num("dipPrestigio_" + id)
 };
 return {
+_id:id,_kind:"dip",
 acume:base.acume+generalParamBonus("dipGeneral_"+id,"acume"),
 volonta:base.volonta+generalParamBonus("dipGeneral_"+id,"volonta"),
 empatia:base.empatia+generalParamBonus("dipGeneral_"+id,"empatia"),
@@ -2936,6 +3057,7 @@ sapienzeTotali:num("ndSapienzeTotali_" + id),
 paramRif:num("ndParamRif_" + id)
 };
 return {
+_id:id,_kind:"nd",
 categoriaRaw: raw,
 categoria: resolved.toLowerCase(),
 label: raw ? (raw === "Intracciabile" ? ("Intracciabile — " + (resolved || "affinità da scegliere")) : raw) : "Categoria da scegliere",
@@ -3798,20 +3920,20 @@ setHTML("a4zoneNote", txt);
 }
 function a4CoordObjectOptionsHTML(mode){
 var h = '<option value="none">Nessun oggetto</option>';
-h += '<option value="manuale_acume_2">Manuali dell\'Acumen (+2 Acume; 1 uso)</option>';
-h += '<option value="manuale_acume_1">Manuali dell\'Acumen — Mercato degli Elfi (+1 Acume; 1 uso)</option>';
-h += '<option value="astronomico_2">Oggetto Astronomico generico (+2 Acume; 1 uso)</option>';
-h += '<option value="astronomico_1">Oggetto Astronomico — Mercato degli Elfi (+1 Acume; 1 uso)</option>';
+h += '<option value="manuale_acume_2">Manuali dell\'Acumen — standard/Obscurus (+2 Acume; 10 usi)</option>';
+h += '<option value="manuale_acume_1">Manuali dell\'Acumen — Mercato degli Elfi (+1 Acume; 5 usi)</option>';
+h += '<option value="astronomico_2">Oggetto Astronomico generico (+2 Acume; 1 uso → effetto per 5 post)</option>';
+h += '<option value="astronomico_1">Oggetto Astronomico — Mercato degli Elfi (+1 Acume; 1 uso → effetto per 3 post)</option>';
 if(mode === "f1"){
-h += '<option value="manuale_volonta_2">Manuali del Voluntas (+2 Volontà; 1 uso)</option>';
-h += '<option value="manuale_volonta_1">Manuali del Voluntas — Mercato degli Elfi (+1 Volontà; 1 uso)</option>';
-h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà)</option>';
-h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà)</option>';
-h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; con il rischio previsto dal Prezzario)</option>';
+h += '<option value="manuale_volonta_2">Manuali del Voluntas — standard/Obscurus (+2 Volontà; 10 usi)</option>';
+h += '<option value="manuale_volonta_1">Manuali del Voluntas — Mercato degli Elfi (+1 Volontà; 5 usi)</option>';
+h += '<option value="sblorb_33">Maschera di Fango di Sblorb (+33% Volontà; 5 post consecutivi)</option>';
+h += '<option value="sblorb_10">Maschera di Sblorb — Mercato degli Elfi (+10% Volontà; 3 post)</option>';
+h += '<option value="sblorb_66">Maschera di Sblorb — Negozio di Ragni Giganti (+66% Volontà; 3 post; rischio intossicazione 1-5 su 1d10)</option>';
 }
 var i = 1;
 while(i <= 7){
-h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità; 1 uso)</option>';
+h += '<option value="fortuna_' + i + '">Amuleto della Fortuna (+' + i + ' possibilità; 3 usi totali; max 1 Amuleto per role)</option>';
 i = i + 1;
 }
 h += '<option value="custom">Altro oggetto applicabile (valori manuali)</option>';
@@ -3819,7 +3941,7 @@ return h;
 }
 function a4CoordObjectBoxHTML(prefix, mode){
 return ''
-+ '<div class="object-box" data-social-prefix="' + prefix + '" data-social-mode="' + mode + '">'
++ '<div class="object-box" data-social-prefix="' + prefix + '" data-social-mode="' + mode + '" data-a4coord="1">'
 + '<div class="field"><label>Oggetto dalla Borsa</label><select id="' + prefix + '_sel">' +
 a4CoordObjectOptionsHTML(mode) + '</select></div>'
 + '<div class="grid" id="' + prefix + '_custom" style="display:none;">'
@@ -3841,9 +3963,11 @@ function a4CoordObjectEffect(prefix, pg, mode){
 var out = {acume:0,volonta:0,popolarita:0,flat:0,label:"",entries:[]};
 var sel = document.getElementById(prefix + "_sel");
 if(!sel){ return out; }
-var maxUses=Math.max(0,Math.floor(num(prefix+"_sel_maxuses"))),usedUses=Math.max(0,Math.floor(num(prefix+"_sel_used")));
-var usable=!(maxUses>0 && (usedUses<1 || usedUses>maxUses));
-var v = usable ? sel.value : "none";
+var maxState=usageCountState(prefix+"_sel_maxuses"),usedState=usageCountState(prefix+"_sel_used");
+var maxUses=maxState.value,usedUses=usedState.value,here=document.getElementById(prefix+"_sel_consumedHere"),consumedHere=!!(here&&here.value==="1");
+if(!maxState.valid||!usedState.valid||(maxUses>0&&usedUses>maxUses)){return out;}
+var v=sel.value,pm=builtInPresetMeta(v);
+if(maxUses>0&&usedUses>=maxUses&&!consumedHere&&pm.mode!=="activation"){return out;}
 if(sel.selectedIndex >= 0 && v !== "none"){ out.label = sel.options[sel.selectedIndex].text; }
 if(v === "manuale_acume_2" || v === "astronomico_2"){ out.acume = 2; }
 else if(v === "manuale_acume_1" || v === "astronomico_1"){ out.acume = 1; }
@@ -5193,6 +5317,13 @@ var roll = rollState("accordoRollVal",4);
 var tabs = document.querySelectorAll(".tab-btn");
 var status = document.getElementById("accordoAssignmentStatus");
 var btn = document.getElementById("accordoRinunciaBtn");
+/* v18: una volta determinato un Accordo non si puo cambiare modalita per azzerarlo gratis. */
+if(linked !== linkedModeLast && accordoAssigned !== null){
+if(linkedToggle){ linkedToggle.checked = linkedModeLast; }
+linked = linkedModeLast;
+linkedConfirmed = !!(confirm && confirm.checked);
+}
+if(linkedToggle){ linkedToggle.disabled = accordoAssigned !== null; }
 setHTML("accordoRinunce", String(accordoRinunceLeft));
 if(confirmWrap){ confirmWrap.style.display = linked ? "block" : "none"; }
 if(linked !== linkedModeLast){
@@ -5239,6 +5370,12 @@ return;
 }
 linkedConfirmLast = false;
 if(confirm){ confirm.checked = false; }
+/* v18: se un replay/azione vecchia prova a cambiare il 1d4 dopo l'assegnazione, conserva l'Accordo gia bloccato. */
+if(accordoAssigned !== null && roll.status === "ok" && roll.value !== accordoAssigned){
+var lockedRollInput=document.getElementById("accordoRollVal");
+if(lockedRollInput){ lockedRollInput.value=String(accordoAssigned); }
+roll={status:"ok",value:accordoAssigned};
+}
 document.getElementById("accordoRollVal").disabled = false;
 if(roll.status === "invalid"){
 accordoAssigned = null;
@@ -5257,6 +5394,7 @@ if(btn){ btn.disabled=true; btn.style.opacity=".45"; btn.innerHTML="Rinuncia all
 return;
 }
 accordoAssigned = roll.value;
+if(linkedToggle){ linkedToggle.disabled = true; }
 document.getElementById("accordoRollVal").disabled = true;
 var target = agreementTabFromNumber(roll.value);
 var t=0; while(t<tabs.length){
@@ -5285,6 +5423,8 @@ resetAgreementByNumber(roll.value);
 accordoRinunceLeft = accordoRinunceLeft - 1;
 clearInput("accordoRollVal");
 accordoAssigned = null;
+var modeToggle=document.getElementById("accordoLinkedToggle");
+if(modeToggle){ modeToggle.disabled=false; }
 refreshAll();
 }
 function switchTab(name, internal){
@@ -5441,6 +5581,7 @@ document.addEventListener("change", function(){RA_ROLL_SNAPSHOT=snapshotRollInpu
 document.addEventListener("input", function(e){
 if(!e.target||!e.target.tagName){ return; }
 if(e.target.tagName === "INPUT"){
+syncManualBuiltInPoolField(e.target);
 var snap=RA_ROLL_SNAPSHOT;RA_ROLL_SNAPSHOT=null;refreshAll();if(cascadeInvalidatedRolls(snap,e.target)){refreshAll();}
 }
 });
@@ -5585,7 +5726,7 @@ function setWorkspaceReadOnly(ro){
 }
 function payload(){
   var a=selectedAgreement();
-  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v16',actionLog:SESSION_ACTIONS};
+  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v18',actionLog:SESSION_ACTIONS};
 }
 function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(function(){SAVE_TIMER=null;saveNow();},850);}
 function saveNow(){
@@ -5619,7 +5760,7 @@ function setCreateSessionBusy(busy){
 function createSession(){
   if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
-  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v16',actionLog:[]};
+  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v18',actionLog:[]};
   FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){
     setCreateSessionBusy(false);if(inp)inp.value='';
     var localData={};Object.keys(data).forEach(function(k){localData[k]=data[k];});
