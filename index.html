@@ -1194,7 +1194,7 @@ header.masthead .seal i{
   <div class="session-home-card">
     <h2>Accordi in corso</h2>
     <p>Ogni Accordo viene salvato automaticamente e può essere ripreso in seguito senza reinserire i dati già registrati.</p>
-    <div class="session-warning"><b>Le sessioni in corso sono personali.</b> Puoi visualizzare quelle degli altri giocatori, ma non modificarle o concluderle. Solo chi ha creato la sessione e il Narratore possono intervenire sui suoi dati.</div>
+    <div class="session-warning"><b>Le sessioni in corso sono condivise tra dispositivi.</b> Ogni Accordo resta salvato su Firebase e può essere ripreso anche da un altro browser o dispositivo. Come in Erbologia e Magizoologia, l’UID anonimo serve solo per collegarsi a Firebase e non determina più chi può riprendere una Ricerca.</div>
     <div id="firebase-auth-status" class="session-status">Connessione a Firebase…</div>
     <div class="session-create-row">
       <div class="field"><label>Nome del PG Diplomatico principale</label><input id="new-session-pg" type="text" placeholder="Es. Percy Weasley" data-session-control="1"></div>
@@ -1220,7 +1220,7 @@ header.masthead .seal i{
       <button class="session-danger-btn" id="btn-delete-session" type="button" data-session-control="1">Concludi ed elimina Accordo</button>
     </div>
   </div>
-  <div id="readonly-banner" class="readonly-banner"><b>Modalità sola lettura.</b> Questa sessione appartiene a un altro giocatore: puoi consultarla, ma non modificarla o concluderla.</div>
+  <div id="readonly-banner" class="readonly-banner"><b>Modalità sola lettura.</b> Questa sessione non è modificabile.</div>
   <div id="save-status" class="session-status"></div>
 </div>
 <!-- STEP 1: ZONA -->
@@ -5614,6 +5614,7 @@ refreshAll();
 <script type="text/javascript">
 (function(){
 var EVT='cli'+'ck';
+/* v22-cross-device: modello Erbologia/Magizoologia. Le sessioni Accordi restano documenti distinti, ma l'UID anonimo non limita più la ripresa/modifica da altri browser o dispositivi. */
 var FIREBASE_CONFIG={
   apiKey:"AIzaSyCvd56bSEL02s2OY2PSk7uyFX-CYRB4Vz0",
   authDomain:"conteggi-eee1b.firebaseapp.com",
@@ -5630,7 +5631,7 @@ var NARRATOR_UID='TFgqfVrFLjW5SwqRFXmEi8tDhtM2';
    La cache viene usata soltanto quando rappresenta un elenco COMPLETO ottenuto da Firebase. */
 var SESSION_LIST_CACHE_KEY=SESSION_COLLECTION+'_list_cache_v2';
 function sessionListMeta(d){
-  d=d||{};var out={ownerUid:d.ownerUid||'',initialPgName:d.initialPgName||'',pgName:d.pgName||'',tipoPaziente:d.tipoPaziente||'',tipoMissione:d.tipoMissione||'',missionId:d.missionId||'',tipoPassaggio:d.tipoPassaggio||'',passaggioId:d.passaggioId||'',tipoAccordo:d.tipoAccordo||'',accordoId:d.accordoId||'',tipoCaso:d.tipoCaso||'',tipoCasoNum:d.tipoCasoNum==null?null:d.tipoCasoNum,tipoCrimine:d.tipoCrimine||'',crimeKey:d.crimeKey||''};
+  d=d||{};var out={ownerUid:d.ownerUid||'',publicSession:d.publicSession!==false,normalizedPgName:d.normalizedPgName||'',initialPgName:d.initialPgName||'',pgName:d.pgName||'',tipoPaziente:d.tipoPaziente||'',tipoMissione:d.tipoMissione||'',missionId:d.missionId||'',tipoPassaggio:d.tipoPassaggio||'',passaggioId:d.passaggioId||'',tipoAccordo:d.tipoAccordo||'',accordoId:d.accordoId||'',tipoCaso:d.tipoCaso||'',tipoCasoNum:d.tipoCasoNum==null?null:d.tipoCasoNum,tipoCrimine:d.tipoCrimine||'',crimeKey:d.crimeKey||''};
   var ts=d.updatedAt,sec=null;
   try{if(ts&&typeof ts.toMillis==='function')sec=Math.floor(ts.toMillis()/1000);else if(ts&&isFinite(Number(ts.seconds)))sec=Number(ts.seconds);}catch(e){}
   if(sec!==null)out.updatedAt={seconds:sec};
@@ -5667,7 +5668,8 @@ var SESSION_ACTIONS=[],RESTORING_SESSION=false,SAVE_TIMER=null,SAVE_IN_FLIGHT=fa
 
 function sq(id){return document.getElementById(id);}
 function workspace(){return sq('accordi-workspace');}
-function sessionCanEdit(data){return !!(FB.user&&data&&(data.ownerUid===FB.user.uid||FB.user.uid===NARRATOR_UID));}
+function normPgName(v){return String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('it-IT');}
+function sessionCanEdit(data){return !!(FB.user&&data);}
 function setStatus(id,text,kind){var n=sq(id);if(!n)return;n.textContent=text||'';n.className='session-status'+(kind?' '+kind:'');}
 function formatTs(ts){try{var d=ts&&typeof ts.toDate==='function'?ts.toDate():(ts&&isFinite(Number(ts.seconds))?new Date(Number(ts.seconds)*1000):null);return d?d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}):'';}catch(e){return '';}}
 function sessionIdFromHash(){var h=String(window.location.hash||'').replace(/^#/,'');if(h.indexOf('session=')!==0)return '';try{return decodeURIComponent(h.slice(8));}catch(e){return h.slice(8);}}
@@ -5684,7 +5686,7 @@ function updateToolbar(){
   if(!CURRENT_SESSION_DATA)return;
   if(sq('current-session-title'))sq('current-session-title').textContent=activeLabel();
   var mine=FB.user&&CURRENT_SESSION_DATA.ownerUid===FB.user.uid,narr=FB.user&&FB.user.uid===NARRATOR_UID,parts=[];
-  parts.push(mine?'Sessione creata da questo browser':(narr?'Gestione Narratore':'Sessione di un altro giocatore'));
+  parts.push(narr?'Gestione Narratore':(mine?'Accordo creato da questo browser · condiviso tra dispositivi':'Accordo condiviso · riprendibile da questo dispositivo'));
   var t=formatTs(CURRENT_SESSION_DATA.updatedAt);if(t)parts.push('ultimo salvataggio '+t);
   if(sq('current-session-meta'))sq('current-session-meta').textContent=parts.join(' · ');
   if(sq('readonly-banner'))sq('readonly-banner').style.display=SESSION_READONLY?'block':'none';
@@ -5761,7 +5763,7 @@ function setWorkspaceReadOnly(ro){
 }
 function payload(){
   var a=selectedAgreement();
-  return {ownerUid:CURRENT_SESSION_DATA.ownerUid,initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v21',actionLog:SESSION_ACTIONS};
+  return {ownerUid:CURRENT_SESSION_DATA.ownerUid||FB.user.uid,publicSession:true,normalizedPgName:normPgName(primaryPgName()),initialPgName:CURRENT_SESSION_DATA.initialPgName||primaryPgName(),pgName:primaryPgName(),tipoAccordo:a?agreementName(a):'',accordoId:a||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v22-cross-device',actionLog:SESSION_ACTIONS};
 }
 function scheduleSave(){if(!CURRENT_SESSION||SESSION_READONLY||SESSION_DELETING||!sessionCanEdit(CURRENT_SESSION_DATA))return;setStatus('save-status','Salvataggio automatico…','');if(SAVE_TIMER)clearTimeout(SAVE_TIMER);SAVE_TIMER=setTimeout(function(){SAVE_TIMER=null;saveNow();},850);}
 function saveNow(){
@@ -5784,7 +5786,7 @@ function loadSessionList(forceServer){
   sessionListSnapshot(!!forceServer).then(function(snap){
     var rows=[];snap.forEach(function(doc){rows.push({id:doc.id,data:doc.data()});});rows.sort(function(a,b){var at=a.data.updatedAt&&a.data.updatedAt.seconds?a.data.updatedAt.seconds:0,bt=b.data.updatedAt&&b.data.updatedAt.seconds?b.data.updatedAt.seconds:0;return bt-at;});host.innerHTML='';
     if(!rows.length){host.innerHTML='<div class="session-status">Non ci sono Accordi in corso. Puoi crearne uno qui sopra.</div>';return;}
-    rows.forEach(function(r){var d=r.data,mine=d.ownerUid===FB.user.uid,narr=FB.user.uid===NARRATOR_UID;var box=document.createElement('div');box.className='session-item';var row=document.createElement('div');row.className='session-item-row';var left=document.createElement('div');var ti=document.createElement('div');ti.className='session-title';ti.textContent=(d.pgName||'PG')+' — '+(d.tipoAccordo||'Accordo da determinare');left.appendChild(ti);var meta=document.createElement('div');meta.className='session-meta';var dt=formatTs(d.updatedAt);meta.textContent=dt?'Aggiornata '+dt:'';left.appendChild(meta);var own=document.createElement('span');own.className='session-owner'+(mine?' mine':'');own.textContent=mine?'Tuo Accordo':(narr?'Gestibile dal Narratore':'Altro giocatore');left.appendChild(own);var b=document.createElement('button');b.type='button';b.className='session-btn'+((mine||narr)?'':' ghost');b.setAttribute('data-session-control','1');b.textContent=(mine||narr)?'Riprendi':'Visualizza';b.addEventListener(EVT,function(){navigateToSession(r.id);});row.appendChild(left);row.appendChild(b);box.appendChild(row);host.appendChild(box);});
+    rows.forEach(function(r){var d=r.data,mine=d.ownerUid===FB.user.uid,narr=FB.user.uid===NARRATOR_UID;var box=document.createElement('div');box.className='session-item';var row=document.createElement('div');row.className='session-item-row';var left=document.createElement('div');var ti=document.createElement('div');ti.className='session-title';ti.textContent=(d.pgName||'PG')+' — '+(d.tipoAccordo||'Accordo da determinare');left.appendChild(ti);var meta=document.createElement('div');meta.className='session-meta';var dt=formatTs(d.updatedAt);meta.textContent=dt?'Aggiornata '+dt:'';left.appendChild(meta);var own=document.createElement('span');own.className='session-owner'+(mine?' mine':'');own.textContent=narr?'Gestibile dal Narratore':(mine?'Creato da questo browser · condiviso':'Condiviso tra dispositivi');left.appendChild(own);var b=document.createElement('button');b.type='button';b.className='session-btn';b.setAttribute('data-session-control','1');b.textContent='Riprendi';b.addEventListener(EVT,function(){navigateToSession(r.id);});row.appendChild(left);row.appendChild(b);box.appendChild(row);host.appendChild(box);});
   }).catch(function(err){console.error(err);host.innerHTML='<div class="session-status bad">Non riesco a leggere gli Accordi in corso: '+String(err.message||err)+'</div>';});
 }
 function setCreateSessionBusy(busy){
@@ -5795,7 +5797,7 @@ function setCreateSessionBusy(busy){
 function createSession(){
   if(CREATING_SESSION)return;
   var inp=sq('new-session-pg'),name=(inp&&inp.value?inp.value:'').trim();if(!name){setStatus('session-home-msg','Inserisci prima il nome del PG Diplomatico principale.','bad');if(inp)inp.focus();return;}if(!FB.user){setStatus('session-home-msg','Firebase non è ancora pronto. Riprova tra un momento.','bad');return;}
-  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v21',actionLog:[]};
+  setCreateSessionBusy(true);setStatus('session-home-msg','Creazione dell’Accordo…','');var data={ownerUid:FB.user.uid,publicSession:true,normalizedPgName:normPgName(name),initialPgName:name,pgName:name,tipoAccordo:'',accordoId:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),toolVersion:'v22-cross-device',actionLog:[]};
   FB.db.collection(SESSION_COLLECTION).add(data).then(function(ref){
     setCreateSessionBusy(false);if(inp)inp.value='';
     var localData={};Object.keys(data).forEach(function(k){localData[k]=data[k];});
@@ -5830,7 +5832,7 @@ function setupFirebase(){
   try{
     if(typeof firebase==='undefined')throw new Error('SDK Firebase non caricato');if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);FB.app=firebase.app();FB.auth=firebase.auth();FB.db=firebase.firestore();
     FB.auth.onAuthStateChanged(function(user){
-      if(user){FB.user=user;if(st){st.textContent=user.uid===NARRATOR_UID?'Firebase connesso · modalità Narratore':'Firebase connesso · sessione anonima attiva';st.className='session-status ok';}var sid=sessionIdFromHash();if(sid)loadSession(sid);else{try{if(sessionStorage.getItem('ra_deleted_notice')==='1'){sessionStorage.removeItem('ra_deleted_notice');setStatus('session-home-msg','Accordo eliminato definitivamente. Per giocarlo di nuovo dovrà essere ricreato da zero.','ok');}}catch(e){}loadSessionList();}return;}
+      if(user){FB.user=user;if(st){st.textContent=user.uid===NARRATOR_UID?'Firebase connesso · modalità Narratore':'Firebase connesso · accesso condiviso tra dispositivi attivo';st.className='session-status ok';}var sid=sessionIdFromHash();if(sid)loadSession(sid);else{try{if(sessionStorage.getItem('ra_deleted_notice')==='1'){sessionStorage.removeItem('ra_deleted_notice');setStatus('session-home-msg','Accordo eliminato definitivamente. Per giocarlo di nuovo dovrà essere ricreato da zero.','ok');}}catch(e){}loadSessionList();}return;}
       FB.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function(){return FB.auth.signInAnonymously();}).catch(function(err){console.error(err);if(st){st.textContent='Errore autenticazione Firebase: '+err.message;st.className='session-status bad';}});
     });
   }catch(err){console.error(err);if(st){st.textContent='Firebase non disponibile: '+err.message;st.className='session-status bad';}}
